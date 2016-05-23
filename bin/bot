@@ -1,0 +1,68 @@
+#!/usr/bin/env bash
+TOKEN="$(cat $HOME/bot.token)"
+URL='https://api.telegram.org/bot'
+PEOPLE=~/people.bot
+
+getMe() {
+    curl -s "$URL$TOKEN/getMe" | jq '"\(.result.first_name) - \(.result.username)"'
+}
+
+sendMessage() {
+    curl -s "$URL$TOKEN/sendMessage" -d chat_id="$1" -d text="$2" -d parse_mode="Markdown" | jq '.ok'
+}
+
+sendPhoto() {
+    curl -s "$URL$TOKEN/sendPhoto" -F chat_id="$1" -F photo="@$2" | jq '.ok'
+}
+
+sendDocument() {
+    curl -s "$URL$TOKEN/sendDocument" -F chat_id="$1" -F document="@$2" | jq '.ok'
+}
+
+sendLocation() {
+    curl -s "$URL$TOKEN/sendLocation" -d chat_id="$1" -d latitude="$2" -d longitude="$3" | jq '.ok'
+}
+
+getUpdates() {
+    messages="$(curl -s "$URL$TOKEN/getUpdates" -d update_id="$1")"
+    echo "$messages" | jq '.result[] | "\(.update_id) \(.message.from.id) \(.message.from.username) \(.message.text)"'
+    echo "$messages" | jq '.result[] | "\(.message.from.username):\(.message.from.id)"' | while read a; do
+        b=${a#"\""}
+        b=${b%"\""}
+        echo "$b" >> $PEOPLE
+    done
+    sort -u $PEOPLE > $PEOPLE.tmp
+    mv $PEOPLE.tmp $PEOPLE
+}
+
+case $1 in
+    me)
+        getMe
+        ;;
+    msg)
+        sendMessage $2 "$3"
+        ;;
+    img)
+        sendPhoto $2 "$3"
+        ;;
+    doc)
+        sendDocument $2 "$3"
+        ;;
+    loc)
+        sendLocation $2 "$3" "$4"
+        ;;
+    get)
+        getUpdates $2
+        ;;
+    show)
+        if [ -e $PEOPLE ]; then
+            echo "People:"
+            cat $PEOPLE
+        else
+            echo "No People Saved"
+        fi
+        ;;
+    *)
+        getUpdates 0
+        ;;
+esac

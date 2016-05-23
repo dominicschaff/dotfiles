@@ -1,0 +1,23 @@
+#!/bin/python
+import csv, sys
+if len(sys.argv) != 2:
+    print "Need File!"
+    sys.exit(1)
+try:
+    with open(sys.argv[1], 'rb') as csvfile:
+        spamreader = csv.reader(csvfile)
+        cols = [[s for s in row] for row in spamreader if len(row) > 0]
+        col_sizes = [max([len(j[i]) for j in cols])for i in xrange(len(cols[0]))]
+        f = ''.join(['%%-%ds | '%i for i in col_sizes])
+        l = '+'.join(['-'*(i+2) for i in col_sizes])
+        l = '+-' + l[1:] + '+'
+        f = '| ' + f[:-1]
+        s = f%tuple(cols[0])
+        print l
+        print s
+        print l
+        for r in cols[1:]:
+            print f%tuple(r)
+        print l
+except:
+    pass

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+<title>$pagetitle$</title>
+<link rel="alternate" type="application/rss+xml" href="/feed.rss" title="RSS feed for 0xC0DE">
+$if(quotes)$
+<style type="text/css">q { quotes: "“" "”" "‘" "’"; }</style>
+$endif$
+$if(highlighting-css)$
+<style type="text/css">
+$highlighting-css$
+</style>
+$endif$
+$for(css)$
+<link rel="stylesheet" href="$css$" $if(html5)$$else$type="text/css" $endif$/>
+$endfor$
+$if(math)$
+$math$
+$endif$
+$for(header-includes)$
+$header-includes$
+$endfor$
+<style type="text/css">
+body {padding-top: 20px;padding-bottom: 20px;}
+.header,.marketing,.footer {padding-right: 15px;padding-left: 15px;}
+.header {padding-bottom: 20px;border-bottom: 1px solid #e5e5e5;}
+.header h3 {margin-top: 0;margin-bottom: 0;line-height: 40px;}
+.footer {padding-top: 19px;color: #777;border-top: 1px solid #e5e5e5;}
+@media (min-width: 1024px) {.container {max-width: 1000px;}}
+.container-narrow > hr {margin: 30px 0;}
+.jumbotron {border-bottom: 1px solid #e5e5e5;}
+.jumbotron .btn {padding: 14px 24px;font-size: 21px;}
+.marketing {margin: 40px 0;}
+.marketing p + h4 {margin-top: 28px;}
+@media screen and (min-width: 1024px) {
+.header,.marketing,.footer {padding-right: 0;padding-left: 0;}
+.header {margin-bottom: 30px;}
+.jumbotron {border-bottom: 0;}
+}
+img {max-width: 100%}
+</style>
+</head>
+<body>
+<div class="container">
+$if(title)$
+<div class="jumbotron">
+  <h1>$title$$if(subtitle)$ <small>$subtitle$</small>small$endif$</h1>
+  $if(date)$
+  $if(author)$
+    $for(author)$
+    <h2>$author$</h2>
+    $endfor$</p>
+  $endif$
+  <h3 class="date">$date$</h3>
+  $endif$
+  <p>
+</div>
+$endif$
+$for(include-before)$
+$include-before$
+$endfor$
+$if(toc)$
+<div class="panel panel-default">
+  <div class="panel-heading">Table of Contents</div>
+  <div class="panel-body">
+    $toc$
+  </div>
+</div>
+$endif$
+$body$
+$for(include-after)$
+$include-after$
+$endfor$
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+</body>
+</html>

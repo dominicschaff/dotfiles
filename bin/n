@@ -1,0 +1,78 @@
+#!/usr/bin/env python3
+from datetime import datetime
+from sys import argv
+import os
+
+class Bot:
+  """docstring for Bot"""
+  def __init__(self, file_name="notes.txt"):
+    super(Bot, self).__init__()
+    self.file_name = os.path.expanduser('~') + '/' + file_name
+    self.items = []
+  def load(self):
+    try:
+      with open(self.file_name, 'r') as f:
+        for l in f:
+          self.items.append(l.strip())
+    except FileNotFoundError:
+      pass
+  def save(self):
+    with open(self.file_name, 'w') as f:
+      f.write("\n".join(self.items))
+  def remove(self, i):
+    try:
+      d = int(i)
+      if d > 0:
+        del self.items[d-1]
+    except EOFError:
+      pass
+    except ValueError:
+      pass
+
+  def __str__(self):
+    return "\n".join(["%3d -> %s"%(idx + 1, val) for idx, val in enumerate(self.items)])
+  def commands(self, s):
+    c = s.split(" ")
+    if c[0] in ['quit', 'q', 'exit']:
+      raise EOFError
+    elif c[0] in ['save', 's']:
+      self.save()
+    elif c[0] in ['list', 'show', 'ls', ':']:
+      print(self)
+    elif c[0] in ['remove', 'del', 'rm', '-']:
+      if len(c) > 1:
+        l = c[1:]
+        l.sort()
+        l.reverse()
+        for i in l:
+          self.remove(i)
+      else:
+        print(self)
+        self.remove(input("Select one: "))
+    elif c[0] in ['+', 'append']:
+      self.items[int(c[1])-1] += ' ' + ' '.join(c[2:])
+    elif c[0] in ['--', 'run']:
+      self.read()
+    else:
+      self.items.append(str(datetime.now()) + ": " + s)
+  def read(self):
+    try:
+      s= ""
+      while True:
+        s = input("> ")
+        self.commands(s)
+    except EOFError:
+      print()
+
+
+if __name__ == '__main__':
+  try:
+    b = Bot()
+    b.load()
+    if len(argv) == 1:
+      print(b)
+    else:
+      b.commands(" ".join(argv[1:]))
+    b.save()
+  except Exception:
+    print('An error occured, perhaps you are dumb?')
