@@ -45,11 +45,6 @@ export TIMEFORMAT='r: %R, u: %U, s: %S'
 
 alias top="top -F -R -o cpu"
 
-csv()
-{
-  python ~/Code/Python/app/csv_reader.py "$1" | less -S
-}
-
 convertUs()
 {
   for i in *; do
