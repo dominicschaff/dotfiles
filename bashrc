@@ -4,12 +4,13 @@
 export HISTCONTROL=ignoreboth:erasedups
 HISTSIZE=1000000000
 HISTFILESIZE=1000000000
+export CLICOLOR=1
 
 # Convenience Functions:
 alias cd..="cd .."
-alias ls="ls -Gp --color --group-directories-first"
+alias ls="ls -GpFh --color --group-directories-first"
 alias l="ls"
-alias ll="ls -lh"
+alias ll="ls -l"
 
 alias ym="youtube-dl -k -f bestvideo+bestaudio"
 alias yr="ym -r 2M"
@@ -45,6 +46,8 @@ export TIMEFORMAT='r: %R, u: %U, s: %S'
 
 alias top="top -F -R -o cpu"
 
+alias weather="curl 'http://wttr.in/cape_town'"
+alias moon="curl 'http://wttr.in/Moon'"
 convertUs()
 {
   for i in *; do
@@ -56,7 +59,7 @@ convertUs()
 
 stitch()
 {
-    ffmpeg -i "$1" -i "$2" -c:v copy -c:a aac -strict experimental "$3"
+    ffmpeg -loglevel 0 -stats -i "$1" -i "$2" -c:v copy -c:a aac -strict experimental "$3"
 }
 
 convertMp4()
@@ -150,6 +153,19 @@ pc()
 fetch_markdown()
 {
   curl --data "read=1" --data "u=$1" "http://fuckyeahmarkdown.com/go/"
+}
+
+print_all_them_colors()
+{
+  for x in 0 1 4 5 7 8; do
+    for i in `seq 30 37`; do
+      for a in `seq 40 47`; do
+        echo -ne "\e[$x;$i;$a""m\\\e[$x;$i;$a""m\e[0;37;40m "
+      done
+      echo
+    done
+  done
+  echo ""
 }
 
 # Encrypt

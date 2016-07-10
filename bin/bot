@@ -25,7 +25,7 @@ sendLocation() {
 
 getUpdates() {
     messages="$(curl -s "$URL$TOKEN/getUpdates" -d update_id="$1")"
-    echo "$messages" | jq '.result[] | "\(.update_id) \(.message.from.id) \(.message.from.username) \(.message.text)"'
+    echo "$messages" | jq '.result[] | {"update":.update_id, "recevied_on":.message.date, "userid":.message.from.id, "username": .message.from.username, "message": .message.text}'
     echo "$messages" | jq '.result[] | "\(.message.from.username):\(.message.from.id)"' | while read a; do
         b=${a#"\""}
         b=${b%"\""}

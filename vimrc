@@ -83,7 +83,7 @@ nnoremap <C-Up> <C-w>k
 nnoremap <C-Right> <C-w>l
 
 " Specify the file type
-autocmd BufRead,BufNewFile *.md set filetype=markdown
+autocmd BufRead,BufNewFile *.md set filetype=md
 au BufNewFile,BufRead *.scala set filetype=scala
 au BufNewFile,BufRead *.sbt set filetype=sbt
 
