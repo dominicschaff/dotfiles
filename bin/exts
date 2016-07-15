@@ -1,8 +1,0 @@
-#!/bin/bash
-
-for f in *; do
-    filename=$(basename "$f")
-    echo "${filename##*.}"
-done | sort -u | while read a; do
-    echo "$a: $(ls *.$a | wc -l)"
-done
