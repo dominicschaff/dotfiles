@@ -10,6 +10,9 @@ set tabstop=2                          " Sets the tabstop to 4 characters
 set shiftwidth=2                       " Allows for backspace of 4 characters
 set softtabstop=2                      " Tabbing in a line
 set expandtab                          " Change tab to space
+set smarttab                           " more tabbing
+set autoindent                         " enable auto indenting
+"set cindent                            " enable indeting in a c-style
 "set mouse=a                            " Allow mouse support
 set encoding=utf-8                     " Set the filetype encoding to utf-8
 set noshowmode                         " Switch off the showing of the Mode
