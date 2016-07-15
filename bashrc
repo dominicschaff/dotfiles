@@ -14,24 +14,12 @@ GIT_ENABLE=''
 # Create PATH
 ################################################################################
 
-if [ -d "$HOME/bin/scala" ]; then
-  export SCALA_HOME="$HOME/bin/scala"
-fi
-
 if [ -d "$HOME/bin" ]; then
   export PATH="$HOME/bin:$PATH"
 fi
 
 if [ -d "$HOME/Library/Android/sdk/platform-tools" ]; then
   export PATH="$PATH:$HOME/Library/Android/sdk/platform-tools"
-fi
-
-if [ -d "$SCALA_HOME" ]; then
-  export PATH="$PATH:$SCALA_HOME/bin"
-fi
-
-if [ -d "$HOME/bin/activator/bin" ]; then
-  export PATH="$PATH:$HOME/bin/activator/bin"
 fi
 
 if [ -d "$DOTFILES/bin" ]; then
