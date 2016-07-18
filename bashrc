@@ -100,20 +100,12 @@ fi
 
 key()
 {
-  amount=8
-  if [ $# -eq 1 ]; then
-    amount=$1
-  fi
-  python -c "import random; print''.join(['1234567890abcdefghijklmnopqrstuvwxyz'[random.randint(0, 35)] for x in xrange($amount)])"
+  pwgen -cnB ${1:-8}
 }
 
 password()
 {
-  amount=8
-  if [ $# -eq 1 ]; then
-    amount=$1
-  fi
-  python -c "import random; print''.join(['1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!._-'[random.randint(0, 66)] for x in xrange($amount)])"
+  pwgen -cnyB ${1:-15}
 }
 
 pc()
