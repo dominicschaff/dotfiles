@@ -4,7 +4,7 @@ URL='https://api.telegram.org/bot'
 PEOPLE=~/people.bot
 
 getMe() {
-    curl -s "$URL$TOKEN/getMe" | jq '"\(.result.first_name) - \(.result.username)"'
+    curl -s "$URL$TOKEN/getMe" | jq -r '"\(.result.first_name) - \(.result.username)"'
 }
 
 sendMessage() {
@@ -26,10 +26,8 @@ sendLocation() {
 getUpdates() {
     messages="$(curl -s "$URL$TOKEN/getUpdates" -d update_id="$1")"
     echo "$messages" | jq '.result[] | {"update":.update_id, "recevied_on":.message.date, "userid":.message.from.id, "username": .message.from.username, "message": .message.text}'
-    echo "$messages" | jq '.result[] | "\(.message.from.username):\(.message.from.id)"' | while read a; do
-        b=${a#"\""}
-        b=${b%"\""}
-        echo "$b" >> $PEOPLE
+    echo "$messages" | jq -r '.result[] | "\(.message.from.username):\(.message.from.id)"' | while read a; do
+        echo "$a" >> $PEOPLE
     done
     sort -u $PEOPLE > $PEOPLE.tmp
     mv $PEOPLE.tmp $PEOPLE
