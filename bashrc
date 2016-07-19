@@ -51,6 +51,8 @@ alias h="type"
 alias encrypt='openssl des3 -salt -in'
 alias decrypt='openssl des3 -salt -d -in'
 
+alias json="sed '/^[#////]/ d' | jq ."
+
 if hash youtube-dl 2>/dev/null; then
   alias ym="youtube-dl -k -f bestvideo+bestaudio"
   alias yr="ym -r 2M"
