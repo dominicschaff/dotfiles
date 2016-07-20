@@ -51,6 +51,8 @@ alias h="type"
 alias encrypt='openssl des3 -salt -in'
 alias decrypt='openssl des3 -salt -d -in'
 
+alias json="sed '/^[#////]/ d' | jq ."
+
 if hash youtube-dl 2>/dev/null; then
   alias ym="youtube-dl -k -f bestvideo+bestaudio"
   alias yr="ym -r 2M"
@@ -100,20 +102,12 @@ fi
 
 key()
 {
-  amount=8
-  if [ $# -eq 1 ]; then
-    amount=$1
-  fi
-  python -c "import random; print''.join(['1234567890abcdefghijklmnopqrstuvwxyz'[random.randint(0, 35)] for x in xrange($amount)])"
+  pwgen -cnB ${1:-8}
 }
 
 password()
 {
-  amount=8
-  if [ $# -eq 1 ]; then
-    amount=$1
-  fi
-  python -c "import random; print''.join(['1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!._-'[random.randint(0, 66)] for x in xrange($amount)])"
+  pwgen -cnyB ${1:-15}
 }
 
 pc()

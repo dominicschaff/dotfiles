@@ -89,6 +89,7 @@ nnoremap <C-Right> <C-w>l
 autocmd BufRead,BufNewFile *.md set filetype=md
 au BufNewFile,BufRead *.scala set filetype=scala
 au BufNewFile,BufRead *.sbt set filetype=sbt
+au BufNewFile,BufRead *.json set filetype=json
 
 set background=dark
 hi User1 ctermfg=Black ctermbg=DarkGray
