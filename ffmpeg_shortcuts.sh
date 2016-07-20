@@ -47,6 +47,23 @@ scale1080()
   scale "trunc(oh*a/2)*2:1080" $1 $2
 }
 
+atop_motion_complete_1080()
+{
+  i=1
+  for f in $i; do
+    echo "$f"
+    scale1080 "$f" "scaled-$(printf "%03d" $i).jpg"
+    i=$((i+1))
+  done
+  stopMotion 8 "scaled-%3d.jpg" "$2-8.mp4"
+  stopMotion 15 "scaled-%3d.jpg" "$2-15.mp4"
+  stopMotion 30 "scaled-%3d.jpg" "$2-30.mp4"
+  hand -i "$2-8.mp4" -o "$2-8.mp4"
+  hand -i "$2-15.mp4" -o "$2-15.m4v"
+  hand -i "$2-30.mp4" -o "$2-30.m4v"
+  rm scaled-*.jpg
+}
+
 gifConvert()
 {
     for f in *.gif; do
