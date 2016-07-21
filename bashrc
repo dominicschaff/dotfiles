@@ -39,6 +39,7 @@ alias la="ll -a"
 alias less='less -R'
 alias curl="curl -w \"\\n\""
 alias wget='wget -c'
+alias code="cd $HOME/Code"
 
 alias print='pyfiglet -f epic -w $COLUMNS'
 
@@ -139,6 +140,20 @@ print_all_them_colors()
     done
   done
   echo ""
+}
+
+tmp()
+{
+  if [ -d "$HOME/tmp" ]; then
+    cd $HOME/tmp
+  else
+    if [ -d "$TMPDIR" ]; then
+      cd $TMPDIR
+    else
+      cd /tmp
+    fi
+  fi
+  pwd
 }
 
 ################################################################################
