@@ -24,6 +24,12 @@ play()
     echo "1 argument expected"
   fi
 }
+
+play_random()
+{
+  find . -iname "*.mp3" | sort -R | while read a; do echo "$a"; afplay "$a"; done
+}
+
 convertUs()
 {
   for i in *; do
