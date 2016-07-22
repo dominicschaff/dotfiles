@@ -127,7 +127,7 @@ exts()
   for f in *; do
     filename=$(basename "$f")
     echo "${filename##*.}"
-  done | uniq -c
+  done | sort | uniq -c
 }
 
 print_all_them_colors()
