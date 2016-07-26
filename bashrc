@@ -41,6 +41,12 @@ alias curl="curl -w \"\\n\""
 alias wget='wget -c'
 alias code="cd $HOME/Code"
 
+# copied from http://stackoverflow.com/questions/2720014/upgrading-all-packages-with-pip
+alias pip_update="pip freeze --local | grep -v '^\-e' | cut -d = -f 1  | xargs -n1 pip install -U"
+alias pip3_update="pip3 freeze --local | grep -v '^\-e' | cut -d = -f 1  | xargs -n1 pip3 install -U"
+
+
+
 good_fonts=(dotmatrix epic big cola colossal contessa crazy cyberlarge doom graceful graffiti isometric3 jacky nancyj-improved nscript ogre puffy rounded shimrod standard stampate stampatello starwars stop straight utopia weird)
 alias print='pyfiglet -f ${good_fonts[$((RANDOM%${#good_fonts[*]}))]} -w $COLUMNS'
 
