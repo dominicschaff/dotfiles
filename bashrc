@@ -82,6 +82,10 @@ if [ "$(uname)" == "Darwin" ]; then # You are using OS X
   source $DOTFILES/osx_shortcuts.sh
 fi
 
+if [ "$HOSTNAME" == "localhost" ]; then # I am on termux
+  source $DOTFILES/termux_shortcuts.sh
+fi
+
 if hash tree 2>/dev/null; then
   alias tt="tree -hpsDAFCQ --dirsfirst"
   alias lf="tt -P"
