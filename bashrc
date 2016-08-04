@@ -40,6 +40,7 @@ alias less='less -R'
 alias curl="curl -w \"\\n\""
 alias wget='wget -c'
 alias code="cd $HOME/Code"
+alias reload="source ~/.bashrc"
 
 # copied from http://stackoverflow.com/questions/2720014/upgrading-all-packages-with-pip
 alias pip_update="pip freeze --local | grep -v '^\-e' | cut -d = -f 1  | xargs -n1 pip install -U"
