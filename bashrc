@@ -188,6 +188,9 @@ git_status()
   branch="$(git branch 2> /dev/null | grep '*')"
   if [ $? -eq 0 ]; then
     branch="$(echo "$branch" | cut -d' ' -f2)"
+    if [ "$branch" == "master" ]; then
+      branch="M"
+    fi
     echo "$branch"
   fi
 }
