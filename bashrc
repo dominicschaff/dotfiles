@@ -109,6 +109,9 @@ if hash git 2>/dev/null; then
   alias glog="git log --oneline --decorate --color --graph"
   alias master="git checkout master; git remote update -p; gp"
   alias gf="git status --porcelain"
+  alias gh="git log -n 1 --pretty=format:\"%H\"i"
+  alias aws_deploy="gl | pbcopy; read; gh | pbcopy"
+  alias gl='git remote show origin -n | grep "Fetch URL:" | sed -E "s#^.*/(.*).*/(.*)\$#\1/\2#" | sed "s#.git\$##"'
   if [ -f $DOTFILES/git-completion.sh ]; then
     source $DOTFILES/git-completion.sh
   fi
@@ -167,16 +170,6 @@ tmp()
     fi
   fi
   pwd
-}
-
-midi()
-{
-  for m in *.mid; do
-    echo "$m"
-    timidity --quiet=9 -Ow8 -o "${m%.*}.wav" "$m" 2> /dev/null > /dev/null
-    ffmpeg -i "$m" "${m%.*}.mp3"
-    rm "${m%.*}.mid" "${m%.*}.wav"
-  done
 }
 
 ################################################################################
