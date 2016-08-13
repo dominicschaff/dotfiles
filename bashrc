@@ -42,12 +42,7 @@ alias wget='wget -c'
 alias code="cd $HOME/Code"
 alias reload="source ~/.bashrc"
 alias termsize="echo $COLUMNS x $LINES"
-
-# copied from http://stackoverflow.com/questions/2720014/upgrading-all-packages-with-pip
-alias pip_update="pip freeze --local | grep -v '^\-e' | cut -d = -f 1  | xargs -n1 pip install -U"
-alias pip3_update="pip3 freeze --local | grep -v '^\-e' | cut -d = -f 1  | xargs -n1 pip3 install -U"
-
-
+alias web="python3 -m http.server"
 
 good_fonts=(dotmatrix epic big cola colossal contessa crazy cyberlarge doom graceful graffiti isometric3 jacky nancyj-improved nscript ogre puffy rounded shimrod standard stampate stampatello starwars stop straight utopia weird)
 alias print='pyfiglet -f ${good_fonts[$((RANDOM%${#good_fonts[*]}))]} -w $COLUMNS'
@@ -84,7 +79,7 @@ if [ "$(uname)" == "Darwin" ]; then # You are using OS X
   source $DOTFILES/osx_shortcuts.sh
 fi
 
-if [ "$HOSTNAME" == "localhost" ]; then # I am on termux
+if [ "$HOSTNAME" == "localhost" ]; then # You are most likely using termux
   source $DOTFILES/termux_shortcuts.sh
 fi
 
@@ -110,8 +105,8 @@ if hash git 2>/dev/null; then
   alias master="git checkout master; git remote update -p; gp"
   alias gf="git status --porcelain"
   alias gh="git log -n 1 --pretty=format:\"%H\"i"
-  alias aws_deploy="gl | pbcopy; read; gh | pbcopy"
   alias gl='git remote show origin -n | grep "Fetch URL:" | sed -E "s#^.*/(.*).*/(.*)\$#\1/\2#" | sed "s#.git\$##"'
+  alias aws_deploy="gl | pbcopy; read; gh | pbcopy"
   if [ -f $DOTFILES/git-completion.sh ]; then
     source $DOTFILES/git-completion.sh
   fi
