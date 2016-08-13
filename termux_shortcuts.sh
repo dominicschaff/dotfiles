@@ -7,3 +7,5 @@ update()
     apt upgrade
   fi
 }
+
+alias bat="termux-battery-status | jq '\"\(.percentage) : \(.temperature) (\(.status)|\(.plugged))\"'"
