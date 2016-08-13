@@ -9,3 +9,10 @@ update()
 }
 
 alias bat="termux-battery-status | jq '\"\(.percentage) : \(.temperature) (\(.status)|\(.plugged))\"'"
+
+status()
+{
+  date
+  uptime
+  echo "Battery: $(bat)"
+}
