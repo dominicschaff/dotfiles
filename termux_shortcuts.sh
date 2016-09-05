@@ -9,6 +9,7 @@ update()
 }
 
 alias bat="termux-battery-status | jq '\"\(.percentage) : \(.temperature) (\(.status)|\(.plugged))\"'"
+alias clean="apt autoremove"
 
 status()
 {
