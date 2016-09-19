@@ -1,6 +1,6 @@
 
 alias lc="adb logcat"
-
+alias installed="adb shell 'pm list packages -f' | grep '/data/app/' | sort"
 shot()
 {
   adb shell screencap -p /sdcard/screen.png
