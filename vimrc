@@ -12,7 +12,7 @@ set softtabstop=2                      " Tabbing in a line
 set expandtab                          " Change tab to space
 set smarttab                           " more tabbing
 set autoindent                         " enable auto indenting
-"set cindent                            " enable indeting in a c-style
+set cindent                            " enable indeting in a c-style
 "set mouse=a                            " Allow mouse support
 set encoding=utf-8                     " Set the filetype encoding to utf-8
 set noshowmode                         " Switch off the showing of the Mode
@@ -20,8 +20,8 @@ set ignorecase                         " Make search case insensitive
 set hidden                             " Allows switching of buffers without saving
 set ttyfast                            " Sets rendering mode to be faster (slow on slow line)
 set backspace=indent,eol,start         " What we backspace over?
-"set cursorline                         " Highlights the current line
-set title                              " Changes the terminal title
+set cursorline                         " Highlights the current line
+"set title                              " Changes the terminal title
 set smartcase                          " Allows case sensitive search if first letter is Uppercase
 set incsearch                          " Searches while typing
 set hlsearch                           " Cannot remember
@@ -73,18 +73,6 @@ nnoremap ; :
 " Clear Whitespace
 nnoremap <leader>W :%s/\s\+$//<cr>:let @/=''<CR>
 
-" Create vertical space
-nnoremap <leader>v <C-w>v<C-w>l
-
-" Switch left a space
-nnoremap <C-Left> <C-w>h
-" Switch down a space
-nnoremap <C-Down> <C-w>j
-" Switch up a space
-nnoremap <C-Up> <C-w>k
-" Switch right a space
-nnoremap <C-Right> <C-w>l
-
 " Specify the file type
 autocmd BufRead,BufNewFile *.md set filetype=md
 au BufNewFile,BufRead *.scala set filetype=scala
@@ -132,7 +120,7 @@ function! GetMode()
 endfunction
 
 " Change status line colours
-set statusline=%1*%{GetMode()}%*\ %-(%m%t%)%=%2*%y%*\ %3*%c,%l%*\ ⦗%n⦘\ %p%%  " What should the status line be
+set statusline=%1*%{GetMode()}%*\ %-(%m%t%)%=%2*%y%*\ %3*%c,%l%*\ %n\ %p%%  " What should the status line be
 
 " Colour Events
 au InsertEnter  * hi User1 ctermfg=Black ctermbg=Green
@@ -140,12 +128,6 @@ au InsertLeave  * call SetColour()
 au BufWritePost  * call SetColour()
 
 autocmd BufWritePre *.scala :%s/\s\+$//e
-
-" Useful mappings for managing tabs
-map <leader>tn :tabnew<cr>
-map <leader>to :tabonly<cr>
-map <leader>tc :tabclose<cr>
-map <leader>tm :tabmove
 
 " Make the exit of insert mode faster
 set timeoutlen=1000 ttimeoutlen=0
