@@ -56,12 +56,9 @@ alias h="type"
 alias encrypt='openssl des3 -salt -in'
 alias decrypt='openssl des3 -salt -d -in'
 
-alias json="sed '/^[#////]/ d' | jq ."
+alias exts='find . | while read f; do echo "${f##*.}"; done | sed "/^\s*$/d" | sort | uniq -c | sort -rn'
 
-if hash youtube-dl 2>/dev/null; then
-  alias ym="youtube-dl -k -f bestvideo+bestaudio"
-  alias yr="ym -r 2M"
-fi
+alias json="sed '/^[#////]/ d' | jq ."
 
 if hash HandBrakeCLI 2>/dev/null; then
   source $DOTFILES/handbrake_shortcuts.sh
@@ -119,13 +116,6 @@ fetch_markdown()
   curl --data "read=1" --data "u=$1" "http://fuckyeahmarkdown.com/go/"
 }
 
-exts()
-{
-  for f in *; do
-    filename=$(basename "$f")
-    echo "${filename##*.}"
-  done | sort | uniq -c
-}
 
 print_all_them_colors()
 {
