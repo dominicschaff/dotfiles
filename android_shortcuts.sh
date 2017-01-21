@@ -22,3 +22,5 @@ push()
 {
   adb push "$1" "/sdcard/$(basename "$1")"
 }
+
+export ANDROID_HOME=~/Library/Android/sdk
