@@ -13,3 +13,7 @@ I would recommend if that if you are going to use my script as is (which is prob
 bash install.sh
 ~~~
 
+
+## Notes
+
+The font file in `config/font.tff` is the Hack font.
