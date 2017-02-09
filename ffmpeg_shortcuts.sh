@@ -2,7 +2,7 @@ alias ffmpeg="ffmpeg -loglevel 0 -stats"
 
 stitch()
 {
-    ffmpeg -loglevel 0 -stats -i "$1" -i "$2" -c:v copy -c:a aac -strict experimental "$3"
+    ffmpeg -i "$1" -i "$2" -c:v copy -c:a aac -strict experimental "$3"
 }
 
 convertMp4()
@@ -52,7 +52,7 @@ stop_motion_complete_1080()
   if [ $# -eq 2 ]; then
     echo "Using $1 to create $2"
   else
-    echo "More arguments are required: stop_motion_complete_1080 <file glob> <output name>"
+    echo "More arguments are required: $0 <file glob> <output name>"
   fi
   i=1
   for f in $1; do
