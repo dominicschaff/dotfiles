@@ -1,5 +1,5 @@
-alias handn="HandBrakeCLI -Z \"Normal\" -e x264"
 alias hand="HandBrakeCLI -Z \"Normal\" -B 192 -e x264"
+alias handn="HandBrakeCLI -Z \"Normal\" -e x264"
 
 allConvert()
 {
