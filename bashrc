@@ -45,7 +45,7 @@ alias curl="curl -w \"\\n\""
 alias wget='wget -c'
 alias code="cd $HOME/Code"
 alias reload="source ~/.bashrc"
-alias termsize="echo $COLUMNS x $LINES"
+alias termsize='echo $COLUMNS x $LINES'
 alias web="python3 -m http.server"
 
 good_fonts=(dotmatrix epic big cola colossal contessa crazy cyberlarge doom graceful graffiti isometric3 jacky nancyj-improved nscript ogre puffy rounded shimrod standard stampate stampatello starwars stop straight utopia weird)
