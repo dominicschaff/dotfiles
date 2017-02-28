@@ -2,8 +2,8 @@
 
 # Terminal Options:
 export HISTCONTROL=ignoreboth:erasedups
-HISTSIZE=-1
-HISTFILESIZE=-1
+export HISTSIZE=-1
+export HISTFILESIZE=-1
 export CLICOLOR=1
 export TIMEFORMAT='r: %R, u: %U, s: %S'
 
