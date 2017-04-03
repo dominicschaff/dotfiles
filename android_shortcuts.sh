@@ -1,4 +1,4 @@
-
+alias kbd="adb shell input text"
 alias lc="adb logcat"
 alias installed="adb shell 'pm list packages -f' | grep '/data/app/' | sort"
 shot()
