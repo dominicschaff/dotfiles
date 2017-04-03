@@ -2,8 +2,8 @@
 
 # Terminal Options:
 export HISTCONTROL=ignoreboth:erasedups
-HISTSIZE=-1
-HISTFILESIZE=-1
+export HISTSIZE=-1
+export HISTFILESIZE=-1
 export CLICOLOR=1
 export TIMEFORMAT='r: %R, u: %U, s: %S'
 
@@ -45,7 +45,7 @@ alias curl="curl -w \"\\n\""
 alias wget='wget -c'
 alias code="cd $HOME/Code"
 alias reload="source ~/.bashrc"
-alias termsize="echo $COLUMNS x $LINES"
+alias termsize='echo $COLUMNS x $LINES'
 alias web="python3 -m http.server"
 
 good_fonts=(dotmatrix epic big cola colossal contessa crazy cyberlarge doom graceful graffiti isometric3 jacky nancyj-improved nscript ogre puffy rounded shimrod standard stampate stampatello starwars stop straight utopia weird)

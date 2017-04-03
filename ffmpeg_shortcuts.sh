@@ -86,3 +86,8 @@ gifenc()
   ffmpeg -v warning -i $1 -vf "palettegen" -y $palette
   ffmpeg -v warning -i $1 -i $palette -lavfi "paletteuse" -y $2
 }
+
+convertMp3()
+{
+  ffmpeg -i "$1" -q:a 3 "${1%.*}.mp3"
+}
