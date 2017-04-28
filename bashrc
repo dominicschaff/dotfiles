@@ -60,7 +60,7 @@ alias h="type"
 alias encrypt='openssl des3 -salt -in'
 alias decrypt='openssl des3 -salt -d -in'
 
-alias exts='find . -type f | while read f; do echo "${f##*.}"; done | sed "/^\s*$/d" | sort | uniq -c | sort -rn'
+alias exts='ls -p1 | grep -v / | while read f; do echo "${f##*.}"; done | sed "/^\s*$/d" | sort | uniq -c | sort -rn'
 
 alias json="sed '/^[#////]/ d' | jq ."
 
