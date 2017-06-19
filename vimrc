@@ -75,8 +75,6 @@ nnoremap <leader>W :%s/\s\+$//<cr>:let @/=''<CR>
 
 " Specify the file type
 autocmd BufRead,BufNewFile *.md set filetype=md
-au BufNewFile,BufRead *.scala set filetype=scala
-au BufNewFile,BufRead *.sbt set filetype=sbt
 au BufNewFile,BufRead *.json set filetype=json
 
 set background=dark
