@@ -60,7 +60,7 @@ alias h="type"
 alias encrypt='openssl des3 -salt -in'
 alias decrypt='openssl des3 -salt -d -in'
 
-alias exts='ls -p1 | grep -v / | while read f; do echo "${f##*.}"; done | sed "/^\s*$/d" | sort | uniq -c | sort -rn'
+alias exts='find . | while read f; do echo "${f##*.}"; done | sed "/^\s*$/d" | sort | uniq -c | sort -rn'
 
 alias json="sed '/^[#////]/ d' | jq ."
 
@@ -113,6 +113,11 @@ password()
 pc()
 {
   pandoc -s --standalone --toc -f markdown --highlight-style zenburn --template ~/dotfiles/pandoc/template.html -t html "$1" | sed 's/<table/<table class=\"table\"/' > "${1%.*}.html"
+}
+
+pc_print()
+{
+  pandoc -s --standalone --toc -f markdown --highlight-style haddock --template ~/dotfiles/pandoc/template.html -t html "$1" | sed 's/<table/<table class=\"table\"/' > "${1%.*}.html"
 }
 
 fetch_markdown()

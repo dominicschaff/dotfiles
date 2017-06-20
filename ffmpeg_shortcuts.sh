@@ -14,6 +14,16 @@ convertMp4()
   done
 }
 
+convertH265()
+{
+  ffmpeg -i "$1" -c:v libx265 -preset medium -crf 28 -c:a aac -b:a 128k "$2"
+}
+
+convertAAC()
+{
+  ffmpeg -i "$1" -c:a aac -b:a 128k "$2"
+}
+
 stopMotion()
 {
   if [ $# -eq 1 ]; then
