@@ -1,6 +1,7 @@
 alias kbd="adb shell input text"
 alias lc="adb logcat"
 alias installed="adb shell 'pm list packages -f' | grep '/data/app/' | sort"
+alias adb_refresh='adb shell am broadcast -a android.intent.action.MEDIA_MOUNTED -d file:///sdcard'
 shot()
 {
   adb shell screencap -p /sdcard/screen.png
