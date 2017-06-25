@@ -42,6 +42,9 @@ set listchars=tab:→→,trail:°           " What should the invisibles be show
 "set listchars=tab:→→,eol:¬,trail:°     " What should the invisibles be shown as
 set ruler                              " Enable the sizing at the bottom
 colorscheme molokai                    " What should the colorscheme be
+set showcmd                            " show last used command
+set lazyredraw                         " speed up the redraw behaviour
+set showmatch                          " Highlight matching bracket
 
 " Setup some keymaps
 " Place Author Tag
@@ -126,6 +129,9 @@ au InsertLeave  * call SetColour()
 au BufWritePost  * call SetColour()
 
 autocmd BufWritePre *.scala :%s/\s\+$//e
+autocmd FileType python setlocal tabstop=2
+autocmd FileType python setlocal shiftwidth=2
+autocmd FileType python setlocal softtabstop=2
 
 " Make the exit of insert mode faster
 set timeoutlen=1000 ttimeoutlen=0
