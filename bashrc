@@ -110,6 +110,11 @@ password()
   pwgen -cnyB ${1:-15}
 }
 
+find_size()
+{
+  find . -iname "$1" -exec du -kc {} + | grep total$ | cut -f1 | awk '{ sum+=$1} END {print sum*1024}' | nft
+}
+
 pc()
 {
   pandoc -s --standalone --toc -f markdown --highlight-style zenburn --template ~/dotfiles/pandoc/template.html -t html "$1" | sed 's/<table/<table class=\"table\"/' > "${1%.*}.html"

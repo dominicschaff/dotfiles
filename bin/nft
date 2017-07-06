@@ -1,0 +1,26 @@
+#/bin/bash
+while read a; do
+  n="$a"
+  s="B"
+  if [ $n -ge 1024 ]; then
+    n=$((n/1024))
+    s="KB"
+  fi
+  
+  if [ $n -ge 1024 ]; then
+    n=$((n/1024))
+    s="MB"
+  fi
+
+  if [ $n -ge 1024 ]; then
+    n=$((n/1024))
+    s="GB"
+  fi
+
+  if [ $n -ge 1024 ]; then
+    n=$((n/1024))
+    s="TB"
+  fi
+
+  echo "$n $s"
+done
