@@ -17,3 +17,6 @@ status()
   uptime
   echo "Battery: $(bat)"
 }
+
+alias pbcopy="termux-clipboard-set"
+alias pbpaste="termux-clipboard-get"
