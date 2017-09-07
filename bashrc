@@ -132,7 +132,7 @@ fetch_markdown()
 
 convert()
 {
-  date -d @$(echo $1) +"%Y/%m/%d %T"
+  date -d @$(echo $1) +"%Y-%m-%d %T"
 }
 
 convertmilli()
