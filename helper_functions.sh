@@ -30,12 +30,12 @@ fetch_markdown()
   curl --data "read=1" --data "u=$1" "http://fuckyeahmarkdown.com/go/"
 }
 
-convert()
+convertTime()
 {
   date -d @$(echo $1) +"%Y-%m-%d %T"
 }
 
-convertmilli()
+convertMilli()
 {
   convert $(echo $1 | rev | cut -c 4- | rev)
 }
@@ -73,7 +73,11 @@ qr_code()
   open "$1.png"
 }
 
-cm()
+tm()
 {
   convertmilli $1 | pbcopy
+}
+t()
+{
+  convert $1 | pbcopy
 }
