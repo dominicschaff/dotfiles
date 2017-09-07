@@ -12,6 +12,7 @@ alias gf="git status --porcelain"
 alias gh="git log -n 1 --pretty=format:\"%H\""
 alias gl='git remote show origin -n | grep "Fetch URL:" | sed -E "s#^.*/(.*).*/(.*)\$#\1/\2#" | sed "s#.git\$##"'
 alias aws_deploy="gl | pbcopy; read; gh | pbcopy"
+alias gds="git diff --stat"
 
 gn()
 {
