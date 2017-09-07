@@ -34,35 +34,17 @@ fi
 # Create PATH - END
 ################################################################################
 
-# Convenience Functions:
-alias cd..="cd .."
-alias ls="ls -GpFh --color --group-directories-first"
-alias l="ls"
-alias ll="ls -l"
-alias la="ll -a"
-alias less='less -R -S -# 10'
-alias curl="curl -w \"\\n\""
-alias wget='wget -c'
-alias code="cd $HOME/Code"
-alias reload="source ~/.bashrc"
-alias termsize='echo $COLUMNS x $LINES'
-alias web="python3 -m http.server"
+################################################################################
+# Handle optional imports - START
+################################################################################
 
-good_fonts=(dotmatrix epic big cola colossal contessa crazy cyberlarge doom graceful graffiti isometric3 jacky nancyj-improved nscript ogre puffy rounded shimrod standard stampate stampatello starwars stop straight utopia weird)
-alias print='pyfiglet -f ${good_fonts[$((RANDOM%${#good_fonts[*]}))]} -w $COLUMNS'
+if [ -d "$DOTFILES/convenience_aliases.sh" ]; then
+  source $DOTFILES/convenience_aliases.sh
+fi
 
-alias weather="curl 'http://wttr.in/cape_town'"
-alias moon="curl 'http://wttr.in/Moon'"
-
-alias f="declare -F | cut -d' ' -f'3-'"
-alias h="type"
-
-alias encrypt='openssl des3 -salt -in'
-alias decrypt='openssl des3 -salt -d -in'
-
-alias exts='find . | while read f; do echo "${f##*.}"; done | sed "/^\s*$/d" | sort | uniq -c | sort -rn'
-
-alias json="sed '/^[#////]/ d' | jq ."
+if [ -d "$DOTFILES/helper_functions.sh" ]; then
+  source $DOTFILES/helper_functions.sh
+fi
 
 if hash HandBrakeCLI 2>/dev/null; then
   source $DOTFILES/handbrake_shortcuts.sh
@@ -74,6 +56,11 @@ fi
 
 if hash adb 2>/dev/null; then
   source $DOTFILES/android_shortcuts.sh
+fi
+
+if hash pyfiglet 2>/dev/null; then
+  good_fonts=(dotmatrix epic big cola colossal contessa crazy cyberlarge doom graceful graffiti isometric3 jacky nancyj-improved nscript ogre puffy rounded shimrod standard stampate stampatello starwars stop straight utopia weird)
+  alias print='pyfiglet -f ${good_fonts[$((RANDOM%${#good_fonts[*]}))]} -w $COLUMNS'
 fi
 
 if [ "$(uname)" == "Darwin" ]; then # You are using OS X
@@ -100,78 +87,10 @@ if hash git 2>/dev/null; then
   fi
 fi
 
-key()
-{
-  pwgen -cnB ${1:-8}
-}
+################################################################################
+# Handle optional imports - END
+################################################################################
 
-password()
-{
-  pwgen -cnyB ${1:-15}
-}
-
-find_size()
-{
-  find . -iname "$1" -exec du -kc {} + | grep total$ | cut -f1 | awk '{ sum+=$1} END {print sum*1024}' | nft
-}
-
-pc()
-{
-  pandoc -s --standalone --toc -f markdown --highlight-style zenburn --template ~/dotfiles/pandoc/template.html -t html "$1" | sed 's/<table/<table class=\"table\"/' > "${1%.*}.html"
-}
-
-pc_print()
-{
-  pandoc -s --standalone --toc -f markdown --highlight-style haddock --template ~/dotfiles/pandoc/template.html -t html "$1" | sed 's/<table/<table class=\"table\"/' > "${1%.*}.html"
-}
-
-fetch_markdown()
-{
-  curl --data "read=1" --data "u=$1" "http://fuckyeahmarkdown.com/go/"
-}
-
-convert()
-{
-  date -d @$(echo $1) +"%Y-%m-%d %T"
-}
-
-convertmilli()
-{
-  convert $(echo $1 | rev | cut -c 4- | rev)
-}
-
-print_all_them_colors()
-{
-  for x in 0 1 4 5 7 8; do
-    for i in `seq 30 37`; do
-      for a in `seq 40 47`; do
-        echo -ne "\e[$x;$i;$a""m\\\e[$x;$i;$a""m\e[0;37;40m "
-      done
-      echo
-    done
-  done
-  echo ""
-}
-
-tmp()
-{
-  if [ -d "$HOME/tmp" ]; then
-    cd $HOME/tmp
-  else
-    if [ -d "$TMPDIR" ]; then
-      cd $TMPDIR
-    else
-      cd /tmp
-    fi
-  fi
-  pwd
-}
-
-qr_code()
-{
-  qr "$1" > "$1.png"
-  open "$1.png"
-}
 
 ################################################################################
 # PS1 command
