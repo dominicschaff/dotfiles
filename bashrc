@@ -130,6 +130,15 @@ fetch_markdown()
   curl --data "read=1" --data "u=$1" "http://fuckyeahmarkdown.com/go/"
 }
 
+convert()
+{
+  date -d @$(echo $1) +"%Y/%m/%d %T"
+}
+
+convertmilli()
+{
+  convert $(echo $1 | rev | cut -c 4- | rev)
+}
 
 print_all_them_colors()
 {
