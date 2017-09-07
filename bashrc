@@ -42,11 +42,11 @@ fi
 # Handle optional imports - START
 ################################################################################
 
-if [ -d "$DOTFILES/convenience_aliases.sh" ]; then
+if [ -e "$DOTFILES/convenience_aliases.sh" ]; then
   source $DOTFILES/convenience_aliases.sh
 fi
 
-if [ -d "$DOTFILES/helper_functions.sh" ]; then
+if [ -e "$DOTFILES/helper_functions.sh" ]; then
   source $DOTFILES/helper_functions.sh
 fi
 
