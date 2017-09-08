@@ -37,7 +37,7 @@ convertTime()
 
 convertMilli()
 {
-  convert $(echo $1 | rev | cut -c 4- | rev)
+  convertTime $(echo $1 | rev | cut -c 4- | rev)
 }
 
 print_all_them_colors()
@@ -75,9 +75,9 @@ qr_code()
 
 tm()
 {
-  convertmilli $1 | pbcopy
+  convertMilli $1 | pbcopy
 }
 t()
 {
-  convert $1 | pbcopy
+  convertTime $1 | pbcopy
 }

@@ -19,7 +19,7 @@ alias f="declare -F | cut -d' ' -f'3-'"
 alias h="type"
 
 alias encrypt='openssl enc -aes-256-cbc -salt -in'
-alias decrypt='penssl enc -d -aes-256-cbc -salt -in'
+alias decrypt='openssl enc -d -aes-256-cbc -salt -in'
 
 alias json="sed '/^[#////]/ d' | jq ."
 

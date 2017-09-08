@@ -1,4 +1,4 @@
-#bash
+#!/usr/bin/env bash
 TOKEN="$(cat $HOME/.bot.token)"
 PREVIOUS_UPDATE="$HOME/.bot.lastupdate"
 URL='https://api.telegram.org/bot'

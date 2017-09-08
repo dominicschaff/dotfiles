@@ -1,4 +1,4 @@
-#/bin/bash
+#!/usr/bin/env bash
 while read a; do
   n="$a"
   s="B"
@@ -6,7 +6,7 @@ while read a; do
     n=$((n/1024))
     s="KB"
   fi
-  
+
   if [ $n -ge 1024 ]; then
     n=$((n/1024))
     s="MB"
