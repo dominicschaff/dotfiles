@@ -96,6 +96,10 @@ fi
 ################################################################################
 
 
+if [ -f "$HOME/bashrc_private" ]; then
+  source $HOME/bashrc_private
+fi
+
 ################################################################################
 # PS1 command
 ################################################################################
@@ -162,16 +166,21 @@ git_file_color()
 # \t = time
 # \W = working directory
 # \$ = mode
-if [ $GIT_ENABLE ]; then
-  export PS1='\[\e[31m\]$(print_time)\[\e[31m\]\[\e[35m\]\W\[$(git_file_color)\]$(git_status)\[\e[00m\] \$ '
+
+if [ -z "$PS1_OVERRIDE" ]; then
+  PS1_temp=''
+  if [ -n "$PS1_PRE" ]; then
+    PS1_temp=$PS1_PRE
+  fi
+  PS1_temp=$PS1_temp'\[\e[31m\]$(print_time)\[\e[31m\]\[\e[35m\]\W'
+  if [ $GIT_ENABLE ]; then
+    export PS1_temp=$PS1_temp'\[$(git_file_color)\]$(git_status)'
+  fi
+  export PS1=$PS1_temp' \[\e[00m\]\$ '
 else
-  export PS1='\[\e[31m\]$(print_time)\[\e[31m\]\[\e[35m\]\W \[\e[00m\]\$'
+  export PS1=$PS1_OVERRIDE
 fi
 ################################################################################
 # PS1 command - END
 ################################################################################
-
-if [ -f "$HOME/bashrc_private" ]; then
-  source $HOME/bashrc_private
-fi
 
