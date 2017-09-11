@@ -149,11 +149,11 @@ git_file_color()
 {
   branch="$(git branch 2> /dev/null)"
   if [ $? -eq 0 ]; then
-    files_affected="($(gf | wc -l | awk '{print $1}'))"
-    if [ "$files_affected" == "(0)" ]; then
-      echo -e "\e[36m"
+    files_affected="$(gf | wc -l | awk '{print $1}')"
+    if [ "$files_affected" == "0" ]; then
+      echo -e "\033[36m"
     else
-      echo -e "\e[31m"
+      echo -e "\033[31m"
     fi
   fi
 }
@@ -162,14 +162,10 @@ git_file_color()
 # \t = time
 # \W = working directory
 # \$ = mode
-# \e[36m = cyan
-# \e[31m = red
-# \e[35m = purple
-# \e[34m = blue
 if [ $GIT_ENABLE ]; then
-  export PS1='\[\e[31m\]$(print_time)\[\e[31m\]\[\e[35m\]\W$(git_file_color)$(git_status)\[\e[00m\] \$ '
+  export PS1='\[\e[31m\]$(print_time)\[\e[31m\]\[\e[35m\]\W\[$(git_file_color)\]$(git_status)\[\e[00m\] \$ '
 else
-  export PS1='\[\e[31m\]$(print_time)\[\e[31m\]\[\e[35m\]\W \[\e[00m\] \$ \[\e[00m\]'
+  export PS1='\[\e[31m\]$(print_time)\[\e[31m\]\[\e[35m\]\W \[\e[00m\]\$'
 fi
 ################################################################################
 # PS1 command - END
