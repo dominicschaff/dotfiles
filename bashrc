@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 # Terminal Options:
+export HISTIGNORE="[ ]*"
 export HISTCONTROL=ignoreboth:erasedups
 export HISTSIZE=-1
 export HISTFILESIZE=-1
@@ -95,7 +96,6 @@ fi
 # Handle optional imports - END
 ################################################################################
 
-
 if [ -f "$HOME/bashrc_private" ]; then
   source $HOME/bashrc_private
 fi
@@ -104,19 +104,19 @@ fi
 # PS1 command
 ################################################################################
 
-timer_start() {
+_timer_start() {
     timer=${timer:-$SECONDS}
 }
 
-timer_stop() {
+_timer_stop() {
     timer_show=$(($SECONDS - $timer))
     unset timer
 }
 
-trap 'timer_start' DEBUG
-PROMPT_COMMAND=timer_stop
+trap '_timer_start' DEBUG
+PROMPT_COMMAND=_timer_stop
 
-git_status()
+_git_status()
 {
   branch="$(git branch 2> /dev/null | grep '*')"
   if [ $? -eq 0 ]; then
@@ -128,19 +128,19 @@ git_status()
   fi
 }
 
-git_file_count()
+_git_file_count()
 {
   branch="$(git branch 2> /dev/null)"
   if [ $? -eq 0 ]; then
-    files_affected=" $(gf | wc -l | awk '{print $1}')"
-    if [ "$files_affected" == " 0" ]; then
+    files_affected="$(gf | wc -l | awk '{print $1}')"
+    if [ "$files_affected" == "0" ]; then
       files_affected=""
     fi
     echo "$files_affected"
   fi
 }
 
-print_time()
+_print_time()
 {
   if [ $timer_show -eq 0 ]; then
     echo ''
@@ -149,7 +149,7 @@ print_time()
   fi
 }
 
-git_file_color()
+_git_file_color()
 {
   branch="$(git branch 2> /dev/null)"
   if [ $? -eq 0 ]; then
@@ -172,9 +172,9 @@ if [ -z "$PS1_OVERRIDE" ]; then
   if [ -n "$PS1_PRE" ]; then
     PS1_temp=$PS1_PRE
   fi
-  PS1_temp=$PS1_temp'\[\e[31m\]$(print_time)\[\e[31m\]\[\e[35m\]\W'
+  PS1_temp=$PS1_temp'\[\e[31m\]$(_print_time)\[\e[31m\]\[\e[35m\]\W'
   if [ $GIT_ENABLE ]; then
-    export PS1_temp=$PS1_temp'\[$(git_file_color)\]$(git_status)'
+    export PS1_temp=$PS1_temp'\[$(_git_file_color)\]$(_git_status)'
   fi
   export PS1=$PS1_temp' \[\e[00m\]\$ '
 else
