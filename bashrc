@@ -120,7 +120,7 @@ git_status()
     if [ "$branch" == "master" ]; then
       branch="M"
     fi
-    echo "$branch"
+    echo " $branch"
   fi
 }
 
@@ -151,7 +151,7 @@ git_file_color()
   if [ $? -eq 0 ]; then
     files_affected="($(gf | wc -l | awk '{print $1}'))"
     if [ "$files_affected" == "(0)" ]; then
-      echo -e "\e[00m"
+      echo -e "\e[36m"
     else
       echo -e "\e[31m"
     fi
@@ -167,7 +167,7 @@ git_file_color()
 # \e[35m = purple
 # \e[34m = blue
 if [ $GIT_ENABLE ]; then
-  export PS1='\[\e[31m\]$(print_time)\[\e[31m\]\[\e[35m\]\W \[\e[36m\]$(git_status)$(git_file_color) \$ \[\e[00m\]'
+  export PS1='\[\e[31m\]$(print_time)\[\e[31m\]\[\e[35m\]\W$(git_file_color)$(git_status)\[\e[00m\] \$ '
 else
   export PS1='\[\e[31m\]$(print_time)\[\e[31m\]\[\e[35m\]\W \[\e[00m\] \$ \[\e[00m\]'
 fi
