@@ -1,0 +1,50 @@
+#!/usr/bin/env python3
+import sys
+
+
+def fix_str(allcontent):
+  # things that should be entered:
+  allcontent0 = " ".join([s.strip() for s in allcontent.split("\n")])
+  allcontent1 = []
+  for w in allcontent0.split(" "):
+    t = w
+    if w.upper() in ["SELECT", "CASE", "WHEN", "FROM", "LEFT", "RIGHT", "ELSE", "WHERE", "AND", "OR", "GROUP", "ORDER", "LIMIT", "END"]:
+      t = w.upper()
+      allcontent1.append([])
+    if w.upper() in ["AS", "THEN", "JOIN", "OUTER", "ON", "ELSE", "END", "BY", "IS", "NULL"]:
+      t = w.upper()
+    if w == "JOIN" and allcontent1[-1][0] not in ['LEFT', 'OUTER', 'RIGHT', 'INNER']:
+      allcontent1.append([])
+
+
+    allcontent1[-1].append(t)
+    if t == "SELECT":
+      allcontent1.append([])
+  allcontent2 = [" ".join(a) for a in allcontent1]
+  # parts
+  from_start = 0
+  for i in range(len(allcontent2)):
+    if allcontent2[i].startswith("FROM"):
+      from_start = i
+      break
+  for i in range(1, from_start):
+    allcontent2[i] = '  ' + allcontent2[i]
+  start_case = 1
+  for i in range(len(allcontent2)):
+    if allcontent2[i].strip().startswith("CASE"):
+      start_case = i
+    if allcontent2[i].strip().startswith("END"):
+      for j in range(start_case+1, i):
+        allcontent2[j] = '  ' + allcontent2[j]
+
+  for i in range(0, len(allcontent2)):
+    if allcontent2[i].strip().startswith("AND") or allcontent2[i].strip().startswith("OR"):
+      allcontent2[i] = '  ' + allcontent2[i]
+  return '\n'.join(allcontent2)
+
+
+lines = []
+for line in sys.stdin:
+    lines.append(line)
+
+print(fix_str(fix_str("\n".join(lines))))
