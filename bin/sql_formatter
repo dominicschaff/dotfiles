@@ -8,10 +8,10 @@ def fix_str(allcontent):
   allcontent1 = []
   for w in allcontent0.split(" "):
     t = w
-    if w.upper() in ["SELECT", "CASE", "WHEN", "FROM", "LEFT", "RIGHT", "ELSE", "WHERE", "AND", "OR", "GROUP", "ORDER", "LIMIT", "END"]:
+    if w.upper() in ["SELECT", "CASE", "WHEN", "FROM", "LEFT", "RIGHT", "ELSE", "WHERE", "AND", "OR", "GROUP", "ORDER", "LIMIT", "END", "CREATE", "INSERT", "DELETE", "UPDATE", "SET"]:
       t = w.upper()
       allcontent1.append([])
-    if w.upper() in ["AS", "THEN", "JOIN", "OUTER", "ON", "ELSE", "END", "BY", "IS", "NULL"]:
+    if w.upper() in ["AS", "THEN", "JOIN", "OUTER", "ON", "ELSE", "END", "BY", "IS", "NULL", "TEMPORARY", "TABLE", "INTO"]:
       t = w.upper()
     if w == "JOIN" and allcontent1[-1][0] not in ['LEFT', 'OUTER', 'RIGHT', 'INNER']:
       allcontent1.append([])
