@@ -24,3 +24,6 @@ alias decrypt='openssl enc -d -aes-256-cbc -salt -in'
 alias json="sed '/^[#////]/ d' | jq ."
 
 alias exts='find . | while read f; do echo "${f##*.}"; done | sed "/^\s*$/d" | sort | uniq -c | sort -rn'
+
+alias myip='curl -s "http://whatismyip.akamai.com"'
+
