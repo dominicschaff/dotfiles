@@ -77,7 +77,23 @@ tm()
 {
   convertMilli $1 | pbcopy
 }
+
 t()
 {
   convertTime $1 | pbcopy
+}
+
+line()
+{
+  printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' -
+}
+
+err()
+{
+  echo "[$(date +'%Y-%m-%d %T')]: $@" >&2
+}
+
+tlog()
+{
+  echo "[$(date +'%Y-%m-%d %T')]: $@"
 }
