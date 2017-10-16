@@ -18,32 +18,32 @@ newPath=""
 
 read -p "Install GNU apps? [Y,n]" -i Y input
 
-if [[ $input != "N" || $input != "n" ]]; then
+if [[ $input != "N" && $input != "n" ]]; then
   brew install coreutils wget grep gnu-sed less make tree openssl --with-default-names
   newPath="$(brew --prefix coreutils)/libexec/gnubin:$newPath"
 fi
 
 read -p "Upgrade BASH? [Y,n]" -i Y input
 
-if [[ $input != "N" || $input != "n" ]]; then
+if [[ $input != "N" && $input != "n" ]]; then
   brew install bash --with-default-names
 fi
 
 read -p "Install media converting apps? [Y,n]" -i Y input
 
-if [[ $input != "N" || $input != "n" ]]; then
+if [[ $input != "N" && $input != "n" ]]; then
   brew install handbrake apktool ffmpeg imagemagick exiftool
 fi
 
 read -p "Install pebble? [Y,n]" -i Y input
 
-if [[ $input != "N" || $input != "n" ]]; then
+if [[ $input != "N" && $input != "n" ]]; then
   brew install node pebble/pebble-sdk/pebble-sdk
 fi
 
 read -p "Install some fun tools? [Y,n]" -i Y input
 
-if [[ $input != "N" || $input != "n" ]]; then
+if [[ $input != "N" && $input != "n" ]]; then
   brew install mdp fortune cowsay cmatrix
 fi
 
