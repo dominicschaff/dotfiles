@@ -4,7 +4,7 @@ import pg8000 as pg, sys
 from csv import writer
 from datetime import datetime as d
 import json as j
-from datetime import datetime
+from datetime import datetime, time, date
 import configparser
 import os
 from decimal import Decimal
@@ -101,6 +101,10 @@ class DB(object):
             except j.decoder.JSONDecodeError as e:
               r[header[i]] = str(row[i])
           elif type(row[i]) is datetime:
+            r[header[i]] = str(row[i])
+          elif type(row[i]) is time:
+            r[header[i]] = str(row[i])
+          elif type(row[i]) is date:
             r[header[i]] = str(row[i])
           elif type(row[i]) is Decimal:
             r[header[i]] = float(row[i])
