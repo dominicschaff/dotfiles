@@ -52,7 +52,7 @@ brew install jq git pwgen jq pidcat ack bmon htop python3
 line
 
 echo "Setting up HomeBrew to play nice..."
-echo "export PATH=\"$newPath/usr/local/bin:\$PATH\"" >> $HOME/bashrc_private
+echo "export PATH=\"$newPath/usr/local/bin:\$PATH\"" >> $HOME/.bashrc
 
 line
 
