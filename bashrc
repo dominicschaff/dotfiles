@@ -92,9 +92,26 @@ if hash git 2>/dev/null; then
   fi
 fi
 
+_ssh()
+{
+    local cur prev opts
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+    opts=$(grep '^Host' ~/.ssh/config | grep -v '[?*]' | cut -d ' ' -f 2-)
+
+    COMPREPLY=( $(compgen -W "$opts" -- ${cur}) )
+    return 0
+}
+complete -F _ssh ssh
+
 ################################################################################
 # Handle optional imports - END
 ################################################################################
+
+if [ -f "$HOME/bashrc_private" ]; then
+  source $HOME/bashrc_private
+fi
 
 ################################################################################
 # PS1 command
