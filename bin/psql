@@ -10,11 +10,12 @@ import os
 from decimal import Decimal
 
 class DB(object):
-  def __init__(self, info = False, json = False, csv = False, rows = False):
+  def __init__(self, info = False, json = False, csv = False, rows = False, insert = False):
     self._json = json
     self._csv = csv
     self._rows = rows
     self._info = info
+    self._insert = insert
     self._dbName = None
     self._config = None
     self._conn = None
@@ -89,6 +90,14 @@ class DB(object):
           print("%25s -> %s"%(header[i], str(row[i])))
         row = cursor.fetchone()
         count += 1
+    elif self._insert:
+      h = "'" + ("','".join(header)) + "'"
+      print("CREATE TABLE data (%s);"%(h))
+      row = cursor.fetchone()
+      while row != None:
+        v = "'" + ("','".join([str(c).replace("'", "") for c in row])) + "'"
+        print("INSERT INTO data (%s) VALUES (%s);"%(h, v))
+        row = cursor.fetchone()
 
     elif self._json:
       row = cursor.fetchone()
@@ -150,6 +159,7 @@ if __name__ == '__main__':
   info = False
   csv = False
   rows = False
+  insert = False
 
   a = sys.argv[1:]
 
@@ -177,6 +187,11 @@ if __name__ == '__main__':
       rows = True
       f = True
 
+    if a[0] == '-insert' or a[0] == '-i':
+      a = a[1:]
+      insert = True
+      f = True
+
     if a[0] == '-table' or a[0] == '-t':
       a = a[1:]
       json = False
@@ -184,7 +199,7 @@ if __name__ == '__main__':
       rows = False
       f = True
 
-  dbObject = DB(info, json, csv, rows)
+  dbObject = DB(info, json, csv, rows, insert)
   s = os.path.expanduser('~/.psql.cfg')
   dbObject.config(s)
   if len(a) == 2:
