@@ -97,3 +97,10 @@ tlog()
 {
   echo "[$(date +'%Y-%m-%d %T')]: $@"
 }
+
+output_zip()
+{
+  cat - > "$1.csv"
+  zip "$1.zip" "$1.csv"
+  rm "$1.csv"
+}
