@@ -33,3 +33,26 @@ gt()
   fi
 }
 
+bundle()
+{
+  if ! [ -d .git ]; then
+    echo "This is not git repo or it's not the root"
+    return
+  fi
+  repo_name="${1:-repo}.bundle"
+  git bundle create "$repo_name" master
+  echo "Created $repo_name"
+}
+
+unbundle()
+{
+  if [ -z "$1" ]; then
+    echo "Need name"
+    return
+  fi
+  if [ ! -f "$1" ]; then
+    echo "File not exist"
+    return
+  fi
+  git clone "$1" -b master
+}

@@ -19,7 +19,7 @@ newPath=""
 read -p "Install GNU apps? [Y,n]" -i Y input
 
 if [[ $input != "N" && $input != "n" ]]; then
-  brew install coreutils wget grep gnu-sed less make tree openssl --with-default-names
+  brew install coreutils wget grep gnu-sed less make tree openssl vim --with-default-names
   newPath="$(brew --prefix coreutils)/libexec/gnubin:$newPath"
 fi
 
