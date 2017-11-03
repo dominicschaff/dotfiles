@@ -104,3 +104,8 @@ output_zip()
   zip "$1.zip" "$1.csv"
   rm "$1.csv"
 }
+
+pip3_update()
+{
+  pip3 install --upgrade awscli paho-mqtt pg8000 Pillow pip qrcode setuptools WeasyPrint youtube-dl aws-shell pyfiglet Pygments
+}

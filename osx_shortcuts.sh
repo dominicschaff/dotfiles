@@ -38,3 +38,9 @@ convertUs()
   done
   wait
 }
+
+update()
+{
+  brew update
+  brew upgrade
+}
