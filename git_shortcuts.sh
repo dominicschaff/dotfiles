@@ -39,7 +39,7 @@ bundle()
     echo "This is not git repo or it's not the root"
     return
   fi
-  repo_name="${1:-repo}.bundle"
+  repo_name="$(pwd | rev | cut -d'/' -f1 | rev).bundle"
   git bundle create "$repo_name" master
   echo "Created $repo_name"
 }
