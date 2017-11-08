@@ -95,7 +95,7 @@ class DB(object):
       print("CREATE TABLE data (%s);"%(h))
       row = cursor.fetchone()
       while row != None:
-        v = "'" + ("','".join([str(c).replace("'", "") for c in row])) + "'"
+        v = "'" + ("','".join([str(c).replace("'", "").replace(",", "") for c in row])) + "'"
         print("INSERT INTO data (%s) VALUES (%s);"%(h, v))
         row = cursor.fetchone()
 
