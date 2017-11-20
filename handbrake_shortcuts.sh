@@ -3,14 +3,14 @@ alias handn="HandBrakeCLI -Z \"Normal\" -e x264"
 
 allConvert()
 {
-    for f in $1; do
+    for f in "$@"; do
         hand -i "$f" -o "${f%.*}.m4v"
     done
 }
 
 allConvertN()
 {
-    for f in $1; do
+    for f in "$@"; do
         handn -i "$f" -o "${f%.*}.m4v"
     done
 }

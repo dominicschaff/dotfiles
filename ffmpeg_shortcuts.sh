@@ -7,7 +7,7 @@ stitch()
 
 convertMp4()
 {
-  for f in $1; do
+  for f in "$@"; do
     o="${f#*/}"
     echo "$f -> $2${o%.*}.mp4"
     ffmpeg -i $f -qp 25 "$2${o%.*}.mp4"
