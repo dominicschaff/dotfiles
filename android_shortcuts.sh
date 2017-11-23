@@ -8,6 +8,15 @@ alias adb_power='adb shell input keyevent 26'
 alias adb_recents='adb shell input keyevent KEYCODE_APP_SWITCH'
 alias adb_notification_open='adb shell service call statusbar 1'
 alias adb_notification_close='adb shell service call statusbar 2'
+
+alias adb_rotate_disable='adb shell settings put system accelerometer_rotation 0'
+alias adb_rotate_enable='adb shell settings put system accelerometer_rotation 1'
+alias adb_rotate_portrait='adb shell settings put system user_rotation 0'
+alias adb_rotate_landscape='adb shell settings put system user_rotation 1'
+alias adb_rotate_reverse_portrait='adb shell settings put system user_rotation 2'
+alias adb_rotate_reverse_landscape='adb shell settings put system user_rotation 3'
+
+
 shot()
 {
   adb shell screencap -p /sdcard/screen.png
