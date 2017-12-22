@@ -99,5 +99,7 @@ gifenc()
 
 convertMp3()
 {
-  ffmpeg -i "$1" -q:a 3 "${1%.*}.mp3"
+  for f in "$@"; do
+    ffmpeg -i "$f" -q:a 3 "${f%.*}.mp3"
+  done
 }

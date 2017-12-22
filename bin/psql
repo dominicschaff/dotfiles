@@ -10,12 +10,13 @@ import os
 from decimal import Decimal
 
 class DB(object):
-  def __init__(self, info = False, json = False, csv = False, rows = False, insert = False):
+  def __init__(self, info = False, json = False, csv = False, rows = False, insert = False, tiny = False):
     self._json = json
     self._csv = csv
     self._rows = rows
     self._info = info
     self._insert = insert
+    self._tiny = tiny
     self._dbName = None
     self._config = None
     self._conn = None
@@ -121,9 +122,10 @@ class DB(object):
             r[header[i]] = row[i]
         print(j.dumps(r, sort_keys=True))
         row = cursor.fetchone()
+    elif self._tiny:
+      self.pcTiny(header, cursor.fetchall())
     else:
-      results = cursor.fetchall()
-      self.pc(header, results)
+      self.pc(header, cursor.fetchall())
     cursor.close()
 
   def i(self, s):
@@ -149,6 +151,19 @@ class DB(object):
       print(f%tuple(r))
     print (l)
 
+  def pcTiny(self, h, d):
+    size = [len(c) for c in h]
+    for row in d:
+      for i in range(len(row)):
+        size[i] = max([size[i], len(str(row[i]))])
+
+    f = ' : '.join(['%%-%ds'%i for i in size])
+    self.i('Results')
+    print(f%tuple(h))
+    print(' : '.join(['-'*i for i in size]))
+    for r in d:
+      print(f%tuple(r))
+
 
 if __name__ == '__main__':
 
@@ -160,6 +175,7 @@ if __name__ == '__main__':
   csv = False
   rows = False
   insert = False
+  tiny = False
 
   a = sys.argv[1:]
 
@@ -199,7 +215,12 @@ if __name__ == '__main__':
       rows = False
       f = True
 
-  dbObject = DB(info, json, csv, rows, insert)
+    if a[0] == '-tiny' or a[0] == '-s':
+      a = a[1:]
+      tiny = True
+      f = True
+
+  dbObject = DB(info, json, csv, rows, insert, tiny)
   s = os.path.expanduser('~/.psql.cfg')
   dbObject.config(s)
   if len(a) == 2:
