@@ -31,12 +31,16 @@ shot()
 
 pull()
 {
-  adb pull "$1"
+  for a in "$@"; do
+    adb pull "$a"
+  done
 }
 
 push()
 {
-  adb push "$1" "/sdcard/$(basename "$1")"
+  for a in "$@"; do
+    adb push "$a" /sdcard/
+  done
 }
 
 kbd()
