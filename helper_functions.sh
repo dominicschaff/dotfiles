@@ -105,7 +105,15 @@ output_zip()
   rm "$1.csv"
 }
 
+pip3_install()
+{
+  pip3 install --user awscli paho-mqtt pg8000 Pillow qrcode youtube-dl aws-shell pyfiglet Pygments
+}
+
 pip3_update()
 {
-  pip3 install --upgrade awscli paho-mqtt pg8000 Pillow pip qrcode setuptools WeasyPrint youtube-dl aws-shell pyfiglet Pygments
+  pip3 list --user | tail -n+3 | cut -d' ' -f1 | while read pck; do
+    pip3 install --upgrade --user "$pck"
+  done
+
 }

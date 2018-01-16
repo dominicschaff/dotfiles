@@ -9,6 +9,9 @@ import configparser
 import os
 from decimal import Decimal
 
+def blankNone(s):
+  return '' if s == None else s
+
 class DB(object):
   def __init__(self, info = False, json = False, csv = False, rows = False, insert = False, tiny = False):
     self._json = json
@@ -74,11 +77,11 @@ class DB(object):
         header[i] = "column%d"%c
         c+=1
     if self._csv:
-      spamwriter = writer(sys.stdout)
+      spamwriter = writer(sys.stdout, lineterminator="\n")
       spamwriter.writerow(header)
       row = cursor.fetchone()
       while row != None:
-        spamwriter.writerow(row)
+        spamwriter.writerow([blankNone(s) for s in row])
         row = cursor.fetchone()
     elif self._rows:
       count = 1
@@ -88,7 +91,7 @@ class DB(object):
           print()
         print("Record: %d"%count)
         for i in range(len(row)):
-          print("%25s -> %s"%(header[i], str(row[i])))
+          print("%25s -> %s"%(header[i], str(blankNone(row[i]))))
         row = cursor.fetchone()
         count += 1
     elif self._insert:
@@ -96,7 +99,7 @@ class DB(object):
       print("CREATE TABLE data (%s);"%(h))
       row = cursor.fetchone()
       while row != None:
-        v = "'" + ("','".join([str(c).replace("'", "").replace(",", "") for c in row])) + "'"
+        v = "'" + ("','".join([str(blankNone(c)).replace("'", "").replace(",", "") for c in row])) + "'"
         print("INSERT INTO data (%s) VALUES (%s);"%(h, v))
         row = cursor.fetchone()
 
@@ -119,7 +122,7 @@ class DB(object):
           elif type(row[i]) is Decimal:
             r[header[i]] = float(row[i])
           else:
-            r[header[i]] = row[i]
+            r[header[i]] = blankNone(row[i])
         print(j.dumps(r, sort_keys=True))
         row = cursor.fetchone()
     elif self._tiny:
@@ -148,7 +151,7 @@ class DB(object):
     print(s)
     print(l)
     for r in d:
-      print(f%tuple(r))
+      print(f%tuple([blankNone(s) for s in r]))
     print (l)
 
   def pcTiny(self, h, d):
@@ -162,7 +165,7 @@ class DB(object):
     print(f%tuple(h))
     print(' : '.join(['-'*i for i in size]))
     for r in d:
-      print(f%tuple(r))
+      print(f%tuple([blankNone(s) for s in r]))
 
 
 if __name__ == '__main__':
