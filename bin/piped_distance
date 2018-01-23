@@ -1,0 +1,77 @@
+#!/usr/bin/env python3
+import csv, sys
+from math import sin, cos, asin, sqrt, radians
+
+def distance(lat1, lon1, lat2, lon2):
+    return 6372.8 * 2 * asin(sqrt(sin(radians(lat2 - lat1) / 2)**2 + sin(radians(lon2 - lon1) / 2)**2 * cos(radians(lat1)) * cos(radians(lat2))))
+
+if len(sys.argv) == 1:
+    print("this is pointless")
+    sys.exit(1)
+
+ENABLE_BUCKETS = False
+if sys.argv[1] == '-wb':
+  ENABLE_BUCKETS = True
+  sys.argv = sys.argv[1:]
+c = []
+for f in sys.argv[1:]:
+    z = f.split(",")
+    if len(z) != 5:
+      pass
+    a,x1,y1,x2,y2 = z
+    c.append([a, int(x1), int(y1), int(x2), int(y2)])
+
+for i in c:
+  if len(i) != 5:
+    print("arg error")
+    sys.exit(1)
+spamreader = csv.reader(sys.stdin)
+spamwriter = csv.writer(sys.stdout, lineterminator="\n")
+i=0
+for line in spamreader:
+  try:
+    if i == 0:
+      header = line
+      for s in c:
+        header.append("distance_" + s[0])
+        if ENABLE_BUCKETS: header.append("bucket_" + s[0])
+      spamwriter.writerow(header)
+    else:
+      a = line
+      for col,lat1, lon1, lat2, lon2 in c:
+        d = distance(float(line[lat1]), float(line[lon1]), float(line[lat2]), float(line[lon2]))
+        a.append("%.1f"%d)
+        if ENABLE_BUCKETS:
+          if d < 0:
+            b = "0"
+          elif d <= 0.5:
+            b = "0-0.5km"
+          elif d <= 1.0:
+            b = "0.5-1.0km"
+          elif d <= 1.5:
+            b = "1.0-1.5km"
+          elif d <= 2.0:
+            b = "1.5-2.0km"
+          elif d <= 2.5:
+            b = "2.0-2.5km"
+          elif d <= 3.0:
+            b = "2.5-3.0km"
+          elif d <= 3.5:
+            b = "3.0-3.5km"
+          elif d <= 4.0:
+            b = "3.5-4.0km"
+          elif d <= 4.5:
+            b = "4.0-4.5km"
+          elif d <= 5.0:
+            b = "4.5-5.0km"
+          else:
+            b = ">5km"
+          a.append(b)
+      spamwriter.writerow(a)
+    i+=1
+  except Exception as err:
+    print(err)
+    a = [''] * len(c)
+    if ENABLE_BUCKETS:
+      a = [''] * 2 * len(c)
+    spamwriter.writerow(line + a)
