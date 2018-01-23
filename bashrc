@@ -190,7 +190,7 @@ if [ -z "$PS1_OVERRIDE" ]; then
   if [ -n "$PS1_PRE" ]; then
     PS1_temp=$PS1_PRE
   fi
-  PS1_temp=$PS1_temp'\[$(_exit_code_colour)\]❂ \[\e[31m\]$(_print_time)\[\e[31m\]\[\e[35m\]\W'
+  PS1_temp=$PS1_temp'\[$(_exit_code_colour)\]· \[\e[31m\]$(_print_time)\[\e[31m\]\[\e[35m\]\W'
   if [ $GIT_ENABLE ]; then
     export PS1_temp=$PS1_temp'\[$(_git_file_color)\]$(_git_status)'
   fi
