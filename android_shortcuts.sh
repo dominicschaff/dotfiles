@@ -49,6 +49,14 @@ kbd()
   adb shell input text "'$@'"
 }
 
+adb_terminal()
+{
+  while read a; do
+    kbd "$a"
+    adb_enter
+  done
+}
+
 adb_launch()
 {
   for a in "$@"; do
