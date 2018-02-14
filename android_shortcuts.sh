@@ -17,6 +17,13 @@ alias adb_rotate_landscape='adb shell settings put system user_rotation 1'
 alias adb_rotate_reverse_portrait='adb shell settings put system user_rotation 2'
 alias adb_rotate_reverse_landscape='adb shell settings put system user_rotation 3'
 
+alias adb_kill="adb shell am force-stop"
+
+adb_tap()
+{
+  adb shell input tap $1 $2
+}
+
 
 shot()
 {
