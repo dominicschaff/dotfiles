@@ -63,6 +63,10 @@ if hash adb 2>/dev/null; then
   source $DOTFILES/android_shortcuts.sh
 fi
 
+if hash awk 2>/dev/null; then
+  source $DOTFILES/awk_one_liners.sh
+fi
+
 if hash pyfiglet 2>/dev/null; then
   good_fonts=(dotmatrix epic big cola colossal contessa crazy cyberlarge doom graceful graffiti isometric3 jacky nancyj-improved nscript ogre puffy rounded shimrod standard stampate stampatello starwars stop straight utopia weird)
   alias print='pyfiglet -f ${good_fonts[$((RANDOM%${#good_fonts[*]}))]} -w $COLUMNS'

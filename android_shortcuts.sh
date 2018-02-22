@@ -18,11 +18,23 @@ alias adb_rotate_reverse_portrait='adb shell settings put system user_rotation 2
 alias adb_rotate_reverse_landscape='adb shell settings put system user_rotation 3'
 
 alias adb_kill="adb shell am force-stop"
+alias adb_clear="adb shell pm clear"
 
 adb_tap()
 {
   adb shell input tap $1 $2
 }
+
+current_activity()
+{
+  adb shell dumpsys activity activities | grep "mFocusedActivity" | cut -d' ' -f6 | cut -d '/' -f2
+}
+
+wait_for_activity()
+{
+  while [[ "$(current_activity)" != "$1" ]]; do sleep 0.3; done
+}
+
 
 
 shot()
@@ -54,14 +66,6 @@ push()
 kbd()
 {
   adb shell input text "'$@'"
-}
-
-adb_terminal()
-{
-  while read a; do
-    kbd "$a"
-    adb_enter
-  done
 }
 
 adb_launch()

@@ -40,7 +40,7 @@ for line in spamreader:
       a = line
       for col,lat1, lon1, lat2, lon2 in c:
         d = distance(float(line[lat1]), float(line[lon1]), float(line[lat2]), float(line[lon2]))
-        a.append("%.1f"%d)
+        a.append("%.3f"%d)
         if ENABLE_BUCKETS:
           if d < 0:
             b = "0"
@@ -70,7 +70,6 @@ for line in spamreader:
       spamwriter.writerow(a)
     i+=1
   except Exception as err:
-    print(err)
     a = [''] * len(c)
     if ENABLE_BUCKETS:
       a = [''] * 2 * len(c)
