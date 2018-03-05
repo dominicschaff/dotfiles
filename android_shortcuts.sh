@@ -4,6 +4,9 @@ alias adb_refresh='adb shell am broadcast -a android.intent.action.MEDIA_MOUNTED
 
 alias adb_home='adb shell input keyevent 3'
 alias adb_back='adb shell input keyevent 4'
+alias adb_volume_up='adb shell input keyevent 24'
+alias adb_volume_down='adb shell input keyevent 25'
+alias adb_camera='adb shell input keyevent 27'
 alias adb_power='adb shell input keyevent 26'
 alias adb_recents='adb shell input keyevent KEYCODE_APP_SWITCH'
 alias adb_notification_open='adb shell service call statusbar 1'

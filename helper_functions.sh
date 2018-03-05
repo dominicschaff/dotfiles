@@ -117,10 +117,20 @@ pip3_update()
   done
 
 }
+
 pip3_update_global()
 {
   pip3 list | tail -n+3 | cut -d' ' -f1 | while read pck; do
     pip3 install --upgrade "$pck"
   done
+}
 
+last_monday()
+{
+  date -dlast-monday +%Y-%m-%d
+}
+
+last_sunday()
+{
+  date -dlast-sunday +%Y-%m-%d
 }
