@@ -121,7 +121,7 @@ function! GetMode()
 endfunction
 
 " Change status line colours
-set statusline=%1*%{GetMode()}%*\ %-(%m%t%)%=%2*%y%*\ %3*%c,%l%*\ %n\ %p%%  " What should the status line be
+set statusline=%1*%{GetMode()}%*\ %-(%m%t%)%=%2*%y%*\ %3*%c,%l%*\ %p%%  " What should the status line be
 
 " Colour Events
 au InsertEnter  * hi User1 ctermfg=Black ctermbg=Green
