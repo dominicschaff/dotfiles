@@ -35,7 +35,7 @@ For a list of all defined functions/aliases run `f`
 
 ## Shortcuts available:
 
-I have made shortcuts for handbrake, ffmped, various OSX features and Termux features.
+I have made shortcuts for handbrake, ffmpeg, various OSX features and Termux features.
 
 And there are utility functions for working with ADB.
 

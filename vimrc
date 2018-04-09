@@ -47,8 +47,6 @@ set lazyredraw                         " speed up the redraw behaviour
 set showmatch                          " Highlight matching bracket
 
 " Setup some keymaps
-" Place Author Tag
-map! <F2> Dominic Schaff <dominic.schaff@gmail.com>
 
 " Switch the paste toggle
 set pastetoggle=<F4>
