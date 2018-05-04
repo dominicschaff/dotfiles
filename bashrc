@@ -61,6 +61,7 @@ fi
 
 if hash adb 2>/dev/null; then
   source $DOTFILES/android_shortcuts.sh
+  export PATH="$PATH:$ANDROID_HOME/tools/bin"
 fi
 
 if hash awk 2>/dev/null; then
