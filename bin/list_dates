@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+if [[ $# -ne 2 ]]; then
+  echo "Need two dates as arguments"
+  exit 1
+fi
+startdate="$1"
+enddate="$2"
+
+d=
+n=0
+until [ "$d" = "$enddate" ]
+do
+    d=$(date -d "$startdate + $n days" +%Y-%m-%d)
+    echo "$d"
+    ((n++))
+done

@@ -127,10 +127,10 @@ pip3_update_global()
 
 last_monday()
 {
-  date -dlast-monday +%Y-%m-%d
+  date -d'last week last monday' +%Y-%m-%d
 }
 
 last_sunday()
 {
-  date -dlast-sunday +%Y-%m-%d
+  date -d'last sunday' +%Y-%m-%d
 }
