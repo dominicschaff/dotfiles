@@ -26,34 +26,41 @@ STYLE_UNDERLINE='\e[4m'
 STYLE_BLINK='\e[5m'
 STYLE_INVERSE='\e[7m'
 
+LOG_DATE="%Y-%m-%d %T"
+
+log_time()
+{
+  echo "$(date +"$LOG_DATE") [INFO] $@"
+}
+
 log_none()
 {
-  echo "$(date +"%Y-%m-%d %T") [INFO] $1" >&2
+  echo "$(date +"$LOG_DATE") [INFO] $@" >&2
 }
 
 log_debug()
 {
-  echo "$(date +"%Y-%m-%d %T") [DEBUG] $1" >&2
+  echo "$(date +"$LOG_DATE") [DEBUG] $@" >&2
 }
 
 log_info()
 {
-  echo -e "$(date +"%Y-%m-%d %T") $CLR_CYAN[INFO]$ALL_CLEAR $@" >&2
+  echo -e "$(date +"$LOG_DATE") $CLR_CYAN[INFO]$ALL_CLEAR $@" >&2
 }
 
 log_error()
 {
-  echo -e "$(date +"%Y-%m-%d %T") $CLR_RED[ERROR]$ALL_CLEAR $@" >&2
+  echo -e "$(date +"$LOG_DATE") $CLR_RED[ERROR]$ALL_CLEAR $@" >&2
 }
 
 log_warn()
 {
-  echo -e "$(date +"%Y-%m-%d %T") $CLR_YELLOW[WARN]$ALL_CLEAR $@" >&2
+  echo -e "$(date +"$LOG_DATE") $CLR_YELLOW[WARN]$ALL_CLEAR $@" >&2
 }
 
 log_end()
 {
-  echo -e "$(date +"%Y-%m-%d %T") $CLR_MAGENTA[END]$ALL_CLEAR $@" >&2
+  echo -e "$(date +"$LOG_DATE") $CLR_MAGENTA[END]$ALL_CLEAR $@" >&2
 }
 
 log_end_time()
@@ -67,4 +74,17 @@ check_file_exists()
     log_error "File does not exist: $1"
     exit 1
   fi
+}
+
+check_program_exists()
+{
+  if ! hash $1 2>/dev/null; then
+    log_error "Program $1 does not exist"
+    exit 1
+  fi
+}
+
+last_week()
+{
+  date -d"last week $1" +%Y-%m-%d
 }
