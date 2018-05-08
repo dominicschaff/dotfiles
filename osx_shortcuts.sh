@@ -15,14 +15,10 @@ notify()
 
 play()
 {
-  if [ $# -eq 1 ]; then
-    for i in $1; do
-      echo "Playing: $i"
-      afplay "$i"
-    done
-  else
-    echo "1 argument expected"
-  fi
+  for i in "$@"; do
+    echo "Playing: $i"
+    afplay "$i"
+  done
 }
 
 play_random()
