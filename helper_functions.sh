@@ -134,3 +134,17 @@ last_sunday()
 {
   date -d'last sunday' +%Y-%m-%d
 }
+
+get_ip_for_host()
+{
+  for f in "$@"; do
+    echo "$f"
+    answer="$(curl -s "https://1.1.1.1/dns-query?ct=application/dns-json&name=$f")"
+    if [[ "$(echo "$answer" | jq -r '.Status')" == "0" ]]; then
+      echo "$answer" | jq -r '.Answer[] | .data' | sort -u
+    else
+      echo "Error finding IP:"
+      echo "$answer"
+    fi
+  done
+}
