@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+#!/usr/bin/env bash
+
+source ~/dotfiles/bash_library.sh
+
+check_program_exists say
+
+while true; do
+  for phrase in "$@"; do
+    afplay /System/Library/Sounds/Ping.aiff
+    say -v Alex "$phrase"
+    sleep 5
+  done
+done
