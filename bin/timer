@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+echo -n "Time: 0s"
+while true; do
+  echo -en "\\rTime: ${SECONDS}s.."
+  sleep 1
+done

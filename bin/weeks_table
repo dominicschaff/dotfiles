@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+
+source $HOME/dotfiles/bash_library.sh
+
+the_monday_of()
+{
+  day_of_week="$(date -d $1 +%u)"
+  date -d"$1 -$((day_of_week-1)) days" +%Y-%m-%d
+}
+the_sunday_of()
+{
+  day_of_week="$(date -d $1 +%u)"
+  date -d"$1 +$((7-day_of_week)) days" +%Y-%m-%d
+}
+the_week_of()
+{
+  date -d"$1" +%W
+}
+
+# echo "$(the_monday_of 2018-01-01) -> $(the_sunday_of 2018-01-01)"
+# echo "$(the_monday_of 2018-02-01) -> $(the_sunday_of 2018-02-01)"
+# echo "$(the_monday_of 2018-03-01) -> $(the_sunday_of 2018-03-01)"
+# echo "$(the_monday_of 2018-04-01) -> $(the_sunday_of 2018-04-01)"
+# echo "$(the_monday_of 2018-05-01) -> $(the_sunday_of 2018-05-01)"
+
+this_year="$(date +%Y)"
+
+list_dates ${1-$this_year}-01-01 ${1-$this_year}-12-31 | while read item; do
+  echo "$(the_monday_of $item) -> $(the_sunday_of $item) : Week $(the_week_of $item)"
+done | sort -u
