@@ -156,10 +156,10 @@ _git_file_count()
 
 _print_time()
 {
-  if [ $timer_show -eq 0 ]; then
-    echo ''
+  if [[ $timer_show -lt 60 ]]; then
+    echo "${timer_show}s"
   else
-    echo "$(printf "%2d" $timer_show) "
+    printf "%02d:%02d" $((timer_show/60)) $((timer_show%60))
   fi
 }
 
@@ -195,7 +195,7 @@ if [ -z "$PS1_OVERRIDE" ]; then
   if [ -n "$PS1_PRE" ]; then
     PS1_temp=$PS1_PRE
   fi
-  PS1_temp=$PS1_temp'\[$(_exit_code_colour)\]· \[\e[31m\]$(_print_time)\[\e[31m\]\[\e[35m\]\W'
+  PS1_temp=$PS1_temp'\[$(_exit_code_colour)\]$(_print_time) \[\e[31m\]\[\e[35m\]\W'
   if [ $GIT_ENABLE ]; then
     export PS1_temp=$PS1_temp'\[$(_git_file_color)\]$(_git_status)'
   fi
