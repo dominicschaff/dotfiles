@@ -1,0 +1,10 @@
+aws-shell
+awscli
+colorama
+paho-mqtt
+pg8000
+pyfiglet
+Pygments
+qrcode
+termcolor
+youtube-dl

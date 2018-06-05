@@ -107,22 +107,12 @@ output_zip()
 
 pip3_install()
 {
-  pip3 install --user awscli paho-mqtt pg8000 Pillow qrcode youtube-dl aws-shell pyfiglet Pygments
+  pip3 install --user --upgrade -r ~/dotfiles/requirements-main.txt
 }
 
-pip3_update()
+pip3_install_extra()
 {
-  pip3 list --user | tail -n+3 | cut -d' ' -f1 | while read pck; do
-    pip3 install --upgrade --user "$pck"
-  done
-
-}
-
-pip3_update_global()
-{
-  pip3 list | tail -n+3 | cut -d' ' -f1 | while read pck; do
-    pip3 install --upgrade "$pck"
-  done
+  pip3 install --user --upgrade -r ~/dotfiles/requirements-extra.txt
 }
 
 last_monday()
