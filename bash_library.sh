@@ -43,6 +43,16 @@ log_debug()
   echo "$(date +"$LOG_DATE") [DEBUG] $@" >&2
 }
 
+log_ok()
+{
+  echo -e "$(date +"$LOG_DATE") $CLR_GREEN[OKAY]$ALL_CLEAR $@" >&2
+}
+
+log_fail()
+{
+  echo -e "$(date +"$LOG_DATE") $CLR_RED[FAIL]$ALL_CLEAR $@" >&2
+}
+
 log_info()
 {
   echo -e "$(date +"$LOG_DATE") $CLR_CYAN[INFO]$ALL_CLEAR $@" >&2
