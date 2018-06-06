@@ -39,7 +39,11 @@ if [ ! -f "$filename" ]; then
   # create a file for the given extension with appropriate shebang
   case $ext in
     rb ) echo -e "#!/usr/bin/env ruby" >> "$filename";;
-    py ) echo -e "#!/usr/bin/env python" >> "$filename";;
+    py ) echo -e "#!/usr/bin/env python
+import sys
+from os.path import expanduser
+sys.path.insert(0, expanduser('~/dotfiles/'))
+import python_library as pl" >> "$filename";;
     pl ) echo -e "#!/usr/bin/env perl" >> "$filename";;
     sh | bash ) echo -e "#!/usr/bin/env bash" >> "$filename";;
     md ) echo "# $USER\n# $(date +"%F %T")" >> "$filename" ;;
@@ -58,5 +62,3 @@ if [ ! -f "$filename" ]; then
 else # Specified filename already exists
   echo -e "\033[31;1mFile exists: $filename\033[0m"
 fi
-# Edit the script
-$EDITOR "$filename"
