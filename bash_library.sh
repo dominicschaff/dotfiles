@@ -86,6 +86,22 @@ check_file_exists()
   fi
 }
 
+check_not_empty()
+{
+  if [ -z "$1" ]; then
+    log_error "Data Missing"
+    exit 1
+  fi
+}
+
+check_not_null()
+{
+  if [[ "$1" == "null" ]]; then
+    log_error "Data Missing"
+    exit 1
+  fi
+}
+
 check_program_exists()
 {
   if ! hash $1 2>/dev/null; then

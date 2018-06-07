@@ -11,6 +11,8 @@ export TIMEFORMAT='r: %R, u: %U, s: %S'
 DOTFILES="$HOME/dotfiles"
 GIT_ENABLE=''
 
+export PYTHONPATH="$HOME/dotfiles"
+
 ################################################################################
 # Create PATH
 ################################################################################

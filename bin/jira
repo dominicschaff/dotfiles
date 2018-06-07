@@ -1,0 +1,227 @@
+#!/usr/bin/env bash
+# This access the Jira board and can do various actions on the boards and tickets.
+
+source ~/dotfiles/bash_library.sh
+
+JIRA_CONFIG="$HOME/.jira.json"
+
+if [ ! -f "$JIRA_CONFIG" ]; then
+  log_error "File does not exist: $1"
+  cat - > $JIRA_CONFIG <<EOF
+{
+  "default": "name",
+  "name": {
+    "auth": "<username>:<password>",
+    "base": "<base url>",
+    "project": "<default project>",
+    "user": "<your username>"
+  },
+  "queries": {
+    "query_name": {
+      "query":"",
+      "jq":""
+    }
+  }
+}
+EOF
+  exit 1
+fi
+
+check_file_exists $JIRA_CONFIG
+
+JQ_GET_DEFAULT=".default"
+
+if [ -z "$JIRA" ]; then
+  JIRA="$(cat $JIRA_CONFIG | jq -r "$JQ_GET_DEFAULT")"
+fi
+
+jira_auth="$(cat $JIRA_CONFIG | jq -r "\"\(.$JIRA.auth)\"")"
+jira_base="$(cat $JIRA_CONFIG | jq -r "\"\(.$JIRA.base)\"")"
+jira_project="$(cat $JIRA_CONFIG | jq -r "\"\(.$JIRA.project)\"")"
+jira_user="$(cat $JIRA_CONFIG | jq -r "\"\(.$JIRA.user)\"")"
+
+check_not_null "$jira_auth"
+check_not_null "$jira_base"
+check_not_null "$jira_project"
+check_not_null "$jira_user"
+
+urlencode() {
+  local LANG=C i c e=''
+  for ((i=0;i<${#1};i++)); do
+    c=${1:$i:1}
+    [[ "$c" =~ [a-zA-Z0-9\.\~\_\-] ]] || printf -v c '%%%02X' "'$c"
+    e+="$c"
+  done
+  echo "$e"
+}
+
+################################################################################
+# Given a JQL fetches all the tickets using the provided JQ script             #
+################################################################################
+fetch_all_for_jql()
+{
+  JQL="$(urlencode "$1")"
+  raw_data_previous="$(curl -s -u "$jira_auth" -H 'Content-Type: application/json' $jira_base"/rest/api/2/search?jql=$JQL")"
+
+  echo "$raw_data_previous" | jq -r "$2"
+
+  total="$(echo "$raw_data_previous" | jq -r '. | "\(.total)"')"
+  if [[ $total -ge 50 ]]; then
+    for i in $(seq 50 50 $total); do
+      curl -s -u "$jira_auth" -H 'Content-Type: application/json' $jira_base"/rest/api/2/search?jql=$JQL&startAt=$i" | jq -r "$2"
+    done
+  fi
+}
+
+################################################################################
+# Runs the specified query                                                     #
+################################################################################
+run_query()
+{
+  query="$(cat $JIRA_CONFIG | jq -r ".queries.$1.query" | sed "s/##PROJECT##/$jira_project/" | sed "s/##USER##/$jira_user/")"
+  jql="$(cat $JIRA_CONFIG | jq -r ".queries.$1.jq")"
+  check_not_null "$query"
+  check_not_null "$jql"
+  fetch_all_for_jql "$query" "$jql"
+}
+
+################################################################################
+# Fetches all tickets which are not assigned to anyone                         #
+################################################################################
+all_open_tickets()
+{
+  fetch_all_for_jql "project = $jira_project AND status not in (Done, Resolved, Closed) and assignee = EMPTY" '.issues[] | "\(.key) \(.fields.summary)"'
+}
+
+################################################################################
+# Gets all tickets completed by me since the beginning of 2017                 #
+################################################################################
+get_tickets()
+{
+  fetch_all_for_jql "resolutiondate > \"2017/01/01\" and assignee = \"$jira_user\" ORDER BY updated ASC" '.issues[] | "\(.fields.updated): \(.key) \(.fields.summary)"'
+}
+
+################################################################################
+# Gets the counts of statuses of tickets that are open                         #
+################################################################################
+counts()
+{
+  all_open_tickets | cut -d':' -f1 | sort | uniq -c
+}
+
+################################################################################
+# Fetches tickets assigned to me                                               #
+################################################################################
+my_board()
+{
+  base_query="(Sprint in openSprints() AND project = $jira_project) AND (status in (Done, Resolved, Closed) AND resolutiondate > startOfWeek() OR status not in (Done, Resolved, Closed)) and assignee = \"$jira_user\""
+
+  jq_query='.issues[] | "\(.key): \(.fields.summary)"'
+
+
+  echo "Todo:"
+  fetch_all_for_jql "$base_query AND Status IN (Reported, \"To Do\") ORDER BY Rank ASC" "$jq_query" | nl
+
+  echo -e "\nIn Progress:"
+  fetch_all_for_jql "$base_query AND Status IN (\"In Progress\") ORDER BY Rank ASC" "$jq_query" | nl
+
+  echo -e "\nReady For QA:"
+  fetch_all_for_jql "$base_query AND Status IN (\"Awaiting QA\") ORDER BY Rank ASC" "$jq_query" | nl
+
+  echo -e "\nReady For Release:"
+  fetch_all_for_jql "$base_query AND Status IN (\"Ready for release\") ORDER BY Rank ASC" "$jq_query" | nl
+
+  echo -e "\nOther:"
+  fetch_all_for_jql "$base_query AND Status NOT IN (Reported, \"To Do\", \"In Progress\", \"Awaiting QA\", \"Ready for release\", Done, Resolved, Closed) ORDER BY Rank ASC" "$jq_query" | nl
+
+  echo -e "\nDone:"
+  fetch_all_for_jql "$base_query AND Status IN (Done, Resolved, Closed) ORDER BY Rank ASC" "$jq_query" | nl
+}
+
+################################################################################
+# Fetch my tickets that are in $jira_project and not resolved                  #
+################################################################################
+mine()
+{
+  fetch_all_for_jql "(project = $jira_project) and assignee = \"$jira_user\" and status not in (Resolved, Done, Closed)" '.issues[] | "\(.key) \(.fields.summary)"'
+}
+
+tickets_done()
+{
+  fetch_all_for_jql "(project = $jira_project) and assignee = \"$jira_user\" and status in (Resolved, Done, Closed)" '.issues[] | "\(.fields.updated): \(.key) \(.fields.summary)"'
+}
+
+################################################################################
+# Move provided ticket to In Progress                                          #
+################################################################################
+move_to_in_progress()
+{
+  curl -s -u "$jira_auth" -X POST --data "{\"transition\": {\"id\": \"4\"}}" -H "Content-Type: application/json" "$jira_base/rest/api/2/issue/$1/transitions" > /dev/null
+}
+
+################################################################################
+# Add provided comment to provided ticket                                      #
+################################################################################
+comment()
+{
+  curl -s -u "$jira_auth" -X POST --data "$(echo "{\"body\": \"$2\"}" | sed 's/$/\\n/' | tr -d '\n')" -H "Content-Type: application/json" "$jira_base/rest/api/2/issue/$1/comment" > /dev/null
+}
+
+################################################################################
+# Move provided to Resolved with successfull type                              #
+################################################################################
+move_to_resolved()
+{
+  curl -s -u "$jira_auth" -X POST --data "{\"fields\": {\"resolution\": {\"name\": \"Data Request Processed\"}},\"transition\": {\"id\": \"5\"}}" -H "Content-Type: application/json" "$jira_base/rest/api/2/issue/$1/transitions" > /dev/null
+}
+
+################################################################################
+# Move provided to Resolved with failure type                                  #
+################################################################################
+move_to_resolved_failed()
+{
+  curl -s -u "$jira_auth" -X POST --data "{\"fields\": {\"resolution\": {\"name\": \"Data Request Rejected\"}},\"transition\": {\"id\": \"5\"}}" -H "Content-Type: application/json" "$jira_base/rest/api/2/issue/$1/transitions" > /dev/null
+}
+
+################################################################################
+# Move provided to Resolved with failure type                                  #
+################################################################################
+assign_to_me()
+{
+  curl -s -u "$jira_auth" -H "Content-Type: application/json" -X PUT -d "{\"name\":\"$jira_user\"}" "$jira_base/rest/api/2/issue/$1/assignee"
+}
+
+################################################################################
+# Upload given file to given ticket                                            #
+################################################################################
+file_upload()
+{
+  curl -s -u "$jira_auth" -X POST -H "X-Atlassian-Token: nocheck" -F "file=@$2" $jira_base/rest/api/2/issue/$1/attachments > /dev/null
+}
+
+################################################################################
+# Do the actual work                                                           #
+################################################################################
+case "$1" in
+  mine) mine ;;
+  in_progress)
+  shift 1
+    for f in "$@"; do
+      move_to_in_progress "$f"
+    done
+  ;;
+  comment) comment "$2" "$3" ;;
+  resolved) move_to_resolved "$2" ;;
+  resolved_failed) move_to_resolved_failed "$2" ;;
+  upload) file_upload "$2" "$3" ;;
+  done) tickets_done ;;
+  all) all_open_tickets ;;
+  counts) counts ;;
+  get) get_tickets ;;
+  work) my_board ;;
+  assign) assign_to_me "$2" ;;
+  query) run_query "$2" ;;
+  *)
+    echo "Unknown command"
+  ;;
+esac
