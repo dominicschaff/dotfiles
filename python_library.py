@@ -1,5 +1,10 @@
 
 from datetime import datetime
+from sty import fg, bg, ef, rs
+from sys import stderr
+
+def info(s):
+  print(str(datetime.now().time()) + fg.blue + " [INFO]" + fg.rs + " " + s, file=stderr)
 
 def convert_java_millis(java_time_millis):
     """Provided a java timestamp convert it into python date time object"""
