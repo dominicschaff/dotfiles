@@ -73,17 +73,35 @@ log_end()
   echo -e "$(date +"$LOG_DATE") $CLR_MAGENTA[END]$ALL_CLEAR $@" >&2
 }
 
+seconds_to_time()
+{
+  date -ud "@$1" +'%H:%M:%S'
+}
+
 log_end_time()
 {
-  log_end "Script took $SECONDS seconds to run [$(date -ud "@$SECONDS" +'%H:%M:%S')]"
+  log_end "Script took $SECONDS seconds to run [$(seconds_to_time $SECONDS)]"
+}
+
+json_log()
+{
+  jq -cn \
+    --arg date "$(date +"%F %H:%M:%S")" \
+    --arg data "$1" \
+    '{
+      "date": $date,
+      "data": $data
+    }'
 }
 
 check_file_exists()
 {
-  if [ ! -f "$1" ]; then
-    log_error "File does not exist: $1"
-    exit 1
-  fi
+  for f in "$@"; do
+    if [ ! -f "$f" ]; then
+      log_error "File does not exist: $f"
+      exit 1
+    fi
+  done
 }
 
 check_not_empty()
@@ -113,4 +131,11 @@ check_program_exists()
 last_week()
 {
   date -d"last week $1" +%Y-%m-%d
+}
+
+file_age()
+{
+  FILE_CREATED_TIME=`date -r "$1" +%s`
+  TIME_NOW=`date +%s`
+  echo "$((TIME_NOW - FILE_CREATED_TIME))"
 }

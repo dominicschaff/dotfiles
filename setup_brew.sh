@@ -13,48 +13,15 @@ fi
 
 line
 
-echo "Installing some nice tools..."
 newPath=""
 
-read -p "Install GNU apps? [Y,n]" -i Y input
-
-if [[ $input != "N" && $input != "n" ]]; then
-  brew install coreutils wget grep gnu-sed less make tree openssl vim --with-default-names
-  newPath="$(brew --prefix coreutils)/libexec/gnubin:$newPath"
-fi
-
-read -p "Upgrade BASH? [Y,n]" -i Y input
-
-if [[ $input != "N" && $input != "n" ]]; then
-  brew install bash --with-default-names
-fi
-
-read -p "Install media converting apps? [Y,n]" -i Y input
-
-if [[ $input != "N" && $input != "n" ]]; then
-  brew install handbrake apktool ffmpeg imagemagick exiftool
-fi
-
-read -p "Install pebble? [Y,n]" -i Y input
-
-if [[ $input != "N" && $input != "n" ]]; then
-  brew install node pebble/pebble-sdk/pebble-sdk
-fi
-
-read -p "Install some fun tools? [Y,n]" -i Y input
-
-if [[ $input != "N" && $input != "n" ]]; then
-  brew install mdp fortune cowsay cmatrix
-fi
-
-brew install jq git pwgen jq pidcat ack bmon htop python3
-
-line
-
-echo "Setting up HomeBrew to play nice..."
-echo "export PATH=\"$newPath/usr/local/bin:\$PATH\"" >> $HOME/.bashrc
-
-line
-
-echo "Doing a full pull of HomeBrew"
+brew install coreutils wget grep gnu-sed less make tree openssl vim bash --with-default-names
+brew install handbrake apktool ffmpeg imagemagick exiftool mdp fortune cowsay cmatrix jq git pwgen jq pidcat ack bmon htop python3
+brew install pandoc scala sbt shellcheck
+# brew install osmosis gdal
+# brew install node pebble/pebble-sdk/pebble-sdk
+echo "export PATH=\"$(brew --prefix coreutils)/libexec/gnubin:/usr/local/bin:\$PATH\"" >> $HOME/.bashrc
 git -C "$(brew --repo homebrew/core)" fetch --unshallow
+
+
+pip3 install --user --upgrade awscli paho-mqtt pg8000 pyfiglet qrcode termcolor youtube-dl sty

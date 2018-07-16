@@ -1,10 +1,19 @@
 
 from datetime import datetime
 from sty import fg, bg, ef, rs
-from sys import stderr
+import sys
+
+def error(s):
+  print(str(datetime.now().time()) + " : " + fg.red + "[ERROR]" + fg.rs + " " + s, file=sys.stderr)
 
 def info(s):
-  print(str(datetime.now().time()) + fg.blue + " [INFO]" + fg.rs + " " + s, file=stderr)
+  print(str(datetime.now().time()) + " : " + fg.blue + "[INFO]" + fg.rs + " " + s, file=sys.stderr)
+
+def warn(s):
+  print(str(datetime.now().time()) + " : " + fg.yellow + "[WARN]" + fg.rs + " " + s, file=sys.stderr)
+
+def show(s):
+  print(s, file=sys.stderr)
 
 def convert_java_millis(java_time_millis):
     """Provided a java timestamp convert it into python date time object"""

@@ -104,3 +104,15 @@ convertMp3()
     ffmpeg -i "$f" -q:a 3 "${f%.*}.mp3"
   done
 }
+
+convertCut()
+{
+  if [[ $# -eq 4 ]]; then
+    ffmpeg -i "$1" -ss $2 -to $3 $SETTINGS "$4"
+  elif [ $# -eq 3 ]; then
+    ffmpeg -i "$1" -ss $2 $SETTINGS "$3"
+  else
+    echo "Not enough arguments:"
+    echo "$0 <INPUT> <START> [<END>] <OUTPUT>"
+  fi
+}
