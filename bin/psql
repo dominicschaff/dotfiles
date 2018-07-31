@@ -13,13 +13,14 @@ def blankNone(s):
   return '' if s == None else s
 
 class DB(object):
-  def __init__(self, info = False, json = False, csv = False, rows = False, insert = False, tiny = False):
+  def __init__(self, info = False, json = False, csv = False, rows = False, insert = False, tiny = False, write = False):
     self._json = json
     self._csv = csv
     self._rows = rows
     self._info = info
     self._insert = insert
     self._tiny = tiny
+    self._write = write
     self._dbName = None
     self._config = None
     self._conn = None
@@ -69,66 +70,70 @@ class DB(object):
     cursor = self._conn.cursor()
     self.i('Query:\n' + query)
     cursor.execute(query)
-    header = [str(h[0].decode('utf-8')) for h in cursor.description]
-    self.i("Returned Data:")
-    c = 1
-    for i in range(len(header)):
-      if header[i] == '?column?':
-        header[i] = "column%d"%c
-        c+=1
-    if self._csv:
-      spamwriter = writer(sys.stdout, lineterminator="\n")
-      spamwriter.writerow(header)
-      row = cursor.fetchone()
-      while row != None:
-        spamwriter.writerow([blankNone(s) for s in row])
+    if not self._write:
+      header = [str(h[0].decode('utf-8')) for h in cursor.description]
+      self.i("Returned Data:")
+      c = 1
+      for i in range(len(header)):
+        if header[i] == '?column?':
+          header[i] = "column%d"%c
+          c+=1
+      if self._csv:
+        spamwriter = writer(sys.stdout, lineterminator="\n")
+        spamwriter.writerow(header)
         row = cursor.fetchone()
-    elif self._rows:
-      count = 1
-      row = cursor.fetchone()
-      while row != None:
-        if count > 1:
-          print()
-        print("Record: %d"%count)
-        for i in range(len(row)):
-          print("%25s -> %s"%(header[i], str(blankNone(row[i]))))
+        while row != None:
+          spamwriter.writerow([blankNone(s) for s in row])
+          row = cursor.fetchone()
+      elif self._rows:
+        count = 1
         row = cursor.fetchone()
-        count += 1
-    elif self._insert:
-      h = "'" + ("','".join(header)) + "'"
-      print("CREATE TABLE data (%s);"%(h))
-      row = cursor.fetchone()
-      while row != None:
-        v = "'" + ("','".join([str(blankNone(c)).replace("'", "").replace(",", "") for c in row])) + "'"
-        print("INSERT INTO data (%s) VALUES (%s);"%(h, v))
+        while row != None:
+          if count > 1:
+            print()
+          print("Record: %d"%count)
+          for i in range(len(row)):
+            print("%25s -> %s"%(header[i], str(blankNone(row[i]))))
+          row = cursor.fetchone()
+          count += 1
+      elif self._insert:
+        h = "'" + ("','".join(header)) + "'"
+        print("CREATE TABLE data (%s);"%(h))
         row = cursor.fetchone()
+        while row != None:
+          v = "'" + ("','".join([str(blankNone(c)).replace("'", "").replace(",", "") for c in row])) + "'"
+          print("INSERT INTO data (%s) VALUES (%s);"%(h, v))
+          row = cursor.fetchone()
 
-    elif self._json:
-      row = cursor.fetchone()
-      while row != None:
-        r = {}
-        for i in range(len(header)):
-          if type(row[i]) is str:
-            try:
-              r[header[i]] = j.loads(row[i])
-            except j.decoder.JSONDecodeError as e:
-              r[header[i]] = str(row[i])
-          elif type(row[i]) is datetime:
-            r[header[i]] = str(row[i])
-          elif type(row[i]) is time:
-            r[header[i]] = str(row[i])
-          elif type(row[i]) is date:
-            r[header[i]] = str(row[i])
-          elif type(row[i]) is Decimal:
-            r[header[i]] = float(row[i])
-          else:
-            r[header[i]] = blankNone(row[i])
-        print(j.dumps(r, sort_keys=True))
+      elif self._json:
         row = cursor.fetchone()
-    elif self._tiny:
-      self.pcTiny(header, cursor.fetchall())
+        while row != None:
+          r = {}
+          for i in range(len(header)):
+            if type(row[i]) is str:
+              try:
+                r[header[i]] = j.loads(row[i])
+              except j.decoder.JSONDecodeError as e:
+                r[header[i]] = str(row[i])
+            elif type(row[i]) is datetime:
+              r[header[i]] = str(row[i])
+            elif type(row[i]) is time:
+              r[header[i]] = str(row[i])
+            elif type(row[i]) is date:
+              r[header[i]] = str(row[i])
+            elif type(row[i]) is Decimal:
+              r[header[i]] = float(row[i])
+            else:
+              r[header[i]] = blankNone(row[i])
+          print(j.dumps(r, sort_keys=True))
+          row = cursor.fetchone()
+      elif self._tiny:
+        self.pcTiny(header, cursor.fetchall())
+      else:
+        self.pc(header, cursor.fetchall())
     else:
-      self.pc(header, cursor.fetchall())
+      self.i('Done with write operation. Committing...')
+      self._conn.commit()
     cursor.close()
 
   def i(self, s):
@@ -179,6 +184,7 @@ if __name__ == '__main__':
   rows = False
   insert = False
   tiny = False
+  write = False
 
   a = sys.argv[1:]
 
@@ -223,7 +229,11 @@ if __name__ == '__main__':
       tiny = True
       f = True
 
-  dbObject = DB(info, json, csv, rows, insert, tiny)
+    if a[0] == '-write' or a[0] == '-w':
+      a = a[1:]
+      write = True
+
+  dbObject = DB(info, json, csv, rows, insert, tiny, write)
   s = os.path.expanduser('~/.psql.cfg')
   dbObject.config(s)
   if len(a) == 2:

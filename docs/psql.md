@@ -18,4 +18,4 @@ The output formats that are allowed are:
 * `-rows` or `-r` - this will output into MySQL `\G` formatted rows
 * `-tiny` or `-s` - this will output into a compressed table
 * `-insert` or `-i` - this will output into SQL insert statement, will also include a create statement (assumes everything is a string)
-
+* `-write` or `-w` - this is for running queries that need to be committed.
