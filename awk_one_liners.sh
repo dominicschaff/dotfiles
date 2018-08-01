@@ -7,3 +7,8 @@ col_avg()
 {
   awk '{ sum += $1 } END { if (n > 0) print sum / NR; }'
 }
+
+col_sum()
+{
+  awk '{ sum += $1 } END { print sum }'
+}
