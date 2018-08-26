@@ -21,7 +21,23 @@ convertH265()
 
 convertAAC()
 {
-  ffmpeg -i "$1" -c:a aac -b:a 128k "$2"
+  for f in "$@"; do
+    ffmpeg -i "$f" -c:a aac -b:a 192k "${f%.*}.m4a"
+  done
+}
+
+convertFlacLow()
+{
+  for f in "$@"; do
+    ffmpeg -i "$f" -af aformat=s16:44100 "${f%.*}.flac"
+  done
+}
+
+convertFlacHigh()
+{
+  for f in "$@"; do
+    ffmpeg -i "$f" -af aformat=s32:176000 "${f%.*}.flac"
+  done
 }
 
 stopMotion()
