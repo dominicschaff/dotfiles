@@ -3,7 +3,7 @@
 update()
 {
   apt update
-  
+
   if [ $(apt list --upgradable 2>/dev/null | wc -l) -ge 2 ];then
     apt upgrade
   fi
@@ -18,6 +18,11 @@ status()
   date
   uptime
   echo "Battery: $(bat)"
+}
+
+core_count()
+{
+  cat /proc/cpuinfo | awk '/^processor/{print $3}' | wc -l
 }
 
 alias pbcopy="termux-clipboard-set"

@@ -40,3 +40,8 @@ update()
   brew update
   brew upgrade
 }
+
+core_count()
+{
+  sysctl -n hw.ncpu
+}

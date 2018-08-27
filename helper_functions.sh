@@ -138,3 +138,8 @@ get_ip_for_host()
     fi
   done
 }
+
+compress_dir()
+{
+  tar -cv $1/ | gzip -9 > archive.tar.gz
+}
