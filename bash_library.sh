@@ -122,10 +122,12 @@ check_not_null()
 
 check_program_exists()
 {
-  if ! hash $1 2>/dev/null; then
-    log_error "Program $1 does not exist"
-    exit 1
-  fi
+  for f in "$@"; do
+    if ! hash $f 2>/dev/null; then
+      log_error "Program $f does not exist"
+      exit 1
+    fi
+  done
 }
 
 last_week()
@@ -138,4 +140,28 @@ file_age()
   FILE_CREATED_TIME=`date -r "$1" +%s`
   TIME_NOW=`date +%s`
   echo "$((TIME_NOW - FILE_CREATED_TIME))"
+}
+
+core_count()
+{
+  case "$(uname)" in
+    Darwin)
+      sysctl -n hw.ncpu
+    ;;
+    *)
+      cat /proc/cpuinfo | awk '/^processor/{print $3}' | wc -l
+    ;;
+  esac
+}
+
+yesterday()
+{
+  date -d'yesterday' +%Y-%m-%d
+}
+
+wait_for_jobs()
+{
+  while [ $(jobs -p | wc -l) -ge ${1:-10} ]; do
+    sleep 1
+  done
 }

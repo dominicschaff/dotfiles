@@ -143,3 +143,8 @@ compress_dir()
 {
   tar -cv $1/ | gzip -9 > archive.tar.gz
 }
+
+load_avg()
+{
+  uptime | rev | cut -d' ' -f1,2,3 | rev
+}
