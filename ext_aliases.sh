@@ -27,3 +27,11 @@ alias exts='find . | while read f; do echo "${f##*.}"; done | sed "/^\s*$/d" | s
 
 alias myip='curl -s "http://whatismyip.akamai.com"'
 
+
+
+if hash tree 2>/dev/null; then
+  alias tt="tree -hpsDAFCQ --dirsfirst"
+  alias lf="tt -P"
+  alias lr="tt -a"
+  alias ld="tt -a -d"
+fi
