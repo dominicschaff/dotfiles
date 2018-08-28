@@ -6,7 +6,7 @@ source ~/dotfiles/bash_library.sh
 JIRA_CONFIG="$HOME/.jira.json"
 
 if [ ! -f "$JIRA_CONFIG" ]; then
-  log_error "File does not exist: $1"
+  log_error "File does not exist: $JIRA_CONFIG"
   cat - > $JIRA_CONFIG <<EOF
 {
   "default": "name",
