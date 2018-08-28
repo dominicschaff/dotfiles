@@ -148,3 +148,10 @@ load_avg()
 {
   uptime | rev | cut -d' ' -f1,2,3 | rev
 }
+
+filesize()
+{
+  for f in "$@"; do
+    echo "$f => $(stat --printf=" \n" "$f" | nft)"
+  done
+}
