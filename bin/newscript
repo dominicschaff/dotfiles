@@ -15,8 +15,6 @@
 # if no extension is provided, default to
 
 default_ext=sh
-# optional, where skeleton scripts (e.g. sh.txt) are stored
-defaults_txt=~/dotfiles/newscripts
 # End config
 filename="$1"
 
@@ -26,33 +24,25 @@ start editing a new script.\n\033[31;1mError:\033[37;1m Missing filename\033[0m\
 Usage: mynewscript SCRIPT_NAME.ext\n"
   exit 1
 fi
-# get the extension from the filename
 ext=${filename#*.}
-# if there's no extenstion, add default
 if [[ "$ext" == "$filename" ]]; then
   ext=$default_ext
-  filename="$filename.$ext"
 fi
 # if no script with this name already exists
 if [ ! -f "$filename" ]; then
-
   # create a file for the given extension with appropriate shebang
   case $ext in
     py ) echo -e "#!/usr/bin/env python3" >> "$filename";;
-    sh | bash ) echo -e "#!/usr/bin/env bash" >> "$filename";;
-    md ) echo "# $USER\n# $(date +"%F %T")" >> "$filename" ;;
+    sh | bash ) echo -e "#!/usr/bin/env bash\nsource ~/dotfiles/bash_library.sh" >> "$filename";;
+    md ) echo -e "# $USER\n# $(date +"%F %T")" >> "$filename" ;;
      * ) touch "$filename";; # any other extension create blank file
   esac
-  # if skeleton files directory and a txt for the given extension exist
-  if [[ -d ${defaults_txt%/} && -f ${defaults_txt%/}/$ext.txt ]]; then
-    # concatenate it to the file
-    cat ${defaults_txt%/}/$ext.txt >> "$filename"
-  fi
   # Add trailing newline to the new script
-  echo -ne "\n" >> "$filename"
+  echo -e "\n" >> "$filename"
   # Make it executable
-  chmod a+x "$filename"
+  chmod 700 "$filename"
   echo -e "\033[32;1m$filename\033[0m"
+  vim "$filename"
 else # Specified filename already exists
   echo -e "\033[31;1mFile exists: $filename\033[0m"
 fi
