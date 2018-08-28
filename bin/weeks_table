@@ -18,12 +18,6 @@ the_week_of()
   date -d"$1" +%W
 }
 
-# echo "$(the_monday_of 2018-01-01) -> $(the_sunday_of 2018-01-01)"
-# echo "$(the_monday_of 2018-02-01) -> $(the_sunday_of 2018-02-01)"
-# echo "$(the_monday_of 2018-03-01) -> $(the_sunday_of 2018-03-01)"
-# echo "$(the_monday_of 2018-04-01) -> $(the_sunday_of 2018-04-01)"
-# echo "$(the_monday_of 2018-05-01) -> $(the_sunday_of 2018-05-01)"
-
 this_year="$(date +%Y)"
 
 list_dates ${1-$this_year}-01-01 ${1-$this_year}-12-31 | while read item; do
