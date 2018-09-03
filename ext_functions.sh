@@ -152,6 +152,6 @@ load_avg()
 filesize()
 {
   for f in "$@"; do
-    echo "$f => $(stat --printf=" \n" "$f" | nft)"
+    echo "$f => $(stat --printf="%B\n" "$f" | nft)"
   done
 }
