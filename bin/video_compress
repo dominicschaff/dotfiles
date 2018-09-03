@@ -5,7 +5,15 @@ set -e
 t="0_random_tmp_$RANDOM.mp4"
 for f in *.mp4; do
   echo -e "\e[35m$(date +%T)\e[0m -> $f"
-  ffmpeg -loglevel 0 -stats -i "$f" -preset veryfast -vcodec libx264 -pix_fmt yuv420p -crf 20 "$t"
+  crop="$(\ffmpeg -i "$f" -vf cropdetect -f null - 2>&1 | awk '/crop/ { print $NF }' | tail -1)"
+  if [[ "${crop: -3}" = "0:0" ]]; then
+    echo -e "\e[36mno crop found\e[0m -> $crop"
+    ffmpeg -loglevel 0 -stats -i "$f" -preset veryfast -vcodec libx264 -pix_fmt yuv420p -crf 20 "$t"
+  else
+    echo -e "\e[36mcropping\e[0m -> $crop"
+    ffmpeg -loglevel 0 -stats -i "$f" -preset veryfast -vcodec libx264 -pix_fmt yuv420p -crf 20 -vf $crop "$t"
+  fi
+
   file_old="$(stat --printf="%s\n" "$f")"
   file_new="$(stat --printf="%s\n" "$t")"
   fs="$((100*file_new/file_old))"
