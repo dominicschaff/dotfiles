@@ -136,11 +136,20 @@ convertCut()
 convertLow()
 {
   mkdir -p "output"
+  settings="-preset veryfast -vcodec libx264 -pix_fmt yuv420p -crf 20"
   for f in "$@"; do
     echo "$(date +%T) -> $f"
-    ffmpeg -i "$f" -preset veryfast -vcodec libx264 -pix_fmt yuv420p -crf 20 "$(dirname "$f")/output/$(basename "$f")"
+    output="$(dirname "$f")/output/$(basename "$f")"
+    crop="$(\ffmpeg -i "$f" -vf cropdetect -f null - 2>&1 | awk '/crop/ { print $NF }' | tail -1)"
+    if [[ "${crop: -3}" = "0:0" ]]; then
+      echo -e "\e[36mno crop found\e[0m -> $crop"
+      ffmpeg -loglevel 0 -stats -i "$f" $settings "$output"
+    else
+      echo -e "\e[36mcropping\e[0m -> $crop"
+      ffmpeg -loglevel 0 -stats -i "$f" $settings -vf $crop "$output"
+    fi
     a="$(stat --printf="%s\n" "$f")"
-    b="$(stat --printf="%s\n" "$(dirname "$f")/output/$(basename "$f")")"
+    b="$(stat --printf="%s\n" "$output")"
     fs="$((100*b/a))"
     if [[ $fs -ge 100 ]]; then
       echo -e "compressed to \e[31m$fs %\e[0m -> $(echo "$b" | nft)"
