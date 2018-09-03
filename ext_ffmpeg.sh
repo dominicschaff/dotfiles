@@ -149,3 +149,8 @@ convertLow()
     fi
   done
 }
+
+get_crop()
+{
+  \ffmpeg -i "$1" -t 1 -vf cropdetect -f null - 2>&1 | awk '/crop/ { print $NF }' | tail -1
+}
