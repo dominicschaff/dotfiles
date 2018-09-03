@@ -2,16 +2,18 @@
 
 set -e
 
+settings="-preset veryfast -vcodec libx264 -pix_fmt yuv420p -crf 20"
+
 t="0_random_tmp_$RANDOM.mp4"
 for f in *.mp4; do
   echo -e "\e[35m$(date +%T)\e[0m -> $f"
   crop="$(\ffmpeg -i "$f" -vf cropdetect -f null - 2>&1 | awk '/crop/ { print $NF }' | tail -1)"
   if [[ "${crop: -3}" = "0:0" ]]; then
     echo -e "\e[36mno crop found\e[0m -> $crop"
-    ffmpeg -loglevel 0 -stats -i "$f" -preset veryfast -vcodec libx264 -pix_fmt yuv420p -crf 20 "$t"
+    ffmpeg -loglevel 0 -stats -i "$f" $settings "$t"
   else
     echo -e "\e[36mcropping\e[0m -> $crop"
-    ffmpeg -loglevel 0 -stats -i "$f" -preset veryfast -vcodec libx264 -pix_fmt yuv420p -crf 20 -vf $crop "$t"
+    ffmpeg -loglevel 0 -stats -i "$f" $settings -vf $crop "$t"
   fi
 
   file_old="$(stat --printf="%s\n" "$f")"
