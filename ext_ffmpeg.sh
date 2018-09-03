@@ -132,3 +132,20 @@ convertCut()
     echo "$0 <INPUT> <START> [<END>] <OUTPUT>"
   fi
 }
+
+convertLow()
+{
+  mkdir -p "output"
+  for f in "$@"; do
+    echo "$(date +%T) -> $f"
+    ffmpeg -i "$f" -preset veryfast -vcodec libx264 -pix_fmt yuv420p -crf 20 "$(dirname "$f")/output/$(basename "$f")"
+    a="$(stat --printf="%s\n" "$f")"
+    b="$(stat --printf="%s\n" "$(dirname "$f")/output/$(basename "$f")")"
+    fs="$((100*b/a))"
+    if [[ $fs -ge 100 ]]; then
+      echo -e "compressed to \e[31m$fs %\e[0m -> $(echo "$b" | nft)"
+    else
+      echo -e "compressed to \e[32m$fs %\e[0m -> $(echo "$b" | nft)"
+    fi
+  done
+}
