@@ -1,7 +1,0 @@
-#!/usr/bin/env python3
-import csv, sys
-from math import sin, cos, asin, sqrt, radians
-spamreader = csv.reader(sys.stdin)
-spamwriter = csv.writer(sys.stdout, lineterminator="\n")
-for line in spamreader:
-  spamwriter.writerow(line)

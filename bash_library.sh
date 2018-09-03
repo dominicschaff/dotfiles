@@ -33,44 +33,49 @@ log_time()
   echo "$(date +"$LOG_DATE") [INFO] $@"
 }
 
+log_to_error()
+{
+  echo -e "$(date +"$LOG_DATE") $@" >&2
+}
+
 log_none()
 {
-  echo "$(date +"$LOG_DATE") [INFO] $@" >&2
+  log_to_error "[INFO] $@"
 }
 
 log_debug()
 {
-  echo "$(date +"$LOG_DATE") [DEBUG] $@" >&2
+  log_to_error "[DEBUG] $@"
 }
 
 log_ok()
 {
-  echo -e "$(date +"$LOG_DATE") $CLR_GREEN[OKAY]$ALL_CLEAR $@" >&2
+  log_to_error "$CLR_GREEN[OKAY]$ALL_CLEAR $@"
 }
 
 log_fail()
 {
-  echo -e "$(date +"$LOG_DATE") $CLR_RED[FAIL]$ALL_CLEAR $@" >&2
+  log_to_error "$CLR_RED[FAIL]$ALL_CLEAR $@"
 }
 
 log_info()
 {
-  echo -e "$(date +"$LOG_DATE") $CLR_CYAN[INFO]$ALL_CLEAR $@" >&2
+  log_to_error "$CLR_CYAN[INFO]$ALL_CLEAR $@"
 }
 
 log_error()
 {
-  echo -e "$(date +"$LOG_DATE") $CLR_RED[ERROR]$ALL_CLEAR $@" >&2
+  log_to_error "$CLR_RED[ERROR]$ALL_CLEAR $@"
 }
 
 log_warn()
 {
-  echo -e "$(date +"$LOG_DATE") $CLR_YELLOW[WARN]$ALL_CLEAR $@" >&2
+  log_to_error "$CLR_YELLOW[WARN]$ALL_CLEAR $@"
 }
 
 log_end()
 {
-  echo -e "$(date +"$LOG_DATE") $CLR_MAGENTA[END]$ALL_CLEAR $@" >&2
+  log_to_error "$CLR_MAGENTA[END]$ALL_CLEAR $@"
 }
 
 seconds_to_time()
@@ -86,7 +91,7 @@ log_end_time()
 json_log()
 {
   jq -cn \
-    --arg date "$(date +"%F %H:%M:%S")" \
+    --arg date "$(date +"%F %T")" \
     --arg data "$1" \
     '{
       "date": $date,
@@ -137,8 +142,8 @@ last_week()
 
 file_age()
 {
-  FILE_CREATED_TIME=`date -r "$1" +%s`
-  TIME_NOW=`date +%s`
+  FILE_CREATED_TIME=$(date -r "$1" +%s)
+  TIME_NOW=$(date +%s)
   echo "$((TIME_NOW - FILE_CREATED_TIME))"
 }
 

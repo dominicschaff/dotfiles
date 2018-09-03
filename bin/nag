@@ -2,7 +2,7 @@
 
 source ~/dotfiles/bash_library.sh
 
-check_program_exists say
+check_program_exists say afplay
 
 while true; do
   for phrase in "$@"; do
