@@ -170,3 +170,43 @@ wait_for_jobs()
     sleep 1
   done
 }
+
+line()
+{
+  printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' -
+}
+
+say_time()
+{
+  s=$1
+
+  m=$((s/60))
+  s=$((s%60))
+  ts=""
+  tm=""
+
+  if [[ $s -gt 0 ]]; then
+    if [[ $s -eq 1 ]]; then
+      ts="$s second"
+    else
+      ts="$s seconds"
+    fi
+  fi
+
+  if [[ $m -gt 0 ]]; then
+    if [[ $m -eq 1 ]]; then
+      tm="$m minute"
+    else
+      tm="$m minutes"
+    fi
+  fi
+
+  shift 1
+
+  say -v Alex "$@ $tm $ts"
+}
+
+notify()
+{
+  osascript -e "display notification \"$2\" with title \"$1\"";
+}

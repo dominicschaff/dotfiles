@@ -155,3 +155,14 @@ filesize()
     echo "$f => $(stat --printf="%B\n" "$f" | nft)"
   done
 }
+
+
+get_tweets()
+{
+  curl -s "https://twitrss.me/twitter_user_to_rss/?user=$1" | xq '.rss.channel.item[]' | jq -c .
+}
+
+get_random_tweet()
+{
+  get_tweets $1 | sort -R | head -n1 | jq -r '.title'
+}
