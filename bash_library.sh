@@ -109,6 +109,16 @@ check_file_exists()
   done
 }
 
+check_dir_exists()
+{
+  for f in "$@"; do
+    if [ ! -d "$f" ]; then
+      log_error "File does not exist: $f"
+      exit 1
+    fi
+  done
+}
+
 check_not_empty()
 {
   if [ -z "$1" ]; then
@@ -210,3 +220,11 @@ notify()
 {
   osascript -e "display notification \"$2\" with title \"$1\"";
 }
+
+function cleanup {
+  log_end_time
+}
+
+if [[ -z "$DISABLE_END" ]]; then
+  trap cleanup EXIT
+fi
