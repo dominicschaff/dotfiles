@@ -9,8 +9,8 @@ convertMp4()
 {
   for f in "$@"; do
     o="${f#*/}"
-    echo "$f -> $2${o%.*}.mp4"
-    ffmpeg -i $f -qp 25 "$2${o%.*}.mp4"
+    echo "$f -> ${o%.*}.mp4"
+    ffmpeg -i $f -qp 25 "${o%.*}.mp4"
   done
 }
 
