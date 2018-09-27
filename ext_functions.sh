@@ -10,11 +10,6 @@ password()
   pwgen -cnyB ${1:-15}
 }
 
-find_size()
-{
-  find . -iname "$1" -exec du -kc {} + | grep total$ | cut -f1 | awk '{ sum+=$1} END {print sum*1024}' | nft
-}
-
 pc()
 {
   pandoc -s --standalone --toc -f markdown --highlight-style zenburn --template ~/dotfiles/pandoc/template.html -t html "$1" | sed 's/<table/<table class=\"table\"/' > "${1%.*}.html"
@@ -56,21 +51,15 @@ print_all_them_colors()
 tmp()
 {
   if [ -d "$HOME/tmp" ]; then
-    cd $HOME/tmp
+    cd "$HOME/tmp"
   else
     if [ -d "$TMPDIR" ]; then
-      cd $TMPDIR
+      cd "$TMPDIR"
     else
       cd /tmp
     fi
   fi
   pwd
-}
-
-qr_code()
-{
-  qr "$1" > "$1.png"
-  open "$1.png"
 }
 
 tm()
@@ -86,23 +75,6 @@ t()
 line()
 {
   printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' -
-}
-
-err()
-{
-  echo "[$(date +'%Y-%m-%d %T')]: $@" >&2
-}
-
-tlog()
-{
-  echo "[$(date +'%Y-%m-%d %T')]: $@"
-}
-
-output_zip()
-{
-  cat - > "$1.csv"
-  zip "$1.zip" "$1.csv"
-  rm "$1.csv"
 }
 
 pip3_install()
@@ -155,7 +127,6 @@ filesize()
     echo "$f => $(stat --printf="%B\n" "$f" | nft)"
   done
 }
-
 
 get_tweets()
 {
