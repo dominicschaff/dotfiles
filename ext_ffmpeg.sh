@@ -121,6 +121,20 @@ convertMp3()
   done
 }
 
+convertWebm()
+{
+  for f in "$@"; do
+    ffmpeg -i "$f" -c:v libvpx-vp9 "${f%.*}.webm"
+  done
+}
+
+convertWebmLow()
+{
+  for f in "$@"; do
+    ffmpeg -i "$f" -c:v libvpx-vp9 -crf 33 -b:v 0 "${f%.*}.webm"
+  done
+}
+
 convertCut()
 {
   if [[ $# -eq 4 ]]; then
