@@ -231,7 +231,9 @@ file_age()
 ################################################################################
 check_age()
 {
-  if [[ $(file_age $1) -gt $2 ]]; then
+  if [[ ! -f "$1" ]]; then
+    return 0
+  elif [[ $(file_age $1) -gt $2 ]]; then
     return 0
   else
     log_warn "Ignoring - file not old enough yet"
@@ -325,5 +327,90 @@ append_exit_trap()
     trap "$1" EXIT
   else
     trap "$1;$previous" EXIT
+  fi
+}
+
+date_quarter_start()
+{
+  year=""
+  quarter=""
+  if [[ $# -eq 0 ]]; then
+    year="$(date +%Y)"
+    quarter="$(date +%q)"
+  elif [[ $# -eq 1 ]]; then
+    if echo "$1" | grep -iq "q"; then
+      year="$(echo "$1" | cut -d'q' -f1)"
+      quarter="$(echo "$1" | cut -d'q' -f2)"
+    else
+      year="$(date +%Y)"
+      quarter="$1"
+    fi
+  elif [[ $# -eq 2 ]]; then
+    year="$1"
+    quarter="$2"
+  else
+    log_error "date_quarter_start: has wrong format: $@"
+    exit 1
+  fi
+
+  check_not_empty "$year"
+  check_not_empty "$quarter"
+
+  case "$quarter" in
+    1 ) echo "$year-01-01" ;;
+    2 ) echo "$year-04-01" ;;
+    3 ) echo "$year-07-01" ;;
+    4 ) echo "$year-10-01" ;;
+    * )
+      log_error "date_quarter_start: Invalid argument: $quarter"
+      exit 1
+    ;;
+  esac
+}
+
+date_quarter_end()
+{
+  year=""
+  quarter=""
+  if [[ $# -eq 0 ]]; then
+    year="$(date +%Y)"
+    quarter="$(date +%q)"
+  elif [[ $# -eq 1 ]]; then
+    if echo "$1" | grep -iq "q"; then
+      year="$(echo "$1" | cut -d'q' -f1)"
+      quarter="$(echo "$1" | cut -d'q' -f2)"
+    else
+      year="$(date +%Y)"
+      quarter="$1"
+    fi
+  elif [[ $# -eq 2 ]]; then
+    year="$1"
+    quarter="$2"
+  else
+    log_error "date_quarter_end: has wrong format: $@"
+    exit 1
+  fi
+
+  check_not_empty "$year"
+  check_not_empty "$quarter"
+
+  case "$quarter" in
+    1 ) echo "$year-03-31" ;;
+    2 ) echo "$year-06-30" ;;
+    3 ) echo "$year-09-30" ;;
+    4 ) echo "$year-12-31" ;;
+    * )
+      log_error "date_quarter_end: Invalid argument: $quarter"
+      exit 1
+    ;;
+  esac
+}
+
+date_quarter()
+{
+  if [[ $# -eq 0 ]]; then
+    date +%q
+  else
+    date -d "$1" +%q
   fi
 }
