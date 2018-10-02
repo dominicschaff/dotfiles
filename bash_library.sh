@@ -414,3 +414,39 @@ date_quarter()
     date -d "$1" +%q
   fi
 }
+
+param_to_stdin()
+{
+  if [ -t 0 ]; then
+    for f in "$@"; do
+      echo "$f"
+    done
+  else
+    cat -
+  fi
+}
+
+clean_numeric()
+{
+  sed 's/[^0-9]*//g'
+}
+
+clean_text()
+{
+  sed 's/[^0-9A-Z]*//g'
+}
+
+clean_date()
+{
+  sed 's/[^0-9 -:]*//g'
+}
+
+upper()
+{
+  tr '[:lower:]' '[:upper:]'
+}
+
+delete_empty()
+{
+  sed 's/[[:blank:]]//g' | sed '/^$/d'
+}

@@ -18,8 +18,8 @@ alias moon="curl 'http://wttr.in/Moon'"
 alias f="declare -F | cut -d' ' -f'3-'"
 alias h="type"
 
-alias encrypt='openssl enc -aes-256-cbc -salt -in'
-alias decrypt='openssl enc -d -aes-256-cbc -salt -in'
+alias encrypt='openssl enc -aes-256-cbc -pbkdf2 -salt -in'
+alias decrypt='openssl enc -d -aes-256-cbc -pbkdf2 -salt -in'
 
 alias exts='find . | while read f; do echo "${f##*.}"; done | sed "/^\s*$/d" | sort | uniq -c | sort -rn'
 
