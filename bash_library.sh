@@ -34,57 +34,46 @@ else
 fi
 
 ################################################################################
-# Log arguments to stderr with the date/time
+# This section sets up the logging functions
+# log_time() -> Log with no type set
+# log_ok() -> Log OKAY type
+# log_fail() -> Log failure type
+# log_debug() -> Log debug type
+# log_info() -> Log info type
+# log_warn() -> Log warning type
+# log_error() -> Log error type
+# log_end() -> Log special end type
 ################################################################################
-log_to_error() { echo -e "[$(date +"$LOG_DATE")]: $@" >&2; }
-
-################################################################################
-# Log with no type set
-################################################################################
-log_time() { log_to_error "$@"; }
-
-################################################################################
-# Log debug type
-################################################################################
-log_debug() { log_to_error "$CLR_MAGENTA[D]$ALL_CLEAR $@"; }
-
-################################################################################
-# Log OKAY type
-################################################################################
-log_ok() { log_to_error "$CLR_GREEN[P]$ALL_CLEAR $@"; }
-
-################################################################################
-# Log failure type
-################################################################################
-log_fail() { log_to_error "$CLR_RED[F]$ALL_CLEAR $@"; }
-
-################################################################################
-# Log info type
-################################################################################
-log_info() { log_to_error "$CLR_CYAN[I]$ALL_CLEAR $@"; }
-
-################################################################################
-# Log error type
-################################################################################
-log_error() { log_to_error "$CLR_RED[E]$ALL_CLEAR $@"; }
-
-################################################################################
-# Log warning type
-################################################################################
-log_warn() { log_to_error "$CLR_YELLOW[W]$ALL_CLEAR $@"; }
-
-################################################################################
-# Log special end type
-################################################################################
-log_end() { log_to_error "$CLR_MAGENTA[--]$ALL_CLEAR $@"; }
+if [[ -z "$LOG_SHORT" ]]; then
+  __log_to_error() { echo -e "[$(date +"$LOG_DATE")]: $@" >&2; }
+  log_time() { __log_to_error "$@"; }
+  log_debug() { __log_to_error "$CLR_MAGENTA[D]$ALL_CLEAR $@"; }
+  log_ok() { __log_to_error "$CLR_GREEN[P]$ALL_CLEAR $@"; }
+  log_fail() { __log_to_error "$CLR_RED[F]$ALL_CLEAR $@"; }
+  log_info() { __log_to_error "$CLR_CYAN[I]$ALL_CLEAR $@"; }
+  log_error() { __log_to_error "$CLR_RED[E]$ALL_CLEAR $@"; }
+  log_warn() { __log_to_error "$CLR_YELLOW[W]$ALL_CLEAR $@"; }
+  log_end() { __log_to_error "$CLR_MAGENTA[--]$ALL_CLEAR $@"; }
+else
+  __log_to_error() {
+    clr="$1"
+    shift 1
+    echo -e "$clr$(date +"$LOG_DATE") :$ALL_CLEAR $@" >&2
+  }
+  log_time()  { __log_to_error $CLR_DEFAULT "$@"; }
+  log_debug() { __log_to_error $CLR_MAGENTA "$@"; }
+  log_ok()    { __log_to_error $CLR_GREEN "$@"; }
+  log_fail()  { __log_to_error $CLR_RED "$@"; }
+  log_info()  { __log_to_error $CLR_CYAN "$@"; }
+  log_error() { __log_to_error $CLR_RED "$@"; }
+  log_warn()  { __log_to_error $CLR_YELLOW "$@"; }
+  log_end()   { __log_to_error $CLR_MAGENTA "$@"; }
+fi
 
 ################################################################################
 # Log script execution time
 ################################################################################
-log_end_time()
-{
-  log_end "Script took $SECONDS seconds to run [$(seconds_to_time $SECONDS)]"
-}
+log_end_time() { log_end "Script took $SECONDS seconds to run [$(seconds_to_time $SECONDS)]"; }
 
 ################################################################################
 # Log a line of the size of the terminal
@@ -96,9 +85,9 @@ log_line() { printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' - >&2; }
 ################################################################################
 log_header()
 {
-  log_line
+  [[ -z "$LOG_SHORT" ]] && log_line || :
   log_center "-" "$(date +"$LOG_DATE") : $@"
-  log_line
+  [[ -z "$LOG_SHORT" ]] && log_line || :
 }
 
 ################################################################################
@@ -330,6 +319,13 @@ append_exit_trap()
   fi
 }
 
+################################################################################
+# Get the start date of a quarter.
+# Sample:
+# date_quarter_start -> uses current date
+# date_quarter_start <YEARqQUARTER> -> e.g. 2018q2
+# date_quarter_start <YEAR> <QUARTER> -> e.q. 2018 2
+################################################################################
 date_quarter_start()
 {
   year=""
@@ -368,6 +364,13 @@ date_quarter_start()
   esac
 }
 
+################################################################################
+# Get the end date of a quarter.
+# Sample:
+# date_quarter_end -> uses current date
+# date_quarter_end <YEARqQUARTER> -> e.g. 2018q2
+# date_quarter_end <YEAR> <QUARTER> -> e.q. 2018 2
+################################################################################
 date_quarter_end()
 {
   year=""
@@ -406,6 +409,12 @@ date_quarter_end()
   esac
 }
 
+################################################################################
+# Gets the quarter number for a date
+# Sample:
+# date_quarter -> uses current date
+# date_quarter <date string> -> e.g. "2018-10-01"
+################################################################################
 date_quarter()
 {
   if [[ $# -eq 0 ]]; then
@@ -415,6 +424,9 @@ date_quarter()
   fi
 }
 
+################################################################################
+# Converts arguments to stdin. Else just redirects stdin
+################################################################################
 param_to_stdin()
 {
   if [ -t 0 ]; then
@@ -426,26 +438,41 @@ param_to_stdin()
   fi
 }
 
+################################################################################
+# Strips anything that's not numeric out of stream
+################################################################################
 clean_numeric()
 {
   sed 's/[^0-9]*//g'
 }
 
+################################################################################
+# Strips anything that's not alphanumeric out of stream
+################################################################################
 clean_text()
 {
   sed 's/[^0-9A-Z]*//g'
 }
 
+################################################################################
+# Strips anything that's not considered characters for a date/time string
+################################################################################
 clean_date()
 {
   sed 's/[^0-9 -:]*//g'
 }
 
+################################################################################
+# Converts lowercase to uppercase
+################################################################################
 upper()
 {
   tr '[:lower:]' '[:upper:]'
 }
 
+################################################################################
+# Remove space characters, and then deletes empty lines
+################################################################################
 delete_empty()
 {
   sed 's/[[:blank:]]//g' | sed '/^$/d'
