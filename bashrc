@@ -17,8 +17,8 @@ export PYTHONPATH="$PYTHONPATH:$HOME/dotfiles"
 # Create PATH
 ################################################################################
 
-if [ -d "$HOME/.bin" ]; then
-  export PATH="$HOME/.bin:$PATH"
+if [ -d "$HOME/bin" ]; then
+  export PATH="$HOME/bin:$PATH"
 fi
 
 if [ -d "$HOME/Library/Android/sdk/platform-tools" ]; then
