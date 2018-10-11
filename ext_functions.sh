@@ -137,3 +137,18 @@ get_random_tweet()
 {
   get_tweets $1 | sort -R | head -n1 | jq -r '.title'
 }
+
+timestamp()
+{
+  if [[ $# -eq 0 ]]; then
+    date "+%s"
+  else
+    for d in "$@"; do
+      s="$d"
+      if [[ ${#s} -gt 10 ]]; then
+        s="$(echo $d | rev | cut -c 4- | rev)"
+      fi
+      date -d @$s +"%Y-%m-%d %T"
+    done
+  fi
+}
