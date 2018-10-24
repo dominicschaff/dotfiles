@@ -5,7 +5,7 @@ col_max()
 
 col_avg()
 {
-  awk '{ sum += $1 } END { if (n > 0) print sum / NR; }'
+  awk '{ sum += $1 } END { if (NR > 0) print sum / NR; }'
 }
 
 col_sum()
