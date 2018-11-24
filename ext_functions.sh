@@ -152,3 +152,16 @@ timestamp()
     done
   fi
 }
+
+do_merge()
+{
+  base="$1"
+  shift 1
+  a=0
+  for f in "$@"; do
+    a=$((a+1))
+    output="output$a.png"
+    convert "$base" "$f" -background black -gravity center -compose over -composite "$output"
+    base="$output"
+  done
+}
