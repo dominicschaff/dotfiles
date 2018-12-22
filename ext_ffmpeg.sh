@@ -10,7 +10,7 @@ convertMp4()
   for f in "$@"; do
     o="${f#*/}"
     echo "$f -> ${o%.*}.mp4"
-    ffmpeg -i $f -qp 25 "${o%.*}.mp4"
+    ffmpeg -i "$f" -vcodec libx264 -pix_fmt yuv420p -qp 25 "${o%.*}.mp4"
   done
 }
 
