@@ -155,13 +155,9 @@ timestamp()
 
 do_merge()
 {
+  filename=$(basename -- "$1")
+  extension="${filename##*.}"
+  filename="${filename%.*}"
   base="$1"
-  shift 1
-  a=0
-  for f in "$@"; do
-    a=$((a+1))
-    output="output$a.png"
-    convert "$base" "$f" -background black -gravity center -compose over -composite "$output"
-    base="$output"
-  done
+  convert $@ -background black -flatten "output.$extension"
 }
