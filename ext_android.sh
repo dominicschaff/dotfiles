@@ -115,6 +115,43 @@ adb_launch()
   done
 }
 
+div()
+{
+  while read line; do
+    a="$line"
+    b="$1"
+    echo $((a/b))
+  done
+}
+
+adb_battery()
+{
+# Current Battery Service state:
+#   AC powered: false
+#   USB powered: true
+#   Wireless powered: false
+#   Max charging current: 2000000
+#   Max charging voltage: 4400000
+#   current now: 341000
+#   charge counter: 2668000
+#   Current:341000
+#   status: 2
+#   health: 2
+#   present: true
+#   level: 92
+#   scale: 100
+#   voltage: 4262
+#   temperature: 297
+#   technology: Li-ion
+  stats="$(adb shell dumpsys battery)"
+  echo "$stats" | grep powered | sed -e 's/^[ \t]*//'
+  echo "Max amperage: $(echo "$stats" | grep 'Max charging current' | rev | cut -d' ' -f1 | rev | div 1000) mA"
+  echo "Max voltage: $(echo "$stats" | grep 'Max charging voltage' | rev | cut -d' ' -f1 | rev | div 1000) mV"
+  echo "Current current: $(echo "$stats" | grep 'current now' | rev | cut -d' ' -f1 | rev | div 1000) mA"
+  echo "Current level: $(echo "$stats" | grep 'level:' | rev | cut -d' ' -f1 | rev) % : $(echo "$stats" | grep 'scale:' | rev | cut -d' ' -f1 | rev) %"
+  echo "Current current: $(echo "$stats" | grep 'temperature:' | rev | cut -d' ' -f1 | rev | div 10) °"
+}
+
 
 open_urls()
 {
