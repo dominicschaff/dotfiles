@@ -6,3 +6,4 @@ qrcode
 termcolor
 youtube-dl
 sty
+certifi
