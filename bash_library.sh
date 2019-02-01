@@ -225,7 +225,7 @@ check_age()
   elif [[ $(file_age $1) -gt $2 ]]; then
     return 0
   else
-    log_warn "Ignoring - file not old enough yet"
+    log_warn "Ignoring - file not old enough yet ($1)"
     return 1
   fi
 }
