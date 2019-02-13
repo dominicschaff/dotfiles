@@ -14,6 +14,7 @@ alias gl='git remote show origin -n | grep "Fetch URL:" | sed -E "s#^.*/(.*).*/(
 alias aws_deploy="gl | pbcopy; read; gh | pbcopy"
 alias gds="git diff --stat"
 alias gcr="git clone --recursive"
+alias gb="cd \$(git rev-parse --show-toplevel)"
 
 gn()
 {
