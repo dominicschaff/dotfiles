@@ -13,15 +13,43 @@ fi
 
 line
 
-newPath=""
-
-brew install coreutils wget grep gnu-sed less make tree openssl vim bash --with-default-names
-brew install handbrake apktool ffmpeg imagemagick exiftool mdp fortune cowsay cmatrix jq git pwgen jq pidcat ack bmon htop python3
-brew install pandoc scala sbt shellcheck
+brew install \
+  ack \
+  apktool \
+  bash \
+  bmon \
+  cmatrix \
+  coreutils \
+  cowsay \
+  exiftool \
+  ffmpeg \
+  fortune \
+  git \
+  gnu-sed \
+  gource \
+  grep \
+  handbrake \
+  htop \
+  imagemagick \
+  jq \
+  jq \
+  less \
+  make \
+  mdp \
+  openssl \
+  openssl \
+  openssl@1.1 \
+  pandoc \
+  pidcat \
+  pwgen \
+  python3 \
+  scrcpy \
+  shellcheck \
+  tmux \
+  tree \
+  vim \
+  wget
 # brew install osmosis gdal
 # brew install node pebble/pebble-sdk/pebble-sdk
 echo "export PATH=\"$(brew --prefix coreutils)/libexec/gnubin:/usr/local/bin:\$PATH\"" >> $HOME/.bashrc
 git -C "$(brew --repo homebrew/core)" fetch --unshallow
-
-
-pip3 install --user --upgrade awscli paho-mqtt pg8000 pyfiglet qrcode termcolor youtube-dl sty
