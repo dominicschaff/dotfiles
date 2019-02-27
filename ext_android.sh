@@ -28,6 +28,10 @@ alias adb_wifi="adb connect"
 alias adb_usb="adb usb"
 alias adb_ip="adb shell ip route | awk '{print \$9}'"
 
+alias adb_next='adb shell input keyevent 87'
+alias adb_previous='adb shell input keyevent 88'
+alias adb_play_pause='adb shell input keyevent 85'
+
 adb_tap()
 {
   adb shell input tap $1 $2
@@ -150,6 +154,33 @@ adb_battery()
   echo "Current current: $(echo "$stats" | grep 'current now' | rev | cut -d' ' -f1 | rev | div 1000) mA"
   echo "Current level: $(echo "$stats" | grep 'level:' | rev | cut -d' ' -f1 | rev) % : $(echo "$stats" | grep 'scale:' | rev | cut -d' ' -f1 | rev) %"
   echo "Current current: $(echo "$stats" | grep 'temperature:' | rev | cut -d' ' -f1 | rev | div 10) °"
+}
+
+adb_device_stats()
+{
+  echo "Device Brand                    : $(adb shell getprop cda.skuid.brand)"
+  echo "Device Name                     : $(adb shell getprop ro.product.model)"
+  echo "Device Nickname                 : $(adb shell getprop ro.product.nickname)"
+  echo "Device Country of Origin        : $(adb shell getprop cda.skuid.locale)"
+  echo "Device CPU Core Type            : $(adb shell getprop dalvik.vm.isa.arm.variant)"
+  echo "Device CPU Core Type 64bit      : $(adb shell getprop dalvik.vm.isa.arm64.variant)"
+  echo "Device CPU Type                 : $(adb shell getprop ro.product.cpu.abilist)"
+
+  echo "Network Type                    : $(adb shell getprop gsm.network.type)"
+  echo "Network Name                    : $(adb shell getprop gsm.operator.alpha)"
+  echo "Network Country                 : $(adb shell getprop gsm.operator.iso-country)"
+  echo "Network Roaming                 : $(adb shell getprop gsm.operator.isroaming)"
+
+  echo "Default SD Card                 : $(adb shell getprop persist.sys.sd.defaultpath)"
+  echo "Device Timezone                 : $(adb shell getprop persist.sys.timezone)"
+  echo "Device Locale                   : $(adb shell getprop ro.product.locale)"
+
+  echo "Device Build Date               : $(adb shell getprop ro.build.date)"
+  echo "Android Version                 : $(adb shell getprop ro.build.version.release)"
+  echo "Android Version SDK             : $(adb shell getprop ro.build.version.sdk)"
+  echo "Android Google Security Version : $(adb shell getprop ro.build.version.security_patch)"
+
+  echo "Wifi Name                       : $(adb shell dumpsys netstats | grep -E 'iface=wlan.*networkId' | sort -u | cut -d'"' -f2)"
 }
 
 
