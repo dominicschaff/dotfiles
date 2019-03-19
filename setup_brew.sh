@@ -16,6 +16,7 @@ line
 brew install \
   ack \
   apktool \
+  aria2 \
   bash \
   bmon \
   cmatrix \
