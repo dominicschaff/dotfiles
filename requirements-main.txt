@@ -7,3 +7,4 @@ termcolor
 youtube-dl
 sty
 certifi
+mutagen
