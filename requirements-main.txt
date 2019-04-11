@@ -8,3 +8,5 @@ youtube-dl
 sty
 certifi
 mutagen
+pyflakes
+pycodestyle
