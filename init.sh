@@ -1,19 +1,21 @@
 #!/usr/bin/env bash
 
-ACCURACY=8
+ACCURACY=10
 INITIAL=10
-STR_INTERMEDIATE="Lines ~ %${ACCURACY}d"
-STR_FINAL="Lines = %${ACCURACY}d"
+STR_INTERMEDIATE="Lines ~ %'${ACCURACY}d"
+STR_FINAL="Lines = %'${ACCURACY}d"
 
 gcc -x c - -o ~/bin/lines <<EOF
 #include <stdio.h>
 #include <stdlib.h>
+#include <locale.h>
 
 int main(int argc, char**argv)
 {
   int ch;
   int lines = 0;
   int each = ${INITIAL};
+  setlocale(LC_NUMERIC, "");
   if (argc == 2) {
     each = atoi(argv[1]);
   }
