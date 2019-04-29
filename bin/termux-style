@@ -47,3 +47,5 @@ if [[ "$option" != "s" ]]; then
     cp "$chosen" ~/.termux/font.ttf
   fi
 fi
+
+termux-reload-settings
