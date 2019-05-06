@@ -1,12 +1,8 @@
 awscli
-paho-mqtt
 pg8000
-pyfiglet
 qrcode
 termcolor
 youtube-dl
 sty
 certifi
 mutagen
-pyflakes
-pycodestyle
