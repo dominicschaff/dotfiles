@@ -1,4 +1,4 @@
-#bash
+#!/usr/bin/env bash
 
 mkdir -p beta/res/mipmap-hdpi beta/res/mipmap-mdpi beta/res/mipmap-xhdpi beta/res/mipmap-xxhdpi beta/res/mipmap-xxxhdpi
 mkdir -p dev/res/mipmap-hdpi dev/res/mipmap-mdpi dev/res/mipmap-xhdpi dev/res/mipmap-xxhdpi dev/res/mipmap-xxxhdpi

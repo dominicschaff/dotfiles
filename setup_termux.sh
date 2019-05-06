@@ -1,8 +1,6 @@
 apt update
 apt upgrade
-apt install aria2 ack-grep apt bash bash-completion bmon command-not-found coreutils cowsay curl ffmpeg fortune git gzip htop imagemagick jq less libandroid-support man ncurses netcat nmap openssh openssl openssl-tool pwgen python readline sed sqlite tar termux-api termux-tools vim wget
-
-apt install clang python-dev libffi libffi-dev openjpeg openjpeg-dev libjpeg-turbo-dev
+apt install aria2 ack-grep apt bash bash-completion command-not-found coreutils curl ffmpeg htop imagemagick jq less libandroid-support man openssh openssl pwgen python readline sed tar termux-api termux-tools vim wget termux-exec
 
 touch ~/.hushlogin
 mkdir -p ~/.termux
