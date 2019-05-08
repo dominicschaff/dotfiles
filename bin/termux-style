@@ -12,13 +12,18 @@ echo "Choose colour: ['s' to skip]"
 
 c=0
 
-for i in "${colour_list[@]}"; do
-  name="${i##*/}"
-  echo "$c : $(echo "$name" | cut -d'.' -f1)"
-  c=$((c+1))
-done
+if [[ $# -gt 0 ]]; then
+  option="$1"
+  shift 1
+else
+  for i in "${colour_list[@]}"; do
+    name="${i##*/}"
+    echo "$c : $(echo "$name" | cut -d'.' -f1)"
+    c=$((c+1))
+  done
 
-read -r option
+  read -r option
+fi
 
 if [[ "$option" != "s" ]]; then
   chosen="${colour_list[$option]}"
@@ -30,15 +35,20 @@ fi
 
 echo "Choose font: ['s' to skip]"
 
-c=0
+if [[ $# -gt 0 ]]; then
+  option="$1"
+  shift 1
+else
+  c=0
 
-for i in "${font_list[@]}"; do
-  name="${i##*/}"
-   echo "$c : $(echo "$name" | cut -d'.' -f1)"
-   c=$((c+1))
-done
+  for i in "${font_list[@]}"; do
+    name="${i##*/}"
+    echo "$c : $(echo "$name" | cut -d'.' -f1)"
+    c=$((c+1))
+  done
 
-read -r option
+  read -r option
+fi
 
 if [[ "$option" != "s" ]]; then
   chosen="${font_list[$option]}"
