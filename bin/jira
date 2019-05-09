@@ -127,13 +127,10 @@ my_board()
   fetch_all_for_jql "$base_query AND Status IN (\"In Progress\") ORDER BY Rank ASC" "$jq_query" | nl
 
   echo -e "\nReady For QA:"
-  fetch_all_for_jql "$base_query AND Status IN (\"Awaiting QA\") ORDER BY Rank ASC" "$jq_query" | nl
-
-  echo -e "\nReady For Release:"
-  fetch_all_for_jql "$base_query AND Status IN (\"Ready for release\") ORDER BY Rank ASC" "$jq_query" | nl
+  fetch_all_for_jql "$base_query AND Status IN (Testing) ORDER BY Rank ASC" "$jq_query" | nl
 
   echo -e "\nOther:"
-  fetch_all_for_jql "$base_query AND Status NOT IN (Reported, \"To Do\", \"In Progress\", \"Awaiting QA\", \"Ready for release\", Done, Resolved, Closed) ORDER BY Rank ASC" "$jq_query" | nl
+  fetch_all_for_jql "$base_query AND Status NOT IN (Registered, \"In Progress\", Testing, Done, Resolved, Closed) ORDER BY Rank ASC" "$jq_query" | nl
 
   echo -e "\nDone:"
   fetch_all_for_jql "$base_query AND Status IN (Done, Resolved, Closed) ORDER BY Rank ASC" "$jq_query" | nl
