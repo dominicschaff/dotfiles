@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # This access the Jira board and can do various actions on the boards and tickets.
-
+DISABLE_END=1
+TIME_ONLY=1
 source ~/dotfiles/bash_library.sh
 
 JIRA_CONFIG="$HOME/.jira.json"
