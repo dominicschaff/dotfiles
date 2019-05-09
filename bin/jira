@@ -8,7 +8,7 @@ JIRA_CONFIG="$HOME/.jira.json"
 
 if [ ! -f "$JIRA_CONFIG" ]; then
   log_error "File does not exist: $JIRA_CONFIG"
-  cat - > $JIRA_CONFIG <<EOF
+  cat - > "$JIRA_CONFIG" <<EOF
 {
   "default": "name",
   "name": {
@@ -28,18 +28,18 @@ EOF
   exit 1
 fi
 
-check_file_exists $JIRA_CONFIG
+check_file_exists "$JIRA_CONFIG"
 
 JQ_GET_DEFAULT=".default"
 
 if [ -z "$JIRA" ]; then
-  JIRA="$(cat $JIRA_CONFIG | jq -r "$JQ_GET_DEFAULT")"
+  JIRA="$(jq -r "$JQ_GET_DEFAULT" "$JIRA_CONFIG")"
 fi
 
-jira_auth="$(cat $JIRA_CONFIG | jq -r "\"\(.$JIRA.auth)\"")"
-jira_base="$(cat $JIRA_CONFIG | jq -r "\"\(.$JIRA.base)\"")"
-jira_project="$(cat $JIRA_CONFIG | jq -r "\"\(.$JIRA.project)\"")"
-jira_user="$(cat $JIRA_CONFIG | jq -r "\"\(.$JIRA.user)\"")"
+jira_auth="$(jq -r "\"\(.$JIRA.auth)\"" "$JIRA_CONFIG")"
+jira_base="$(jq -r "\"\(.$JIRA.base)\"" "$JIRA_CONFIG")"
+jira_project="$(jq -r "\"\(.$JIRA.project)\"" "$JIRA_CONFIG")"
+jira_user="$(jq -r "\"\(.$JIRA.user)\"" "$JIRA_CONFIG")"
 
 check_not_null "$jira_auth"
 check_not_null "$jira_base"
@@ -62,14 +62,14 @@ urlencode() {
 fetch_all_for_jql()
 {
   JQL="$(urlencode "$1")"
-  raw_data_previous="$(curl -s -u "$jira_auth" -H 'Content-Type: application/json' $jira_base"/rest/api/2/search?jql=$JQL")"
+  raw_data_previous="$(curl -s -u "$jira_auth" -H 'Content-Type: application/json' "$jira_base/rest/api/2/search?jql=$JQL")"
 
   echo "$raw_data_previous" | jq -r "$2" 2>/dev/null
 
   total="$(echo "$raw_data_previous" | jq -r '. | "\(.total)"')"
   if [[ $total -ge 50 ]]; then
-    for i in $(seq 50 50 $total); do
-      curl -s -u "$jira_auth" -H 'Content-Type: application/json' $jira_base"/rest/api/2/search?jql=$JQL&startAt=$i" | jq -r "$2" 2>/dev/null
+    for i in $(seq 50 50 "$total"); do
+      curl -s -u "$jira_auth" -H 'Content-Type: application/json' "$jira_base/rest/api/2/search?jql=$JQL&startAt=$i" | jq -r "$2" 2>/dev/null
     done
   fi
 }
@@ -79,8 +79,8 @@ fetch_all_for_jql()
 ################################################################################
 run_query()
 {
-  query="$(cat $JIRA_CONFIG | jq -r ".queries.$1.query" | sed "s/##PROJECT##/$jira_project/" | sed "s/##USER##/$jira_user/")"
-  jql="$(cat $JIRA_CONFIG | jq -r ".queries.$1.jq")"
+  query="$(jq -r ".queries.$1.query" "$JIRA_CONFIG" | sed "s/##PROJECT##/$jira_project/" | sed "s/##USER##/$jira_user/")"
+  jql="$(jq -r ".queries.$1.jq" "$JIRA_CONFIG")"
   check_not_null "$query"
   check_not_null "$jql"
   fetch_all_for_jql "$query" "$jql"
@@ -194,7 +194,7 @@ assign_to_me()
 ################################################################################
 file_upload()
 {
-  curl -s -u "$jira_auth" -X POST -H "X-Atlassian-Token: nocheck" -F "file=@$2" $jira_base/rest/api/2/issue/$1/attachments > /dev/null
+  curl -s -u "$jira_auth" -X POST -H "X-Atlassian-Token: nocheck" -F "file=@$2" "$jira_base/rest/api/2/issue/$1/attachments" > /dev/null
 }
 
 ################################################################################
@@ -212,7 +212,7 @@ case "$1" in
   resolved) move_to_resolved "$2" ;;
   resolved_failed) move_to_resolved_failed "$2" ;;
   upload) file_upload "$2" "$3" ;;
-  done) tickets_done ;;
+  'done') tickets_done ;;
   all) all_open_tickets ;;
   counts) counts ;;
   get) get_tickets ;;
