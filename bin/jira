@@ -114,7 +114,7 @@ counts()
 ################################################################################
 my_board()
 {
-  base_query="(Sprint in openSprints() AND project = $jira_project) AND (status in (Done, Resolved, Closed) AND resolutiondate > startOfWeek() OR status not in (Done, Resolved, Closed)) and assignee = \"$jira_user\""
+  base_query="(Sprint in openSprints() AND project = $jira_project AND and assignee = \"$jira_user\""
 
   jq_query='.issues[] | "\(.key): \(.fields.summary)"'
 
