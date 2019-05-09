@@ -63,12 +63,12 @@ fetch_all_for_jql()
   JQL="$(urlencode "$1")"
   raw_data_previous="$(curl -s -u "$jira_auth" -H 'Content-Type: application/json' $jira_base"/rest/api/2/search?jql=$JQL")"
 
-  echo "$raw_data_previous" | jq -r "$2"
+  echo "$raw_data_previous" | jq -r "$2" 2>/dev/null
 
   total="$(echo "$raw_data_previous" | jq -r '. | "\(.total)"')"
   if [[ $total -ge 50 ]]; then
     for i in $(seq 50 50 $total); do
-      curl -s -u "$jira_auth" -H 'Content-Type: application/json' $jira_base"/rest/api/2/search?jql=$JQL&startAt=$i" | jq -r "$2"
+      curl -s -u "$jira_auth" -H 'Content-Type: application/json' $jira_base"/rest/api/2/search?jql=$JQL&startAt=$i" | jq -r "$2" 2>/dev/null
     done
   fi
 }
@@ -114,13 +114,13 @@ counts()
 ################################################################################
 my_board()
 {
-  base_query="(Sprint in openSprints() AND project = $jira_project AND and assignee = \"$jira_user\""
+  base_query="(Sprint in openSprints() AND project = $jira_project) AND assignee = \"$jira_user\""
 
   jq_query='.issues[] | "\(.key): \(.fields.summary)"'
 
 
-  echo "Todo:"
-  fetch_all_for_jql "$base_query AND Status IN (Reported, \"To Do\") ORDER BY Rank ASC" "$jq_query" | nl
+  echo "To Do:"
+  fetch_all_for_jql "$base_query AND Status IN (Registered) ORDER BY Rank ASC" "$jq_query" | nl
 
   echo -e "\nIn Progress:"
   fetch_all_for_jql "$base_query AND Status IN (\"In Progress\") ORDER BY Rank ASC" "$jq_query" | nl
