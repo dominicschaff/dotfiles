@@ -201,17 +201,18 @@ view_ticket()
 {
   data="$(curl -s -u "$jira_auth" -H "X-Atlassian-Token: nocheck" "$jira_base/rest/api/2/issue/$1")"
 
-  {
+  output="$(
     echo "# $1 : $(echo "$data" | jq -r '.fields.summary')"
     echo "$data" | jq -r '.fields.description' | sed 's/^h1./##/g'
 
     echo
     echo "# Comments"
     echo "$data" | jq -r '.fields.comment.comments[] | "## \(.updated) : \(.author.name)\n\(.body)"'
-  } | if hash mdless 2>/dev/null; then
-    cat - | mdless -P
+  )"
+  if hash mdv 2>/dev/null; then
+    mdv <(echo "$output")
   else
-    cat -
+    echo "$output"
   fi
 }
 
