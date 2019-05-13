@@ -166,22 +166,6 @@ comment()
 }
 
 ################################################################################
-# Move provided to Resolved with successfull type                              #
-################################################################################
-move_to_resolved()
-{
-  curl -s -u "$jira_auth" -X POST --data "{\"fields\": {\"resolution\": {\"name\": \"Data Request Processed\"}},\"transition\": {\"id\": \"5\"}}" -H "Content-Type: application/json" "$jira_base/rest/api/2/issue/$1/transitions" > /dev/null
-}
-
-################################################################################
-# Move provided to Resolved with failure type                                  #
-################################################################################
-move_to_resolved_failed()
-{
-  curl -s -u "$jira_auth" -X POST --data "{\"fields\": {\"resolution\": {\"name\": \"Data Request Rejected\"}},\"transition\": {\"id\": \"5\"}}" -H "Content-Type: application/json" "$jira_base/rest/api/2/issue/$1/transitions" > /dev/null
-}
-
-################################################################################
 # Move provided to Resolved with failure type                                  #
 ################################################################################
 assign_to_me()
@@ -222,14 +206,12 @@ view_ticket()
 case "$1" in
   mine) mine ;;
   in_progress)
-  shift 1
+    shift 1
     for f in "$@"; do
       move_to_in_progress "$f"
     done
-  ;;
+    ;;
   comment) comment "$2" "$3" ;;
-  resolved) move_to_resolved "$2" ;;
-  resolved_failed) move_to_resolved_failed "$2" ;;
   upload) file_upload "$2" "$3" ;;
   'done') tickets_done ;;
   all) all_open_tickets ;;
