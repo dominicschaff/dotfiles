@@ -126,7 +126,7 @@ my_board()
   echo -e "\nIn Progress:"
   fetch_all_for_jql "$base_query AND Status IN (\"In Progress\") ORDER BY Rank ASC" "$jq_query" | nl
 
-  echo -e "\nReady For QA:"
+  echo -e "\nTesting:"
   fetch_all_for_jql "$base_query AND Status IN (Testing) ORDER BY Rank ASC" "$jq_query" | nl
 
   echo -e "\nOther:"
