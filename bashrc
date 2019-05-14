@@ -7,7 +7,7 @@ export HISTSIZE=-1
 export HISTFILESIZE=-1
 export CLICOLOR=1
 export TIMEFORMAT='r: %R, u: %U, s: %S'
-
+export MDV_THEME='733.3399'
 export DOTFILES="$HOME/dotfiles"
 GIT_ENABLE=''
 
