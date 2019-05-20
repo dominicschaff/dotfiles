@@ -194,7 +194,7 @@ view_ticket()
     echo "$data" | jq -r '.fields.comment.comments[] | "## \(.updated) : \(.author.name)\n\(.body)"'
   )"
   if hash mdv 2>/dev/null; then
-    mdv <(echo "$output")
+    echo "$output" | mdv -
   else
     echo "$output"
   fi
