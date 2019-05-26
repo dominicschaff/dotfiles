@@ -60,17 +60,17 @@ stopMotion()
 
 scale()
 {
-  ffmpeg -i $2 -vf scale=$1 $3
+  ffmpeg -i "$2" -vf scale=$1 "$3"
 }
 
 scale720()
 {
-  scale "trunc(oh*a/2)*2:720" $1 $2
+  scale "trunc(oh*a/2)*2:720" "$1" "$2"
 }
 
 scale1080()
 {
-  scale "trunc(oh*a/2)*2:1080" $1 $2
+  scale "trunc(oh*a/2)*2:1080" "$1" "$2"
 }
 
 stop_motion_complete_1080()
