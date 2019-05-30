@@ -8,8 +8,8 @@ do_path()
   log_info "$1"
   name="$(basename "$1")"
 
-  files="$(find "$1" -type f -depth 1 | sort | while read -r line; do echo "\"$(basename "$line")\""; done | jq -cs .)"
-  directories="$(find "$1" -type d -depth 1 | sort | while read -r line; do do_path "$line"; done | jq -cs .)"
+  files="$(find "$1" -type f -maxdepth 1 | sort | while read -r line; do echo "\"$(basename "$line")\""; done | jq -cs .)"
+  directories="$(find "$1" -type d -maxdepth 1 | sort | while read -r line; do do_path "$line"; done | jq -cs .)"
 
   jq -n \
     --arg name "$name" \
