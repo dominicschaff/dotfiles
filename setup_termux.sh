@@ -9,6 +9,7 @@ apt install \
   command-not-found \
   coreutils curl \
   ffmpeg \
+  findutils \
   imagemagick \
   jq \
   less \
