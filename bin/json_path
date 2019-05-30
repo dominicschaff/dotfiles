@@ -9,7 +9,7 @@ do_path()
   name="$(basename "$1")"
 
   files="$(find "$1" -maxdepth 1 -type f | sort | while read -r line; do echo "\"$(basename "$line")\""; done | jq -cs .)"
-  directories="$(find "$1" -maxdepth 1 -type d | sort | while read -r line; do do_path "$line"; done | jq -cs .)"
+  directories="$(find "$1" -maxdepth 1 -type d | grep -v "^$1\$" | sort | while read -r line; do do_path "$line"; done | jq -cs .)"
 
   jq -n \
     --arg name "$name" \
