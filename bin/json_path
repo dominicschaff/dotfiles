@@ -1,22 +1,24 @@
-#!/usr/bin/env bash
-TIME_ONLY=1
-LOG_SHORT=1
-source "$DOTFILES/bash_library.sh"
+#!/usr/bin/env python
+# Orriginal script has been taken from:
+#   https://unix.stackexchange.com/questions/164602/how-to-output-the-directory-structure-to-json-format
+# With some modifications.
 
-do_path()
-{
-  log_info "$1"
-  name="$(basename "$1")"
-
-  files="$(find "$1" -maxdepth 1 -type f | sort | while read -r line; do echo "\"$(basename "$line")\""; done | jq -cs .)"
-  directories="$(find "$1" -maxdepth 1 -type d | grep -v "^$1\$" | sort | while read -r line; do do_path "$line"; done | jq -cs .)"
-
-  jq -n \
-    --arg name "$name" \
-    --argjson directories "$directories" \
-    --argjson files "$files" \
-    '{"name": $name,"directories": $directories,"files": $files}'
-}
+import os
 
 
-do_path "."
+def path_hierarchy(path):
+    if os.path.isfile(path):
+        return os.path.getsize(path)
+
+    return {contents: path_hierarchy(os.path.join(path, contents)) for contents in os.listdir(path)}
+
+
+if __name__ == '__main__':
+    import json
+    import sys
+
+    if len(sys.argv) == 1:
+        sys.argv.append(".")
+
+    for i in sys.argv[1:]:
+        print(json.dumps(path_hierarchy(i), sort_keys=True))
