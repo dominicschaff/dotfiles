@@ -178,7 +178,6 @@ get_crop()
   \ffmpeg -i "$1" -t 1 -vf cropdetect -f null - 2>&1 | awk '/crop/ { print $NF }' | tail -1
 }
 
-
 shrink_1080()
 {
   crop="$(\ffmpeg -i "$1" -vf cropdetect -f null -t 60 - 2>&1 | awk '/crop/ { print $NF }' | tail -1)"
@@ -190,4 +189,9 @@ shrink_1080()
     echo -e "\e[36mcropping\e[0m -> $crop"
     \ffmpeg -i "$1" -c:v libx265 -preset veryfast -crf 20 -c:a copy -vf "scale='max(1920,ih)':-2" -vf $crop "$2"
   fi
+}
+
+shrink_1080mp4()
+{
+  ffmpeg -i "$1" -preset veryfast -crf 20 -c:a copy -vf "scale='max(1920,ih)':-2" "$2"
 }
