@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+TIME_ONLY=1
+LOG_SHORT=1
+source "$DOTFILES/bash_library.sh"
+
+do_path()
+{
+  log_info "$1"
+  name="$(basename "$1")"
+
+  files="$(find "$1" -type f -d 1 | sort | while read -r line; do echo "\"$(basename "$line")\""; done | jq -cs .)"
+  directories="$(find "$1" -type d -d 1 | sort | while read -r line; do do_path "$line"; done | jq -cs .)"
+
+  jq -n \
+    --arg name "$name" \
+    --argjson directories "$directories" \
+    --argjson files "$files" \
+    '{"name": $name,"directories": $directories,"files": $files}'
+}
+
+
+do_path "."
