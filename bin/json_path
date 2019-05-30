@@ -1,24 +1,16 @@
 #!/usr/bin/env python
-# Orriginal script has been taken from:
-#   https://unix.stackexchange.com/questions/164602/how-to-output-the-directory-structure-to-json-format
-# With some modifications.
-
-import os
-
-
-def path_hierarchy(path):
-    if os.path.isfile(path):
-        return os.path.getsize(path)
-
-    return {contents: path_hierarchy(os.path.join(path, contents)) for contents in os.listdir(path)}
+from json import dumps
+from os import listdir as ls
+from os.path import isfile, getsize, join
+from sys import argv
 
 
-if __name__ == '__main__':
-    import json
-    import sys
+def walk(p):
+    return getsize(p) if isfile(p) else {n: walk(join(p, n)) for n in ls(p)}
 
-    if len(sys.argv) == 1:
-        sys.argv.append(".")
 
-    for i in sys.argv[1:]:
-        print(json.dumps(path_hierarchy(i), sort_keys=True))
+if len(argv) == 1:
+    argv.append(".")
+
+for p in argv[1:]:
+    print(dumps(walk(p), sort_keys=True, separators=(',', ':')))
