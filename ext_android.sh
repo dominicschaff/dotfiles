@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 alias lc="adb logcat"
 alias android_installed='adb shell "pm list packages -f" | cut -f 2 -d "=" | sort'
 alias adb_refresh='adb shell am broadcast -a android.intent.action.MEDIA_MOUNTED -d file:///sdcard'
@@ -37,40 +39,6 @@ adb_tap()
   adb shell input tap $1 $2
 }
 
-adb_layout()
-{
-  adb exec-out uiautomator dump /dev/tty | sed -e 's/UI hierchary dumped to:.*//' | xmllint --format -
-}
-
-adb_bounds_of()
-{
-  grep "$1" | grep -o 'bounds="[^"]*"' | cut -d'=' -f2 | cut -d'"' -f2
-}
-
-adb_bounds_middle()
-{
-  while read line; do
-    bounds="$(echo "$line" | tr '[' ',' | tr ']' ',')"
-
-    x_start="$(echo "$bounds" | cut -d',' -f 2)"
-    y_start="$(echo "$bounds" | cut -d',' -f 3)"
-    x_end="$(echo "$bounds" | cut -d',' -f 5)"
-    y_end="$(echo "$bounds" | cut -d',' -f 6)"
-
-    echo "$(( (x_end-x_start)/2 + x_start )) $(( (y_end-y_start)/2 + y_start ))"
-  done
-}
-
-adb_click_on()
-{
-  adb_tap $(adb_layout | adb_bounds_of "$1" | adb_bounds_middle)
-}
-
-adb_click_list()
-{
-  adb_tap $(adb_layout | adb_bounds_of "$1" | adb_bounds_middle | head -n1)
-}
-
 current_activity()
 {
   adb shell dumpsys activity activities | grep "mFocusedActivity" | cut -d' ' -f6 | cut -d '/' -f2
@@ -87,7 +55,7 @@ shot()
   adb pull /sdcard/screen.png
   adb shell rm /sdcard/screen.png
   if [ $# -eq 1 ]; then
-    mv screen.png $1.png
+    mv screen.png "$1.png"
   else
     open screen.png
   fi
@@ -115,13 +83,13 @@ kbd()
 adb_launch()
 {
   for a in "$@"; do
-    adb shell monkey -p $a -c android.intent.category.LAUNCHER 1
+    adb shell monkey -p "$a" -c android.intent.category.LAUNCHER 1
   done
 }
 
 div()
 {
-  while read line; do
+  while read -r line; do
     a="$line"
     b="$1"
     echo $((a/b))
@@ -130,30 +98,12 @@ div()
 
 adb_battery()
 {
-# Current Battery Service state:
-#   AC powered: false
-#   USB powered: true
-#   Wireless powered: false
-#   Max charging current: 2000000
-#   Max charging voltage: 4400000
-#   current now: 341000
-#   charge counter: 2668000
-#   Current:341000
-#   status: 2
-#   health: 2
-#   present: true
-#   level: 92
-#   scale: 100
-#   voltage: 4262
-#   temperature: 297
-#   technology: Li-ion
   stats="$(adb shell dumpsys battery)"
-  echo "$stats" | grep powered | sed -e 's/^[ \t]*//'
-  echo "Max amperage: $(echo "$stats" | grep 'Max charging current' | rev | cut -d' ' -f1 | rev | div 1000) mA"
-  echo "Max voltage: $(echo "$stats" | grep 'Max charging voltage' | rev | cut -d' ' -f1 | rev | div 1000) mV"
-  echo "Current current: $(echo "$stats" | grep 'current now' | rev | cut -d' ' -f1 | rev | div 1000) mA"
-  echo "Current level: $(echo "$stats" | grep 'level:' | rev | cut -d' ' -f1 | rev) % : $(echo "$stats" | grep 'scale:' | rev | cut -d' ' -f1 | rev) %"
-  echo "Current current: $(echo "$stats" | grep 'temperature:' | rev | cut -d' ' -f1 | rev | div 10) °"
+  echo "$stats" | grep powered | grep -vi wireless | sed -e 's/^[ \t]*//'
+  echo "Current voltage: $(echo "$stats" | grep 'voltage' | grep -v 'Max' | rev | cut -d' ' -f1 | rev) mV / $(echo "$stats" | grep 'Max charging voltage' | rev | cut -d' ' -f1 | rev | div 1000) mV"
+  echo "Current current: $(echo "$stats" | grep 'current now' | rev | cut -d' ' -f1 | rev | div 1000) mA / $(echo "$stats" | grep 'Max charging current' | rev | cut -d' ' -f1 | rev | div 1000) mA"
+  echo "Current level: $(echo "$stats" | grep 'level:' | rev | cut -d' ' -f1 | rev) % / $(echo "$stats" | grep 'scale:' | rev | cut -d' ' -f1 | rev) %"
+  echo "Current temperature: $(echo "$stats" | grep 'temperature:' | rev | cut -d' ' -f1 | rev | div 10) °"
 }
 
 adb_device_stats()
