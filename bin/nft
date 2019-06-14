@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-while read a; do
+while read -r a; do
   n="$a"
   s="B"
   if [ $n -ge 1024 ]; then
