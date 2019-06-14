@@ -184,14 +184,19 @@ shrink_1080()
 
   if [[ "${crop: -3}" = "0:0" ]]; then
     echo -e "\e[36mno crop found\e[0m -> $crop"
-    \ffmpeg -i "$1" -c:v libx265 -preset veryfast -crf 20 -c:a copy -vf "scale='max(1920,ih)':-2" "$2"
+    \ffmpeg -i "$1" -c:v libx265 -preset veryfast -crf 20 -c:a copy -vf "scale='min(1920,iw)':-2" "$2"
   else
     echo -e "\e[36mcropping\e[0m -> $crop"
-    \ffmpeg -i "$1" -c:v libx265 -preset veryfast -crf 20 -c:a copy -vf "scale='max(1920,ih)':-2" -vf $crop "$2"
+    \ffmpeg -i "$1" -c:v libx265 -preset veryfast -crf 20 -c:a copy -vf "scale='min(1920,iw)':-2" -vf $crop "$2"
   fi
 }
 
 shrink_1080mp4()
 {
-  ffmpeg -i "$1" -preset veryfast -crf 20 -c:a copy -vf "scale='max(1920,ih)':-2" "$2"
+  ffmpeg -i "$1" -preset veryfast -crf 20 -c:a copy -vf "scale=-2:'min(1080,ih)'" "$2"
+}
+
+shrink_1920mp4()
+{
+  ffmpeg -i "$1" -preset veryfast -crf 20 -c:a copy -vf "scale='min(1920,iw)':-2" "$2"
 }
