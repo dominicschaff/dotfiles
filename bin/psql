@@ -70,6 +70,9 @@ class DB(object):
       port=int(port))
     self.i('Connected')
 
+  def disconnect(self):
+    self._conn.close()
+
   def run(self, query):
     if self._conn == None:
       raise ValueError("A connection is required")
@@ -144,7 +147,7 @@ class DB(object):
 
   def i(self, s):
     if self._info:
-      print("[+] %s: %s"%(d.now().time(), s))
+      print("[+] %s: %s"%(d.now().time(), s), file=sys.stderr)
 
   def pc(self, h, d):
     size = [len(c) for c in h]
@@ -249,3 +252,4 @@ if __name__ == '__main__':
     a = a[1:]
   dbObject.connect()
   dbObject.run(a[-1])
+  dbObject.disconnect()

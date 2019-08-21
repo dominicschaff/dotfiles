@@ -8,6 +8,6 @@ while true; do
   for phrase in "$@"; do
     afplay /System/Library/Sounds/Ping.aiff
     say -v Alex "$phrase"
-    sleep 5
+    sleep 1
   done
 done

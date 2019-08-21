@@ -4,13 +4,13 @@ from sty import fg, bg, ef, rs
 import sys
 
 def error(s):
-  print(str(datetime.now().time()) + " : " + fg.red + "[ERROR]" + fg.rs + " " + s, file=sys.stderr)
+  print(fg.red + str(datetime.now().time()) + " : " + "[ERROR]" + fg.rs + " " + s, file=sys.stderr)
 
 def info(s):
-  print(str(datetime.now().time()) + " : " + fg.blue + "[INFO]" + fg.rs + " " + s, file=sys.stderr)
+  print(fg.cyan + str(datetime.now().time()) + " : " + "[INFO]" + fg.rs + " " + s, file=sys.stderr)
 
 def warn(s):
-  print(str(datetime.now().time()) + " : " + fg.yellow + "[WARN]" + fg.rs + " " + s, file=sys.stderr)
+  print(fg.yellow + str(datetime.now().time()) + " : " + "[WARN]" + fg.rs + " " + s, file=sys.stderr)
 
 def show(s):
   print(s, file=sys.stderr)

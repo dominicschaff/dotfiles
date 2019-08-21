@@ -22,9 +22,9 @@ alias h="type"
 alias encrypt='openssl enc -aes-256-cbc -pbkdf2 -salt -in'
 alias decrypt='openssl enc -d -aes-256-cbc -pbkdf2 -salt -in'
 
-alias exts='find . | while read f; do echo "${f##*.}"; done | sed "/^\s*$/d" | sort | uniq -c | sort -rn'
+alias exts='find . -type f | while read f; do echo "${f##*.}"; done | sed "/^\s*$/d" | sort | uniq -c | sort -rn'
 
-alias myip='curl -s "http://whatismyip.akamai.com"'
+alias myip='curl -s -w "\n" "http://whatismyip.akamai.com"'
 
 
 

@@ -102,7 +102,8 @@ adb_battery()
   echo "$stats" | grep powered | grep -vi wireless | sed -e 's/^[ \t]*//'
   echo "Current voltage: $(echo "$stats" | grep 'voltage' | grep -v 'Max' | rev | cut -d' ' -f1 | rev) mV / $(echo "$stats" | grep 'Max charging voltage' | rev | cut -d' ' -f1 | rev | div 1000) mV"
   echo "Current current: $(echo "$stats" | grep 'current now' | rev | cut -d' ' -f1 | rev | div 1000) mA / $(echo "$stats" | grep 'Max charging current' | rev | cut -d' ' -f1 | rev | div 1000) mA"
-  echo "Current level: $(echo "$stats" | grep 'level:' | rev | cut -d' ' -f1 | rev) % / $(echo "$stats" | grep 'scale:' | rev | cut -d' ' -f1 | rev) %"
+  echo "Current level: $(echo "$stats" | grep 'Charge counter' | rev | cut -d' ' -f1 | rev | div 1000) mAh"
+  echo "Battery level: $(echo "$stats" | grep 'level:' | rev | cut -d' ' -f1 | rev) % / $(echo "$stats" | grep 'scale:' | rev | cut -d' ' -f1 | rev) %"
   echo "Current temperature: $(echo "$stats" | grep 'temperature:' | rev | cut -d' ' -f1 | rev | div 10) °"
 }
 
