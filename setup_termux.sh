@@ -14,6 +14,7 @@ apt install \
   jq \
   less \
   libandroid-support \
+  make \
   man \
   openssh \
   openssl \
