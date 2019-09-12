@@ -5,12 +5,14 @@ apt install \
   ack-grep \
   apt \
   bash \
+  bmon \
   bash-completion \
   command-not-found \
   coreutils curl \
   ffmpeg \
   findutils \
   imagemagick \
+  htop \
   jq \
   less \
   libandroid-support \
