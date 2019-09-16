@@ -7,3 +7,4 @@ sty
 certifi
 mutagen
 mdv
+awslogs
