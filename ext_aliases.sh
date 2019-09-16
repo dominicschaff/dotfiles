@@ -26,6 +26,7 @@ alias exts='find . -type f | while read f; do echo "${f##*.}"; done | sed "/^\s*
 
 alias myip='curl -s -w "\n" "http://whatismyip.akamai.com"'
 
+alias local_ip="ifconfig | grep inet | grep broadcast | rev | cut -d' ' -f7 | rev"
 
 
 if hash tree 2>/dev/null; then
