@@ -62,8 +62,8 @@ unbundle()
 
 record_history_to_video()
 {
-  output="~/Desktop/gource.mp4"
-  if [ ! -z "$1" ]; then
+  output="$HOME/gource.mp4"
+  if [[ -n "$1" ]]; then
     output="$1"
   fi
   gource -1920x1080 -o - | ffmpeg -y -r 60 -f image2pipe -vcodec ppm -i - -vcodec libx264 -preset ultrafast -pix_fmt yuv420p -crf 1 -threads 0 -bf 0 "$output"
