@@ -27,6 +27,11 @@ STYLE_UNDERLINE='\e[4m'
 STYLE_BLINK='\e[5m'
 STYLE_INVERSE='\e[7m'
 
+if [[ -n "$SHORT" ]]; then
+  TIME_ONLY=1
+  LOG_SHORT=1
+fi
+
 if [[ -z "$TIME_ONLY" ]]; then
   LOG_DATE="%Y-%m-%d %T"
 else
@@ -45,29 +50,38 @@ fi
 # log_end() -> Log special end type
 ################################################################################
 if [[ -z "$LOG_SHORT" ]]; then
-  __log_to_error() { echo -e "[$(date +"$LOG_DATE")]: $@" >&2; }
-  log_time() { __log_to_error "$@"; }
-  log_debug() { __log_to_error "$CLR_MAGENTA[D]$ALL_CLEAR $@"; }
-  log_ok() { __log_to_error "$CLR_GREEN[P]$ALL_CLEAR $@"; }
-  log_fail() { __log_to_error "$CLR_RED[F]$ALL_CLEAR $@"; }
-  log_info() { __log_to_error "$CLR_CYAN[I]$ALL_CLEAR $@"; }
-  log_error() { __log_to_error "$CLR_RED[E]$ALL_CLEAR $@"; }
-  log_warn() { __log_to_error "$CLR_YELLOW[W]$ALL_CLEAR $@"; }
-  log_end() { __log_to_error "$CLR_MAGENTA[--]$ALL_CLEAR $@"; }
+  __log_to_error() { echo -e "[$(date +"$LOG_DATE")]: $*" >&2; }
+  log_time() { __log_to_error "$*"; }
+  log_debug() { __log_to_error "${CLR_MAGENTA}[D]$ALL_CLEAR $*"; }
+  log_ok() { __log_to_error "${CLR_GREEN}[P]$ALL_CLEAR $*"; }
+  log_fail() { __log_to_error "${CLR_RED}[F]$ALL_CLEAR $*"; }
+  log_info() { __log_to_error "${CLR_CYAN}[I]$ALL_CLEAR $*"; }
+  log_error() { __log_to_error "${CLR_RED}[E]$ALL_CLEAR $*"; }
+  log_warn() { __log_to_error "${CLR_YELLOW}[W]$ALL_CLEAR $*"; }
+  log_end() { __log_to_error "${CLR_MAGENTA}[--]$ALL_CLEAR $*"; }
+  log_yes() { __log_to_error "${CLR_GREEN✔}$ALL_CLEAR"; }
+  log_no() { __log_to_error "${CLR_RED✕}$ALL_CLEAR"; }
 else
   __log_to_error() {
     clr="$1"
     shift 1
-    echo -e "$clr$(date +"$LOG_DATE") :$ALL_CLEAR $@" >&2
+    echo -e "$clr$(date +"$LOG_DATE") : $ALL_CLEAR$*" >&2
   }
-  log_time()  { __log_to_error $CLR_DEFAULT "$@"; }
-  log_debug() { __log_to_error $CLR_MAGENTA "$@"; }
-  log_ok()    { __log_to_error $CLR_GREEN "$@"; }
-  log_fail()  { __log_to_error $CLR_RED "$@"; }
-  log_info()  { __log_to_error $CLR_CYAN "$@"; }
-  log_error() { __log_to_error $CLR_RED "$@"; }
-  log_warn()  { __log_to_error $CLR_YELLOW "$@"; }
-  log_end()   { __log_to_error $CLR_MAGENTA "$@"; }
+  __log_to_error_all_colour() {
+    clr="$1"
+    shift 1
+    echo -e "$clr$(date +"$LOG_DATE") : $*$ALL_CLEAR" >&2
+  }
+  log_time()  { __log_to_error "$CLR_DEFAULT" "$*"; }
+  log_debug() { __log_to_error "$CLR_MAGENTA" "$*"; }
+  log_ok()    { __log_to_error "$CLR_GREEN" "$*"; }
+  log_fail()  { __log_to_error "$CLR_RED" "$*"; }
+  log_info()  { __log_to_error "$CLR_CYAN" "$*"; }
+  log_error() { __log_to_error "$CLR_RED" "$*"; }
+  log_warn()  { __log_to_error "$CLR_YELLOW" "$*"; }
+  log_end()   { __log_to_error "$CLR_MAGENTA" "$*"; }
+  log_yes()   { __log_to_error_all_colour "$CLR_GREEN" "✔"; }
+  log_no()   { __log_to_error_all_colour "$CLR_RED" "✕"; }
 fi
 
 ################################################################################
