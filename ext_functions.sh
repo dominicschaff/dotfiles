@@ -161,3 +161,8 @@ do_merge()
   base="$1"
   convert $@ -background black -flatten "output.$extension"
 }
+
+title()
+{
+   PROMPT_COMMAND="echo -ne \"\033]0;$*\007\""
+}
