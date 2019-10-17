@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+_make()
+{                                                                                                                                                                                         local cur prev opts
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+    if [[ -e Makefile ]]; then
+      opts=$(grep -o '^[^ ]*:' Makefile | cut -d':' -f1 | sort -u)
+    else
+      opts=$()
+    fi
+
+    COMPREPLY=( $(compgen -W "$opts" -- ${cur}) )
+    return 0
+}
+complete -F _make make

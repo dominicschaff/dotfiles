@@ -1,3 +1,9 @@
+#!/usr/bin/env bash
+
+if ! hash ffmpeg 2>/dev/null; then
+  return
+fi
+
 alias ffmpeg="ffmpeg -loglevel 0 -stats"
 
 stitch()

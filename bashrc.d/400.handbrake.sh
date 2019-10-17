@@ -1,3 +1,9 @@
+#!/usr/bin/env bash
+
+if ! hash HandbrakeCLI 2>/dev/null; then
+  return
+fi
+
 allConvert()
 {
     for f in "$@"; do

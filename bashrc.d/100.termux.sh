@@ -1,4 +1,8 @@
+#!/usr/bin/env bash
 
+if [ "$HOSTNAME" != "localhost" ]; then # You are most likely using termux
+  return
+fi
 
 update()
 {
