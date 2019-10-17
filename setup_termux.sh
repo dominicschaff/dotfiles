@@ -7,6 +7,7 @@ apt install \
   bash \
   bmon \
   bash-completion \
+  clang \
   command-not-found \
   coreutils curl \
   ffmpeg \
