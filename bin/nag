@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-source ~/dotfiles/bash_library.sh
+source $BASH_LIB
 
 check_program_exists say afplay
 
