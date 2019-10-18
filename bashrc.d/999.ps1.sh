@@ -73,7 +73,7 @@ if [ -z "$PS1_OVERRIDE" ]; then
     PS1_temp=$PS1_PRE
   fi
   PS1_temp=$PS1_temp'\[$(_exit_code_colour)\]$(date +%T) $(_print_time) \[\e[31m\]\[\e[35m\]\W'
-  if [ $GIT_ENABLE ]; then
+  if hash git 2>/dev/null; then
     export PS1_temp=$PS1_temp'\[$(_git_file_color)\]$(_git_status)'
   fi
   export PS1=$PS1_temp' \[\e[00m\]\$ '
