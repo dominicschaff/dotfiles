@@ -83,6 +83,9 @@ else
   log_yes()   { __log_to_error_all_colour "$CLR_GREEN" "✔"; }
   log_no()   { __log_to_error_all_colour "$CLR_RED" "✕"; }
 fi
+log_progress_start() { echo -en "[$(date +"$LOG_DATE")]: $* " >&2; }
+log_progress() { echo -e "." >&2; }
+log_progress_end() { echo -e "$ALL_CLEAR" >&2; }
 
 ################################################################################
 # Log script execution time
