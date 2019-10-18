@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+if ! hash awk 2>/dev/null; then
+  return
+fi
+
 col_max()
 {
   awk 'BEGIN {max = -1000000000} {if ($1>max) max=$1} END {print max}'

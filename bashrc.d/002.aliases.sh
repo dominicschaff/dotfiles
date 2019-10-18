@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 
 alias cd..="cd .."
 alias ls="ls -GpFh --color --group-directories-first"

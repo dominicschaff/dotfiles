@@ -1,3 +1,10 @@
+#!/usr/bin/env bash
+
+if [ "$(uname)" != "Darwin" ]; then # You are using OS X
+  return
+fi
+
+
 alias top="top -F -R -o cpu"
 
 notify()

@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 apt update
 apt upgrade
 apt install \
@@ -7,6 +9,7 @@ apt install \
   bash \
   bmon \
   bash-completion \
+  clang \
   command-not-found \
   coreutils curl \
   ffmpeg \

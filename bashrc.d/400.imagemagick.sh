@@ -1,3 +1,9 @@
+#!/usr/bin/env bash
+
+if ! hash convert 2>/dev/null; then
+  return
+fi
+
 cut_3_screens()
 {
   for f in "$@"; do

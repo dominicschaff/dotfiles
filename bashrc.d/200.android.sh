@@ -1,5 +1,12 @@
 #!/usr/bin/env bash
 
+if ! hash adb 2>/dev/null; then
+  return
+fi
+
+export PATH="$PATH:$ANDROID_HOME/tools/bin"
+
+
 alias lc="adb logcat"
 alias android_installed='adb shell "pm list packages -f" | cut -f 2 -d "=" | sort'
 alias adb_refresh='adb shell am broadcast -a android.intent.action.MEDIA_MOUNTED -d file:///sdcard'

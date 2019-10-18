@@ -1,3 +1,9 @@
+#!/usr/bin/env bash
+
+if ! hash git 2>/dev/null; then
+  return
+fi
+
 alias g="git status"
 alias gp="git pull"
 alias gc="git commit"
