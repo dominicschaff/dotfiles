@@ -164,5 +164,10 @@ do_merge()
 
 title()
 {
-   PROMPT_COMMAND="echo -ne \"\033]0;$*\007\""
+  PROMPT_COMMAND="echo -ne \"\033]0;$*\007\""
+}
+
+dir_size()
+{
+  du -hsc * 2>/dev/null | sort -h
 }
