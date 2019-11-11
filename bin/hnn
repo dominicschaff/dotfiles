@@ -1,0 +1,39 @@
+#!/usr/bin/env python3
+
+#alpha
+digs = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+
+y,m,d,i = 2019, 10, 21, 1200
+
+def c(x):
+  base = len(digs)
+  if x < 0:
+    raise ValueError("Cannot use negative")
+  elif x == 0:
+    return digs[0]
+
+  digits = []
+
+  while x:
+    digits.append(digs[int(x % base)])
+    x = int(x / base)
+  digits.reverse()
+  return ''.join(digits)
+
+def f(y, m, d, i):
+  return ''.join([c(y-2016), c(m), c(d), '-', c(i)])
+
+
+if __name__ == '__main__':
+  from sys import argv
+  from datetime import date
+
+  if len(argv) == 2:
+    d = date.today()
+    print(f(d.year, d.month, d.day, int(argv[1])))
+  elif len(argv) == 5:
+    print(f(argv[1], argv[2], argv[3], argv[4]))
+  else:
+    print("Wrong Usage")
+#print(f(y,m,d,i))
+
