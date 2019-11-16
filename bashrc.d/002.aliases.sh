@@ -13,6 +13,7 @@ alias reload="source ~/.bashrc"
 alias termsize='echo $COLUMNS x $LINES'
 alias web="python3 -m http.server"
 alias st='top -o VIRT,RES,SHR,%CPU,%MEM,TIME+,CMDLINE -q'
+alias m='mv -i'
 
 alias weather="curl 'http://wttr.in/cape_town'"
 alias moon="curl 'http://wttr.in/Moon'"
