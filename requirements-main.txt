@@ -8,3 +8,4 @@ certifi
 mutagen
 mdv
 awslogs
+WeasyPrint
