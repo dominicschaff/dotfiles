@@ -7,7 +7,7 @@ maps_last_update()
 
 wget_quiet()
 {
-  wget -c --quiet --show-progress "$1" -O "$2"
+  wget --quiet --show-progress "$1" -O "$2"
 }
 
 maps_run()
