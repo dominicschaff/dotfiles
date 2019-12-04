@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+
+# This script is from:
+# https://medium.com/randomcodes/create-star-trails-with-imagemagick-cb4c0227c414
+cp "$1" "$2"
+
+for f in `ls *.JPG`
+do
+  echo "$f"
+  convert "$2" "$f" -gravity center -compose lighten -composite -format jpg "$2"
+done
