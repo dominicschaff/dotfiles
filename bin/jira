@@ -213,13 +213,15 @@ work_time()
   records="$(fetch_all_for_jql "$jql" '.issues[] | "\(.key)"' | while read issue; do
     work_log "$issue"| while read time_log; do
       user="$(echo "$time_log" | jq -r .author)"
-      started="$(echo "$time_log" | jq -r .started)"
-      date_start="$(echo "$started" | cut -c 1-10 | tr -d '-')"
-      time_start="$(echo "$started" | cut -c 12-20)"
-      spent="$(echo "$time_log" | jq -r .spent)"
-      spentSeconds="$(echo "$time_log" | jq -r .spentSeconds)"
-      if [[ $date_start -ge $monday ]]; then
-        echo "$(echo "$started" | cut -c 1-10) - $time_start $spent [$issue] |$spentSeconds"
+      if [[ "$user" == "$jira_user" ]]; then
+        started="$(echo "$time_log" | jq -r .started)"
+        date_start="$(echo "$started" | cut -c 1-10 | tr -d '-')"
+        time_start="$(echo "$started" | cut -c 12-20)"
+        spent="$(echo "$time_log" | jq -r .spent)"
+        spentSeconds="$(echo "$time_log" | jq -r .spentSeconds)"
+        if [[ $date_start -ge $monday ]]; then
+          echo "$(echo "$started" | cut -c 1-10) - $time_start $spent [$issue] |$spentSeconds"
+        fi
       fi
     done
   done | sort)"
