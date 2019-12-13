@@ -208,7 +208,7 @@ work_log()
 
 work_time()
 {
-  monday="$(date -d'last monday' +%Y%m%d)"
+  monday="$(date -d'last sunday' +%Y%m%d)"
   jql='worklogAuthor = currentUser() AND worklogDate >= startOfWeek()'
   records="$(fetch_all_for_jql "$jql" '.issues[] | "\(.key)"' | while read issue; do
     work_log "$issue"| while read time_log; do
