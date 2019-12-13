@@ -200,6 +200,33 @@ view_ticket()
   fi
 }
 
+work_log()
+{
+  data="$(curl -s -u "$jira_auth" -H "X-Atlassian-Token: nocheck" "$jira_base/rest/api/2/issue/$1/worklog")"
+  echo "$data" | jq -rc '.worklogs[] | {author:.author.name, started:.started, spent:.timeSpent, spentSeconds: .timeSpentSeconds}'
+}
+
+work_time()
+{
+  monday="$(date -d'last monday' +%Y%m%d)"
+  jql='worklogAuthor = currentUser() AND worklogDate >= startOfWeek()'
+  records="$(fetch_all_for_jql "$jql" '.issues[] | "\(.key)"' | while read issue; do
+    work_log "$issue"| while read time_log; do
+      user="$(echo "$time_log" | jq -r .author)"
+      started="$(echo "$time_log" | jq -r .started)"
+      date_start="$(echo "$started" | cut -c 1-10 | tr -d '-')"
+      time_start="$(echo "$started" | cut -c 12-20)"
+      spent="$(echo "$time_log" | jq -r .spent)"
+      spentSeconds="$(echo "$time_log" | jq -r .spentSeconds)"
+      if [[ $date_start -ge $monday ]]; then
+        echo "$(echo "$started" | cut -c 1-10) - $time_start $spent [$issue] |$spentSeconds"
+      fi
+    done
+  done | sort)"
+  echo "Time spent this week: $(echo "$records" | cut -d'|' -f2 | awk '{ sum += $1 } END { printf "%02d:%02d:%02d",sum/3600,sum%3600/60,sum%60 }')"
+  echo "$records" | cut -d'|' -f1
+}
+
 ################################################################################
 # Do the actual work                                                           #
 ################################################################################
@@ -221,6 +248,8 @@ case "$1" in
   assign) assign_to_me "$2" ;;
   query) run_query "$2" ;;
   view) view_ticket "$2" ;;
+  log) work_log "$2" ;;
+  time) work_time ;;
   *)
     echo "Unknown command"
   ;;
