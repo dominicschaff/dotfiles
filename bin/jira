@@ -204,7 +204,7 @@ view_ticket()
 # Do the actual work                                                           #
 ################################################################################
 case "$1" in
-  mine) mine ;;
+  m|mine) mine ;;
   in_progress)
     shift 1
     for f in "$@"; do
@@ -217,10 +217,10 @@ case "$1" in
   all) all_open_tickets ;;
   counts) counts ;;
   get) get_tickets ;;
-  work) my_board ;;
+  w|work) my_board ;;
   assign) assign_to_me "$2" ;;
   query) run_query "$2" ;;
-  view) view_ticket "$2" ;;
+  v|view) view_ticket "$2" ;;
   *)
     echo "Unknown command"
   ;;
