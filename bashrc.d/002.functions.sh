@@ -186,3 +186,16 @@ do_we_have_internet()
     sleep 5
   done
 }
+
+mirror()
+{
+  wget \
+    --mirror \
+    --convert-links \
+    --adjust-extension \
+    --page-requisites \
+    --no-parent \
+    --quiet \
+    --show-progress \
+    "$1"
+}
