@@ -171,3 +171,18 @@ dir_size()
 {
   du -hsc * 2>/dev/null | sort -h
 }
+
+do_we_have_internet()
+{
+  while true; do
+    ping -c 1 -t 3 google.com > /dev/null
+    if [[ $? == 0 ]]; then
+      echo 'We are connected'
+      say "We have the internets"
+      return
+    else
+      echo "No internet"
+    fi
+    sleep 5
+  done
+}
