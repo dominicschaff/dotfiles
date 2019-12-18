@@ -93,22 +93,22 @@ stop_motion_complete_1080()
     scale1080 "$f" "scaled-$(printf "%03d" $i).jpg"
     i=$((i+1))
   done
-  stopMotion 8 "scaled-%3d.jpg" "$2-8.mp4"
-  stopMotion 15 "scaled-%3d.jpg" "$2-15.mp4"
-  stopMotion 24 "scaled-%3d.jpg" "$2-24.mp4"
-  stopMotion 30 "scaled-%3d.jpg" "$2-30.mp4"
-  hand -i "$2-8.mp4" -o "$2-8.mp4"
-  hand -i "$2-15.mp4" -o "$2-15.m4v"
-  hand -i "$2-24.mp4" -o "$2-24.m4v"
-  hand -i "$2-30.mp4" -o "$2-30.m4v"
-  rm scaled-*.jpg
+  stopMotion 8 "scaled-%3d.jpg" "temp-8.mp4"
+  stopMotion 15 "scaled-%3d.jpg" "temp-15.mp4"
+  stopMotion 24 "scaled-%3d.jpg" "temp-24.mp4"
+  stopMotion 30 "scaled-%3d.jpg" "temp-30.mp4"
+  ffmpeg -i "temp-8.mp4" -vcodec libx264 -vf "pad=ceil(iw/2)*2:ceil(ih/2)*2" -pix_fmt yuv420p -qp 25 "$2p-8.mp4"
+  ffmpeg -i "temp-15.mp4" -vcodec libx264 -vf "pad=ceil(iw/2)*2:ceil(ih/2)*2" -pix_fmt yuv420p -qp 25 "$2-15.mp4"
+  ffmpeg -i "temp-24.mp4" -vcodec libx264 -vf "pad=ceil(iw/2)*2:ceil(ih/2)*2" -pix_fmt yuv420p -qp 25 "$2-24.mp4"
+  ffmpeg -i "temp-30.mp4" -vcodec libx264 -vf "pad=ceil(iw/2)*2:ceil(ih/2)*2" -pix_fmt yuv420p -qp 25 "$2-30.mp4"
+  rm scaled-*.jpg temp-*.mp4
 }
 
 gifConvert()
 {
     for f in *.gif; do
         ffmpeg -i "$f" -c:v libvpx -crf 12 -b:v 500K "${f%.*}.webm"
-        hand -i "${f%.*}.webm" -o "${f%.*}.m4v"
+        convertMp4 "${f%.*}.webm"
         rm "${f%.*}.webm"
     done
 }
