@@ -52,3 +52,13 @@ core_count()
 {
   sysctl -n hw.ncpu
 }
+
+
+power_usage()
+{
+  data="$(system_profiler SPPowerDataType)"
+  amps="$(echo "$data" | grep Amperage | rev | cut -d' ' -f1 | rev)"
+  volts="$(echo "$data" | grep Voltage | rev | cut -d' ' -f1 | rev)"
+  usage="$(echo "scale=2; $volts/1000.0 * $amps/1000.0" | bc)"
+  echo "Power usage: $usage"
+}

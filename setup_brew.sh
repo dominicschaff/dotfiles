@@ -26,11 +26,9 @@ brew install \
   htop \
   imagemagick \
   jq \
-  jq \
   less \
   make \
   mdp \
-  openssl \
   openssl \
   openssl@1.1 \
   pandoc \
