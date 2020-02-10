@@ -23,6 +23,7 @@ apt install \
   man \
   openssh \
   openssl \
+  pkg-config \
   pwgen \
   python \
   readline \
