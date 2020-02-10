@@ -77,16 +77,6 @@ line()
   printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' -
 }
 
-pip3_install()
-{
-  pip3 install --user --upgrade -r ~/dotfiles/requirements-main.txt
-}
-
-pip3_install_extra()
-{
-  pip3 install --user --upgrade -r ~/dotfiles/requirements-extra.txt
-}
-
 last_monday()
 {
   date -d'last week last monday' +%Y-%m-%d

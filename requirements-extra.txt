@@ -1,5 +1,0 @@
-Pillow
-matplotlib
-Shapely
-pyflakes
-pycodestyle
