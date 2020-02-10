@@ -1,7 +1,6 @@
 awscli
 awslogs
 certifi
-matplotlib
 mdv
 mutagen
 pg8000
@@ -9,7 +8,6 @@ Pillow
 pycodestyle
 pyflakes
 qrcode
-Shapely
 sty
 termcolor
 virtualenv
