@@ -189,3 +189,21 @@ mirror()
     --show-progress \
     "$1"
 }
+
+fib()
+{
+  n=$1
+  if [[ $n -lt 2 ]]; then
+    echo $n
+    return
+  fi
+  a=0
+  b=1
+  c=$((a+b))
+  for (( i = 1; i < n; i++ )); do
+    c=$((a+b))
+    a=$b
+    b=$c
+  done
+  echo $c
+}
