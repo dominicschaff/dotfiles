@@ -206,3 +206,9 @@ shrink_1920mp4()
 {
   ffmpeg -i "$1" -preset veryfast -crf 20 -c:a copy -vf "scale='min(1920,iw)':-2" "$2"
 }
+
+overlay()
+{
+  ffmpeg -i "$1" -i "$2" -filter_complex "overlay=(main_w-overlay_w)/2:(main_h-overlay_h)/2" "$3"
+}
+
