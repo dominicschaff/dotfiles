@@ -2,26 +2,42 @@
 TOKEN="$(cat $HOME/.bot.token)"
 PREVIOUS_UPDATE="$HOME/.bot.lastupdate"
 URL='https://api.telegram.org/bot'
-PEOPLE=~/people.bot
+PEOPLE=~/.bot.people
+
+getPerson(){
+  grep "$1" $PEOPLE | head -n1 | cut -d':' -f2
+}
+
+pe()
+{
+  if ! grep -q "$1" $PEOPLE ; then
+    echo "Person not found: $1"
+    exit 1
+  fi
+}
 
 getMe() {
     curl -s "$URL$TOKEN/getMe" | jq -r '"\(.result.first_name) - \(.result.username)"'
 }
 
 sendMessage() {
-    curl -s "$URL$TOKEN/sendMessage" -d chat_id="$1" -d text="$2" -d parse_mode="Markdown" | jq '.ok'
+  pe "$1"
+  curl -s "$URL$TOKEN/sendMessage" -d chat_id="$(getPerson "$1")" -d text="$2" -d parse_mode="Markdown" | jq '.ok'
 }
 
 sendPhoto() {
-    curl -s "$URL$TOKEN/sendPhoto" -F chat_id="$1" -F photo="@$2" | jq '.ok'
+  pe "$1"
+  curl -s "$URL$TOKEN/sendPhoto" -F chat_id="$(getPerson "$1")" -F photo="@$2" | jq '.ok'
 }
 
 sendDocument() {
-    curl -s "$URL$TOKEN/sendDocument" -F chat_id="$1" -F document="@$2" | jq '.ok'
+  pe "$1"
+  curl -s "$URL$TOKEN/sendDocument" -F chat_id="$(getPerson "$1")" -F document="@$2" | jq '.ok'
 }
 
 sendLocation() {
-    curl -s "$URL$TOKEN/sendLocation" -d chat_id="$1" -d latitude="$2" -d longitude="$3" | jq '.ok'
+  pe "$1"
+  curl -s "$URL$TOKEN/sendLocation" -d chat_id="$(getPerson "$1")" -d latitude="$2" -d longitude="$3" | jq '.ok'
 }
 
 getUpdates() {
@@ -47,32 +63,41 @@ getUpdates() {
 
 case $1 in
     me)
-        getMe
-        ;;
-    msg)
-        sendMessage $2 "$3"
-        ;;
-    img)
-        sendPhoto $2 "$3"
-        ;;
-    doc)
-        sendDocument $2 "$3"
-        ;;
-    loc)
-        sendLocation $2 "$3" "$4"
-        ;;
-    get)
-        getUpdates $2
-        ;;
-    show)
-        if [ -e $PEOPLE ]; then
-            echo "People:"
-            cat $PEOPLE
-        else
-            echo "No People Saved"
-        fi
-        ;;
+      getMe
+      ;;
+    m|msg)
+      sendMessage $2 "$3"
+      ;;
+    i|img)
+      sendPhoto $2 "$3"
+      ;;
+    f|doc)
+      sendDocument $2 "$3"
+      ;;
+    l|loc)
+      sendLocation $2 "$3" "$4"
+      ;;
+    u|get)
+      getUpdates $2
+      ;;
+    p|people)
+      if [ -e $PEOPLE ]; then
+        echo "People:"
+        cat $PEOPLE
+      else
+        echo "No People Saved"
+      fi
+      ;;
+    h|help)
+      echo "me - Get info about the current bot"
+      echo "m|msg <person_id> 'message' - send a message"
+      echo "i|img <person_id> path - send an image"
+      echo "f|doc <person_id> path - send a document"
+      echo "l|loc <person_id> <latitude> <longitude> - send a location"
+      echo "p|people - list people we can talk to"
+      echo "uget|* - get all unreceived messages"
+      ;;
     *)
-        getUpdates 0
-        ;;
+      getUpdates 0
+      ;;
 esac
