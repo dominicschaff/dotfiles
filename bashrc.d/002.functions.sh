@@ -181,8 +181,10 @@ mirror()
 {
   wget \
     --mirror \
+    --recursive \
     --convert-links \
     --adjust-extension \
+    --span-hosts \
     --page-requisites \
     --no-parent \
     --quiet \
