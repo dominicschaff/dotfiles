@@ -1,10 +1,11 @@
+syntax enable
 syntax on                              " Enable the syntax highlighting
 filetype plugin indent on              " Allow indenting, and file type detection
 
 let mapleader=","                      " Change the leader character to a ,
 
 "set modelines=0                       " I cannot remember
-set nocompatible                       " Disable the vi backwars compatibility
+set nocompatible                       " Disable the vi backwards compatibility
 set number                             " Enables the line numbering
 set tabstop=2                          " Sets the tabstop to 4 characters
 set shiftwidth=2                       " Allows for backspace of 4 characters
@@ -45,8 +46,17 @@ colorscheme molokai                    " What should the colorscheme be
 set showcmd                            " show last used command
 set lazyredraw                         " speed up the redraw behaviour
 set showmatch                          " Highlight matching bracket
+set path+=**                           " search sub directories for files
+set wildmenu                           " enable file menu for multi options
+
+" File browser Settings
+let g:netrw_banner=0                   " Disable banner
+let g:netrw_altv=1                     " open splits to the right
+let g:netrw_liststyle=3                " tree view
 
 " Setup some keymaps
+
+nnoremap <leader>top :-1read $HOME/.vim/snippets/top.py<CR>
 
 " Switch the paste toggle
 set pastetoggle=<F4>
