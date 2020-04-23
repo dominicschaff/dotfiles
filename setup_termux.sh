@@ -3,37 +3,39 @@
 apt update
 apt upgrade
 apt install \
-  aria2 \
   ack-grep \
   apt \
+  aria2 \
   bash \
-  bmon \
   bash-completion \
+  bmon \
   clang \
   command-not-found \
-  coreutils curl \
+  coreutils \
+  curl \
   ffmpeg \
   findutils \
-  imagemagick \
+  gawk \
+  git \
   htop \
+  imagemagick \
   jq \
   less \
-  libandroid-support \
   make \
   man \
+  nmap \
   openssh \
   openssl \
-  pkg-config \
   pwgen \
   python \
   readline \
   sed \
   tar \
   termux-api \
+  termux-exec \
   termux-tools \
   vim \
-  wget \
-  termux-exec
+  wget
 
 touch ~/.hushlogin
 mkdir -p ~/.termux
