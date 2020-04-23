@@ -16,7 +16,6 @@ maps_run()
   wget_quiet "https://repo1.maven.org/maven2/com/graphhopper/graphhopper-web/0.13.0/$TOOLS" $TOOLS &
   wget_quiet "https://download.geofabrik.de/africa/south-africa-latest.osm.pbf" area.osm.pbf &
   wget_quiet "http://download.mapsforge.org/maps/v5/africa/south-africa-and-lesotho.map" area.map &
-  wget_quiet "http://download.openandromaps.org/mapsV4/africa/SouthAfrica.zip" SouthAfrica.zip &
 
   wait
 
