@@ -37,6 +37,7 @@ brew install \
   python3 \
   scrcpy \
   shellcheck \
+  the_silver_searcher \
   tmux \
   tree \
   vim \

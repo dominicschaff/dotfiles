@@ -30,6 +30,7 @@ apt install \
   python \
   readline \
   sed \
+  silversearcher-ag \
   tar \
   termux-api \
   termux-exec \
