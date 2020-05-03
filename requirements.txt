@@ -10,7 +10,6 @@ pyflakes
 qrcode
 sty
 termcolor
-virtualenv
 WeasyPrint
 youtube-dl
 
