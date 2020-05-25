@@ -22,6 +22,7 @@ alias gds="git diff --stat"
 alias gcr="git clone --recursive"
 alias gb="cd \$(git rev-parse --show-toplevel)"
 alias gr="git remote -v"
+alias gfl='git log --follow -p --'
 
 gn()
 {
