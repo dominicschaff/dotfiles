@@ -12,4 +12,5 @@ sty
 termcolor
 WeasyPrint
 youtube-dl
+diagrams
 

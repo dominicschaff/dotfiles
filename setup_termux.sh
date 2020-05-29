@@ -17,6 +17,7 @@ apt install \
   findutils \
   gawk \
   git \
+  graphviz \
   htop \
   imagemagick \
   jq \
