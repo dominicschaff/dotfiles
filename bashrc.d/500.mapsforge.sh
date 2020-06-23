@@ -23,7 +23,8 @@ maps_run()
 graphhopper:
   datareader.file: area.osm.pbf
   graph.location: area
-  graph.flag_encoders: foot,car
+  graph.flag_encoders: car,foot
+  graph.encoded_values: road_class,road_class_link,road_environment,max_speed,road_access,surface,toll,track_type
   prepare.min_network_size: 1
   prepare.min_one_way_network_size: 1
   routing.non_ch.max_waypoint_distance: 1000000
@@ -32,11 +33,12 @@ graphhopper:
     - name: car
       vehicle: car
       weighting: fastest
-      turn_costs: true
-  profiles:
     - name: foot
       vehicle: foot
       weighting: fastest
+  profiles_ch:
+    - profile: car
+    - profile: foot
 server:
   application_connectors:
   - type: http
