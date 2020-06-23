@@ -2,7 +2,7 @@
 
 maps_last_update()
 {
-  curl -s -I http://download.mapsforge.org/maps/v5/africa/south-africa-and-lesotho.map | grep 'Last-Modified'
+  curl -s -I --continue http://download.mapsforge.org/maps/v5/africa/south-africa-and-lesotho.map | grep 'Last-Modified'
 }
 
 wget_quiet()
@@ -12,8 +12,8 @@ wget_quiet()
 
 maps_run()
 {
-  TOOLS="graphhopper-web-0.13.0.jar"
-  wget_quiet "https://repo1.maven.org/maven2/com/graphhopper/graphhopper-web/0.13.0/$TOOLS" $TOOLS &
+  TOOLS="graphhopper.jar"
+  wget_quiet "https://repo1.maven.org/maven2/com/graphhopper/graphhopper-web/1.0/graphhopper-web-1.0.jar" $TOOLS &
   wget_quiet "https://download.geofabrik.de/africa/south-africa-latest.osm.pbf" area.osm.pbf &
   wget_quiet "http://download.mapsforge.org/maps/v5/africa/south-africa-and-lesotho.map" area.map &
 
@@ -23,25 +23,38 @@ maps_run()
 graphhopper:
   datareader.file: area.osm.pbf
   graph.location: area
-  graph.flag_encoders: car,foot|turn_costs=true
-  prepare.ch.weightings: fastest
+  graph.flag_encoders: foot,car
   prepare.min_network_size: 1
   prepare.min_one_way_network_size: 1
   routing.non_ch.max_waypoint_distance: 1000000
   graph.dataaccess: RAM_STORE
+  profiles:
+    - name: car
+      vehicle: car
+      weighting: fastest
+      turn_costs: true
+  profiles:
+    - name: foot
+      vehicle: foot
+      weighting: fastest
 server:
-  applicationConnectors:
+  application_connectors:
   - type: http
     port: 8989
-    bindHost: localhost
-  requestLog:
+    bind_host: localhost
+  request_log:
       appenders: []
-  adminConnectors:
+  admin_connectors:
   - type: http
     port: 8990
-    bindHost: localhost
+    bind_host: localhost
 EOF
+  rm -rf area
   java -Xmx4000m -Xms1000m -server -jar "$TOOLS" import config.yml
 
-  rm config.yml area.osm.pbf "$TOOLS"
+  if [[ "$1" == "keep" ]]; then
+    echo "Not deleting base files"
+  else
+    rm config.yml area.osm.pbf "$TOOLS"
+  fi
 }
