@@ -137,9 +137,9 @@ au InsertLeave  * call SetColour()
 au BufWritePost  * call SetColour()
 
 autocmd BufWritePre *.scala :%s/\s\+$//e
-autocmd FileType python setlocal tabstop=2
-autocmd FileType python setlocal shiftwidth=2
-autocmd FileType python setlocal softtabstop=2
+autocmd FileType python setlocal tabstop=4
+autocmd FileType python setlocal shiftwidth=4
+autocmd FileType python setlocal softtabstop=4
 
 " Make the exit of insert mode faster
 set timeoutlen=1000 ttimeoutlen=0
