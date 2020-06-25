@@ -148,3 +148,4 @@ set timeoutlen=1000 ttimeoutlen=0
 set completeopt=menuone,longest
 set magic
 set autoread
+let g:python_highlight_all = 1
