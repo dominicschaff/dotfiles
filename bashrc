@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-export DOTFILES="$HOME/dotfiles"
+export DOTFILES="$(dirname "${BASH_SOURCE[0]}")"
 
 for FN in $DOTFILES/bashrc.d/*.sh ; do
     source "$FN"
