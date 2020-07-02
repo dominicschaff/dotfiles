@@ -620,7 +620,7 @@
     <context name="Desktop">
       <mousebind button="Middle" action="Press">
         <action name="Execute">
-           <command>lxterminal</command>
+          <command>lxterminal</command>
         </action>
       </mousebind>
       <mousebind button="Button8" action="Press">
