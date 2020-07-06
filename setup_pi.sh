@@ -25,3 +25,6 @@ sudo apt-get install \
   openssl \
   pandoc \
   default-jdk
+
+mkdir -p ~/.config/openbox
+ln -s $HOME/.dotfiles/config/pi-openbox.xml ~/.config/lxde-pi-rc.xml
