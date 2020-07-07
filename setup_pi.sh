@@ -27,4 +27,4 @@ sudo apt-get install \
   default-jdk
 
 mkdir -p ~/.config/openbox
-ln -s $HOME/.dotfiles/config/pi-openbox.xml ~/.config/lxde-pi-rc.xml
+ln -s $HOME/.dotfiles/config/pi-openbox.xml ~/.config/openbox/lxde-pi-rc.xml
