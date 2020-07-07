@@ -52,7 +52,7 @@ server:
     bind_host: localhost
 EOF
   rm -rf area
-  java -Xmx4000m -Xms1000m -server -jar "$TOOLS" import config.yml
+  java -Xmx2700m -Xms1g -server -jar "$TOOLS" import config.yml
 
   if [[ "$1" == "keep" ]]; then
     echo "Not deleting base files"

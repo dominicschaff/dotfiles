@@ -1,16 +1,7 @@
 awscli
-awslogs
-certifi
-mdv
-mutagen
 pg8000
 Pillow
-pycodestyle
-pyflakes
-qrcode
 sty
-termcolor
 WeasyPrint
 youtube-dl
-diagrams
 
