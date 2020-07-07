@@ -2,42 +2,8 @@
 
 apt update
 apt upgrade
-apt install \
-  ack-grep \
-  apt \
-  aria2 \
-  bash \
-  bash-completion \
-  bmon \
-  clang \
-  command-not-found \
-  coreutils \
-  curl \
-  ffmpeg \
-  findutils \
-  gawk \
-  git \
-  graphviz \
-  htop \
-  imagemagick \
-  jq \
-  less \
-  make \
-  man \
-  nmap \
-  openssh \
-  openssl \
-  pwgen \
-  python \
-  readline \
-  sed \
-  silversearcher-ag \
-  tar \
-  termux-api \
-  termux-exec \
-  termux-tools \
-  vim \
-  wget
+apt install jq
+apt install $(jq -r '.general + .termux | @tsv' applications.json)
 
 touch ~/.hushlogin
 mkdir -p ~/.termux
