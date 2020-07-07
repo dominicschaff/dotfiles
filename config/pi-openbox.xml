@@ -57,8 +57,8 @@
     <invisibleHandles>yes</invisibleHandles>
     <animateIconify>no</animateIconify>
     <font place="ActiveWindow">
-      <name>PibotoLt</name>
-      <size>11</size>
+      <name>JetBrains Mono</name>
+      <size>10</size>
       <!-- font size in points -->
       <weight>Normal</weight>
       <!-- 'bold' or 'normal' -->
@@ -66,8 +66,8 @@
       <!-- 'italic' or 'normal' -->
     </font>
     <font place="InactiveWindow">
-      <name>PibotoLt</name>
-      <size>11</size>
+      <name>JetBrains Mono</name>
+      <size>10</size>
       <!-- font size in points -->
       <weight>Normal</weight>
       <!-- 'bold' or 'normal' -->
@@ -75,8 +75,8 @@
       <!-- 'italic' or 'normal' -->
     </font>
     <font place="MenuHeader">
-      <name>PibotoLt</name>
-      <size>11</size>
+      <name>JetBrains Mono</name>
+      <size>10</size>
       <!-- font size in points -->
       <weight>Normal</weight>
       <!-- 'bold' or 'normal' -->
@@ -84,8 +84,8 @@
       <!-- 'italic' or 'normal' -->
     </font>
     <font place="MenuItem">
-      <name>PibotoLt</name>
-      <size>11</size>
+      <name>JetBrains Mono</name>
+      <size>10</size>
       <!-- font size in points -->
       <weight>Normal</weight>
       <!-- 'bold' or 'normal' -->
@@ -93,18 +93,18 @@
       <!-- 'italic' or 'normal' -->
     </font>
     <font place="ActiveOnScreenDisplay">
-      <name>PibotoLt</name>
-      <size>11</size>
+      <name>JetBrains Mono</name>
+      <size>10</size>
       <weight>Normal</weight>
       <slant>Normal</slant>
     </font>
     <font place="InactiveOnScreenDisplay">
-      <name>PibotoLt</name>
-      <size>11</size>
+      <name>JetBrains Mono</name>
+      <size>10</size>
       <weight>Normal</weight>
       <slant>Normal</slant>
     </font>
-  </theme>
+  <invHandleWidth>10</invHandleWidth><titleColor>#87919b</titleColor><textColor>#f0f0f0</textColor></theme>
   <desktops>
     <!-- this stuff is only used at startup, pagers allow you to change them
        during a session
@@ -191,19 +191,16 @@
         <direction>east</direction>
       </action>
     </keybind>
-    <keybind key="W-Down">
-      <action name="Unmaximize"/>
-    </keybind>
     <keybind key="W-Up">
       <action name="Maximize"/>
     </keybind>
-    <keybind key="S-A-Left">
+    <keybind key="C-A-S-Left">
       <action name="SendToDesktopLeft">
         <dialog>no</dialog>
         <wrap>no</wrap>
       </action>
     </keybind>
-    <keybind key="S-A-Right">
+    <keybind key="C-A-S-Right">
       <action name="SendToDesktopRight">
         <dialog>no</dialog>
         <wrap>no</wrap>
@@ -225,7 +222,7 @@
       <action name="ToggleShowDesktop"/>
     </keybind>
     <!-- Keybindings for windows -->
-    <keybind key="A-F4">
+    <keybind key="W-Q">
       <action name="Close"/>
     </keybind>
     <keybind key="A-Escape">
@@ -244,12 +241,6 @@
     </keybind>
     <keybind key="A-S-Tab">
       <action name="PreviousWindow"/>
-    </keybind>
-    <keybind key="C-A-Tab">
-      <action name="NextWindow">
-        <panels>yes</panels>
-        <desktop>yes</desktop>
-      </action>
     </keybind>
     <!-- Keybindings for running applications -->
     <keybind key="Print">
@@ -324,11 +315,6 @@
         <command>lxterminal</command>
       </action>
     </keybind>
-    <keybind key="C-A-End">
-      <action name="Execute">
-        <command>lxde-pi-shutdown-helper</command>
-      </action>
-    </keybind>
     <keybind key="C-A-Delete">
       <action name="Execute">
         <command>lxde-pi-shutdown-helper</command>
@@ -374,24 +360,6 @@
         <action name="FocusToBottom"/>
         <action name="Unfocus"/>
       </mousebind>
-      <mousebind button="A-Up" action="Click">
-        <action name="DesktopPrevious"/>
-      </mousebind>
-      <mousebind button="A-Down" action="Click">
-        <action name="DesktopNext"/>
-      </mousebind>
-      <mousebind button="C-A-Up" action="Click">
-        <action name="DesktopPrevious"/>
-      </mousebind>
-      <mousebind button="C-A-Down" action="Click">
-        <action name="DesktopNext"/>
-      </mousebind>
-      <mousebind button="A-S-Up" action="Click">
-        <action name="SendToDesktopPrevious"/>
-      </mousebind>
-      <mousebind button="A-S-Down" action="Click">
-        <action name="SendToDesktopNext"/>
-      </mousebind>
     </context>
     <context name="Titlebar">
       <mousebind button="Left" action="Press">
@@ -418,6 +386,7 @@
       <mousebind button="Down" action="Click">
         <action name="Unshade"/>
         <action name="Raise"/>
+        <action name="Focus"/>
       </mousebind>
       <mousebind button="Right" action="Press">
         <action name="Focus"/>
@@ -618,11 +587,6 @@
       </mousebind>
     </context>
     <context name="Desktop">
-      <mousebind button="Middle" action="Press">
-        <action name="Execute">
-          <command>lxterminal</command>
-        </action>
-      </mousebind>
       <mousebind button="Button8" action="Press">
         <action name="DesktopLeft"/>
       </mousebind>
