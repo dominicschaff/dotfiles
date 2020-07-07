@@ -94,9 +94,15 @@ Plug 'itchyny/lightline.vim'
 Plug 'terryma/vim-multiple-cursors'
 Plug 'scrooloose/nerdtree'
 Plug 'tomasr/molokai'
+Plug 'jiangmiao/auto-pairs'
+Plug 'frazrepo/vim-rainbow'
+Plug 'mileszs/ack.vim'
 call plug#end()
 
 
 map ; :Files<CR>
 map <C-o> :NERDTreeToggle<CR>
-colorscheme molokai                    " What should the colorscheme be
+colorscheme molokai
+if executable('ag')
+  let g:ackprg = 'ag --vimgrep'
+endif
