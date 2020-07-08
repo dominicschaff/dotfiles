@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-if [ "$HOSTNAME" != "localhost" ]; then # You are most likely using termux
+if [ "$(uname -o)" != "Android" ]; then # You are most likely using termux
   return
 fi
 
