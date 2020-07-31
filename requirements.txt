@@ -1,4 +1,3 @@
-awscli
 pg8000
 Pillow
 sty
