@@ -1,255 +1,254 @@
 #!/usr/bin/env python3
 
-import pg8000 as pg, sys
 from csv import writer
 from datetime import datetime as d
-import json as j
-from datetime import datetime, time, date
-import configparser
-import os
+from datetime import time, date
 from decimal import Decimal
+import configparser
+import json as j
+import os
+import sys
+import pg8000 as pg
 
 
-def blankNone(s):
-  return '' if s is None else s
+def blankNone(val):
+    """Convert None to blank string"""
+    return '' if val is None else val
 
 
 class DB(object):
+    def __init__(self, info=False, json=False, csv=False, rows=False, insert=False, tiny=False, write=False):
+        self._json = json
+        self._csv = csv
+        self._rows = rows
+        self._info = info
+        self._insert = insert
+        self._tiny = tiny
+        self._write = write
+        self._db_name = None
+        self._config = None
+        self._conn = None
 
+    def config(self, fileName):
+        self._config = configparser.RawConfigParser()
+        self._config.read(fileName)
+        for section_name in self._config.sections():
+            if self._config.getboolean(section_name, "default"):
+                self._db_name = section_name
 
-  def __init__(self, info = False, json = False, csv = False, rows = False, insert = False, tiny = False, write = False):
-    self._json = json
-    self._csv = csv
-    self._rows = rows
-    self._info = info
-    self._insert = insert
-    self._tiny = tiny
-    self._write = write
-    self._dbName = None
-    self._config = None
-    self._conn = None
+    def setDb(self, dbName):
+        if self._config is None:
+            raise ValueError("Config file is required")
+        for section_name in self._config.sections():
+            if dbName == self._config.get(section_name, "switch") or dbName == self._config.get(section_name, "short"):
+                self._db_name = section_name
+                return True
+        return False
 
-  def config(self, fileName):
-    self._config = configparser.RawConfigParser()
-    self._config.read(fileName)
-    for s in self._config.sections():
-      if self._config.getboolean(s, "default"):
-        self._dbName = s
+    def connect(self):
+        if self._config is None:
+            raise ValueError("Config file is required")
+        if self._db_name is None:
+            raise ValueError("No DB specified")
+        self.i("Fetching Info...")
 
-  def setDb(self, dbName):
-    if self._config == None:
-      raise ValueError("Config file is required")
-    for s in self._config.sections():
-      if dbName == self._config.get(s, "switch") or dbName == self._config.get(s, "short"):
-        self._dbName = s
-        return True
-    return False
+        host = self._config.get(self._db_name, "host")
+        user = self._config.get(self._db_name, "user")
+        database = self._config.get(self._db_name, "database")
+        password = self._config.get(self._db_name, "password")
+        port = self._config.get(self._db_name, "port", fallback=5432)
 
-  def connect(self):
-    if self._config == None:
-      raise ValueError("Config file is required")
-    if self._dbName == None:
-      raise ValueError("No DB specified")
-    self.i("Fetching Info...")
+        self.i('Connecting')
+        self.i("Host: " + host)
+        self.i("Database: " + database)
+        self.i("UserName: " + user)
+        self._conn = pg.connect(
+            host=host,
+            database=database,
+            user=user,
+            password=password,
+            port=int(port)
+        )
+        self.i('Connected')
 
-    host = self._config.get(self._dbName, "host")
-    user = self._config.get(self._dbName, "user")
-    database = self._config.get(self._dbName, "database")
-    password = self._config.get(self._dbName, "password")
-    port = self._config.get(self._dbName, "port", fallback=5432)
+    def disconnect(self):
+        self._conn.close()
 
-    self.i('Connecting')
-    self.i("Host: " + host)
-    self.i("Database: " + database)
-    self.i("UserName: " + user)
-    self._conn = pg.connect(
-      host=host,
-      database=database,
-      user=user,
-      password=password,
-      port=int(port))
-    self.i('Connected')
+    def run(self, query):
+        if self._conn is None:
+            raise ValueError("A connection is required")
+        cursor = self._conn.cursor()
+        self.i('Query:\n' + query)
+        cursor.execute(query)
+        if not self._write:
+            header = [str(h[0].decode('utf-8')) for h in cursor.description]
+            self.i("Returned Data:")
+            for i, name in enumerate(header):
+                if name == '?column?':
+                    header[i] = "column%d" % (i + 1)
+            if self._csv:
+                spamwriter = writer(sys.stdout, lineterminator="\n")
+                spamwriter.writerow(header)
+                row = cursor.fetchone()
+                while row is not None:
+                    spamwriter.writerow([blankNone(s) for s in row])
+                    row = cursor.fetchone()
+            elif self._rows:
+                count = 1
+                row = cursor.fetchone()
+                while row is not None:
+                    if count > 1:
+                        print()
+                    print("Record: %d" % count)
+                    for i, col in enumerate(row):
+                        print("%25s -> %s" % (header[i], str(blankNone(col))))
+                    row = cursor.fetchone()
+                    count += 1
+            elif self._insert:
+                h = "'" + ("','".join(header)) + "'"
+                print("CREATE TABLE data (%s);" % (h))
+                row = cursor.fetchone()
+                while row is not None:
+                    v = "'" + ("','".join([str(blankNone(c)).replace("'", "").replace(",", "") for c in row])) + "'"
+                    print("INSERT INTO data (%s) VALUES (%s);"%(h, v))
+                    row = cursor.fetchone()
 
-  def disconnect(self):
-    self._conn.close()
-
-  def run(self, query):
-    if self._conn == None:
-      raise ValueError("A connection is required")
-    cursor = self._conn.cursor()
-    self.i('Query:\n' + query)
-    cursor.execute(query)
-    if not self._write:
-      header = [str(h[0].decode('utf-8')) for h in cursor.description]
-      self.i("Returned Data:")
-      c = 1
-      for i in range(len(header)):
-        if header[i] == '?column?':
-          header[i] = "column%d"%c
-          c+=1
-      if self._csv:
-        spamwriter = writer(sys.stdout, lineterminator="\n")
-        spamwriter.writerow(header)
-        row = cursor.fetchone()
-        while row != None:
-          spamwriter.writerow([blankNone(s) for s in row])
-          row = cursor.fetchone()
-      elif self._rows:
-        count = 1
-        row = cursor.fetchone()
-        while row != None:
-          if count > 1:
-            print()
-          print("Record: %d"%count)
-          for i in range(len(row)):
-            print("%25s -> %s"%(header[i], str(blankNone(row[i]))))
-          row = cursor.fetchone()
-          count += 1
-      elif self._insert:
-        h = "'" + ("','".join(header)) + "'"
-        print("CREATE TABLE data (%s);"%(h))
-        row = cursor.fetchone()
-        while row != None:
-          v = "'" + ("','".join([str(blankNone(c)).replace("'", "").replace(",", "") for c in row])) + "'"
-          print("INSERT INTO data (%s) VALUES (%s);"%(h, v))
-          row = cursor.fetchone()
-
-      elif self._json:
-        row = cursor.fetchone()
-        while row != None:
-          r = {}
-          for i in range(len(header)):
-            if type(row[i]) is str:
-              try:
-                r[header[i]] = j.loads(row[i])
-              except j.decoder.JSONDecodeError as e:
-                r[header[i]] = str(row[i])
-            elif type(row[i]) is datetime:
-              r[header[i]] = str(row[i])
-            elif type(row[i]) is time:
-              r[header[i]] = str(row[i])
-            elif type(row[i]) is date:
-              r[header[i]] = str(row[i])
-            elif type(row[i]) is Decimal:
-              r[header[i]] = float(row[i])
+            elif self._json:
+                row = cursor.fetchone()
+                while row is not None:
+                    r = {}
+                    for i, col in enumerate(header):
+                        if isinstance(col, str):
+                            try:
+                                r[header[i]] = j.loads(col)
+                            except j.decoder.JSONDecodeError:
+                                r[header[i]] = str(col)
+                        elif isinstance(col, d):
+                            r[header[i]] = str(col)
+                        elif isinstance(col, time):
+                            r[header[i]] = str(col)
+                        elif isinstance(col, date):
+                            r[header[i]] = str(col)
+                        elif isinstance(col, Decimal):
+                            r[header[i]] = float(col)
+                        else:
+                            r[header[i]] = blankNone(row[i])
+                    print(j.dumps(r, sort_keys=True))
+                    row = cursor.fetchone()
+            elif self._tiny:
+                self.pcTiny(header, cursor.fetchall())
             else:
-              r[header[i]] = blankNone(row[i])
-          print(j.dumps(r, sort_keys=True))
-          row = cursor.fetchone()
-      elif self._tiny:
-        self.pcTiny(header, cursor.fetchall())
-      else:
-        self.pc(header, cursor.fetchall())
-    else:
-      self.i('Done with write operation. Committing...')
-      self._conn.commit()
-    cursor.close()
+                self.pc(header, cursor.fetchall())
+        else:
+            self.i('Done with write operation. Committing...')
+            self._conn.commit()
+        cursor.close()
 
-  def i(self, s):
-    if self._info:
-      print("[+] %s: %s"%(d.now().time(), s), file=sys.stderr)
+    def i(self, line):
+        if self._info:
+            print("[+] %s: %s" % (d.now().time(), line), file=sys.stderr)
 
-  def pc(self, h, d):
-    size = [len(c) for c in h]
-    for row in d:
-      for i in range(len(row)):
-        size[i] = max([size[i], len(str(row[i]))])
+    def pc(self, header, data):
+        size = [len(c) for c in header]
+        for row in data:
+            for i, col in enumerate(row):
+                size[i] = max([size[i], len(str(col))])
 
-    f = ''.join(['%%-%ds | '%i for i in size])
-    l = '+'.join(['-'*(i+2) for i in size])
-    l = '+-' + l[1:] + '+'
-    f = '| ' + f[:-1]
-    s = f%tuple(h)
-    self.i('Results')
-    print(l)
-    print(s)
-    print(l)
-    for r in d:
-      print(f%tuple([blankNone(s) for s in r]))
-    print (l)
+        f = ''.join(['%%-%ds | ' % i for i in size])
+        l = '+'.join(['-' * (i + 2) for i in size])
+        l = '+-' + l[1:] + '+'
+        f = '| ' + f[:-1]
+        s = f % tuple(header)
+        self.i('Results')
+        print(l)
+        print(s)
+        print(l)
+        for row in data:
+            print(f % tuple([blankNone(s) for s in row]))
+        print(l)
 
-  def pcTiny(self, h, d):
-    size = [len(c) for c in h]
-    for row in d:
-      for i in range(len(row)):
-        size[i] = max([size[i], len(str(row[i]))])
+    def pcTiny(self, h, d):
+        size = [len(c) for c in h]
+        for row in d:
+            for i, col in enumerate(row):
+                size[i] = max([size[i], len(str(col))])
 
-    f = ' : '.join(['%%-%ds'%i for i in size])
-    self.i('Results')
-    print(f%tuple(h))
-    print(' : '.join(['-'*i for i in size]))
-    for r in d:
-      print(f%tuple([blankNone(s) for s in r]))
+        f = ' : '.join(['%%-%ds'%i for i in size])
+        self.i('Results')
+        print(f % tuple(h))
+        print(' : '.join(['-' * i for i in size]))
+        for r in d:
+            print(f % tuple([blankNone(s) for s in r]))
 
 
 if __name__ == '__main__':
 
-  if len(sys.argv) < 2:
-    sys.exit(1)
+    if len(sys.argv) < 2:
+        sys.exit(1)
 
-  json = False
-  info = False
-  csv = False
-  rows = False
-  insert = False
-  tiny = False
-  write = False
+    json = False
+    info = False
+    csv = False
+    rows = False
+    insert = False
+    tiny = False
+    write = False
 
-  a = sys.argv[1:]
+    a = sys.argv[1:]
 
-  f = True
+    f = True
 
-  while f:
-    f = False
-    if a[0] == '-info':
-      a = a[1:]
-      info = True
-      f = True
+    while f:
+        f = False
+        if a[0] == '-info':
+            a = a[1:]
+            info = True
+            f = True
 
-    if a[0] == '-json' or a[0] == '-j':
-      a = a[1:]
-      json = True
-      f = True
+        if a[0] == '-json' or a[0] == '-j':
+            a = a[1:]
+            json = True
+            f = True
 
-    if a[0] == '-csv' or a[0] == '-c':
-      a = a[1:]
-      csv = True
-      f = True
+        if a[0] == '-csv' or a[0] == '-c':
+            a = a[1:]
+            csv = True
+            f = True
 
-    if a[0] == '-rows' or a[0] == '-r':
-      a = a[1:]
-      rows = True
-      f = True
+        if a[0] == '-rows' or a[0] == '-r':
+            a = a[1:]
+            rows = True
+            f = True
 
-    if a[0] == '-insert' or a[0] == '-i':
-      a = a[1:]
-      insert = True
-      f = True
+        if a[0] == '-insert' or a[0] == '-i':
+            a = a[1:]
+            insert = True
+            f = True
 
-    if a[0] == '-table' or a[0] == '-t':
-      a = a[1:]
-      json = False
-      csv = False
-      rows = False
-      f = True
+        if a[0] == '-table' or a[0] == '-t':
+            a = a[1:]
+            json = False
+            csv = False
+            rows = False
+            f = True
 
-    if a[0] == '-tiny' or a[0] == '-s':
-      a = a[1:]
-      tiny = True
-      f = True
+        if a[0] == '-tiny' or a[0] == '-s':
+            a = a[1:]
+            tiny = True
+            f = True
 
-    if a[0] == '-write' or a[0] == '-w':
-      a = a[1:]
-      write = True
+        if a[0] == '-write' or a[0] == '-w':
+            a = a[1:]
+            write = True
 
-  dbObject = DB(info, json, csv, rows, insert, tiny, write)
-  s = os.path.expanduser('~/.psql.cfg')
-  dbObject.config(s)
-  if len(a) == 2:
-    if dbObject.setDb(a[0]) == False:
-      print("Database not found: " + a[0])
-      sys.exit(1)
-    a = a[1:]
-  dbObject.connect()
-  dbObject.run(a[-1])
-  dbObject.disconnect()
+    dbObject = DB(info, json, csv, rows, insert, tiny, write)
+    s = os.path.expanduser('~/.psql.cfg')
+    dbObject.config(s)
+    if len(a) == 2:
+        if not dbObject.setDb(a[0]):
+            print("Database not found: " + a[0])
+            sys.exit(1)
+        a = a[1:]
+    dbObject.connect()
+    dbObject.run(a[-1])
+    dbObject.disconnect()
