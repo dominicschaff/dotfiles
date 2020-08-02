@@ -62,3 +62,8 @@ power_usage()
   usage="$(echo "scale=2; $volts/1000.0 * $amps/1000.0" | bc)"
   echo "Power usage: $usage"
 }
+
+net()
+{
+  bmon -p en0
+}
