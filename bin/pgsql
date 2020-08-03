@@ -118,19 +118,19 @@ class DB(object):
                 while row is not None:
                     r = {}
                     for i, col in enumerate(header):
-                        if isinstance(col, str):
+                        if isinstance(row[i], str):
                             try:
-                                r[header[i]] = j.loads(col)
+                                r[header[i]] = j.loads(row[i])
                             except j.decoder.JSONDecodeError:
-                                r[header[i]] = str(col)
-                        elif isinstance(col, d):
-                            r[header[i]] = str(col)
-                        elif isinstance(col, time):
-                            r[header[i]] = str(col)
-                        elif isinstance(col, date):
-                            r[header[i]] = str(col)
-                        elif isinstance(col, Decimal):
-                            r[header[i]] = float(col)
+                                r[header[i]] = str(row[i])
+                        elif isinstance(row[i], d):
+                            r[header[i]] = str(row[i])
+                        elif isinstance(row[i], time):
+                            r[header[i]] = str(row[i])
+                        elif isinstance(row[i], date):
+                            r[header[i]] = str(row[i])
+                        elif isinstance(row[i], Decimal):
+                            r[header[i]] = float(row[i])
                         else:
                             r[header[i]] = blankNone(row[i])
                     print(j.dumps(r, sort_keys=True))
