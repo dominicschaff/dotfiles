@@ -1,10 +1,6 @@
-"syntax enable
-"syntax on                              " Enable the syntax highlighting
-"filetype plugin indent on              " Allow indenting, and file type detection
 
 let mapleader=","                      " Change the leader character to a ,
 
-"set nocompatible                       " Disable the vi backwards compatibility
 set number                             " Enables the line numbering
 set tabstop=2                          " Sets the tabstop to 4 characters
 set shiftwidth=2                       " Allows for backspace of 4 characters
@@ -29,7 +25,6 @@ set ff=unix                            " Default line endings
 set fileformats=unix,dos               " File formats allowed
 set laststatus=2                        " When must the status line be displayed
 set list                               " Show the invisible characters
-"set listchars=tab:→→,trail:°           " What should the invisibles be shown as
 set ruler                              " Enable the sizing at the bottom
 set showcmd                            " show last used command
 set lazyredraw                         " speed up the redraw behaviour
@@ -100,7 +95,7 @@ Plug 'mileszs/ack.vim'
 call plug#end()
 
 
-map ; :Files<CR>
+map <C-p> :Files<CR>
 map <C-o> :NERDTreeToggle<CR>
 colorscheme molokai
 if executable('ag')
