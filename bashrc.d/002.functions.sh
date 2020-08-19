@@ -209,3 +209,12 @@ fib()
   done
   echo $c
 }
+
+scratch()
+{
+  if [ ! -f ~/scratch.md ]; then
+    echo -e "\`\`\`bash\necho \"Hello\"\n\`\`\`\n" > ~/scratch.md
+  fi
+
+  vim ~/scratch.md
+}
