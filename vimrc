@@ -1,4 +1,3 @@
-
 let mapleader=","                      " Change the leader character to a ,
 
 set number                             " Enables the line numbering
@@ -92,6 +91,7 @@ Plug 'tomasr/molokai'
 Plug 'jiangmiao/auto-pairs'
 Plug 'frazrepo/vim-rainbow'
 Plug 'mileszs/ack.vim'
+Plug 'dense-analysis/ale'
 call plug#end()
 
 
@@ -101,3 +101,9 @@ colorscheme molokai
 if executable('ag')
   let g:ackprg = 'ag --vimgrep'
 endif
+
+let g:ale_fixers = {'*': ['remove_trailing_lines', 'trim_whitespace']}
+let g:ale_fix_on_save = 1
+
+set mouse=
+set ttymouse=
