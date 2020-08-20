@@ -36,6 +36,8 @@ let g:netrw_banner=0                   " Disable banner
 let g:netrw_altv=1                     " open splits to the right
 let g:netrw_liststyle=3                " tree view
 
+set pastetoggle=<F2>
+
 " Setup some keymaps
 
 " Make level 1 heading
