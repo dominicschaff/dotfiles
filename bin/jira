@@ -251,8 +251,24 @@ case "$1" in
   query) run_query "$2" ;;
   v|view) view_ticket "$2" ;;
   log) work_log "$2" ;;
-  time) work_time ;;
+  t|time) work_time ;;
   *)
-    echo "Unknown command"
+    echo "Unknown command specified '$1'"
+    echo ""
+    echo "Try one of these:"
+    echo "w | work : My Board"
+    echo "v | view <ticket> : View a ticket"
+    echo "m | mine : View tickets assigned to me"
+    echo "t | time : get logged time since last Sunday"
+    echo "in_progress [ticket numbers] : Move tickets to in progress"
+    echo "comment <ticket> 'comment' : Comment on a ticket"
+    echo "upload <ticket> <file> : Upload a file to a ticket"
+    echo "done : Get completed tickets"
+    echo "all : get all open tickets"
+    echo "counts : Get ticket counts"
+    echo "get : Get my tickets"
+    echo "assign : Assign a ticket to my name"
+    echo "query <name> : Run a named query"
+    echo "log <ticket> : Get logged work on ticket"
   ;;
 esac
