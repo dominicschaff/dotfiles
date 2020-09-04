@@ -30,6 +30,7 @@ set lazyredraw                         " speed up the redraw behaviour
 set showmatch                          " Highlight matching bracket
 set path+=**                           " search sub directories for files
 set wildmenu                           " enable file menu for multi options
+set timeoutlen=0               " make esc behave instantly
 
 " File browser Settings
 let g:netrw_banner=0                   " Disable banner
@@ -109,7 +110,6 @@ let g:ale_fix_on_save = 1
 let g:ale_linters = {
 \   'python': ['mypy', 'pylint', 'pycodestyle', 'pyflakes'],
 \}
-
 
 set mouse=
 set ttymouse=
