@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
 
+convert "$1" -fill black -colorize 100 tmp.miff
 
-# This script is from:
-# https://medium.com/randomcodes/create-star-trails-with-imagemagick-cb4c0227c414
-cp "$1" "$2"
-
-for f in `ls *.JPG`
-do
-  echo "$f"
-  convert "$2" "$f" -gravity center -compose blend -composite -format jpg "$2"
+k=1
+for img in "$@"; do
+  pct=`convert xc: -format "%[fx:100/($k)]" info:`
+  echo "$img: pct=$pct"
+  convert tmp.miff $img -compose blend -set option:compose:args $pct -composite tmp.miff
+  k=$((k+1))
 done
+convert tmp.miff -format jpg average.jpg
+rm -f tmp.miff
