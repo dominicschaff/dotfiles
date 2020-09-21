@@ -32,6 +32,10 @@ set path+=**                           " search sub directories for files
 set wildmenu                           " enable file menu for multi options
 set timeoutlen=0               " make esc behave instantly
 
+" turn hybrid line numbers on
+:set number relativenumber
+:set nu rnu
+
 " File browser Settings
 let g:netrw_banner=0                   " Disable banner
 let g:netrw_altv=1                     " open splits to the right
@@ -62,7 +66,7 @@ nnoremap qa :qa<cr>
 nnoremap <leader>W :%s/\s\+$//<cr>:let @/=''<CR>
 
 " Specify the file type
-autocmd BufRead,BufNewFile *.md set filetype=md
+autocmd BufRead,BufNewFile *.md set filetype=markdown
 au BufNewFile,BufRead *.json set filetype=json
 
 autocmd FileType python setlocal tabstop=4
@@ -95,6 +99,7 @@ Plug 'jiangmiao/auto-pairs'
 Plug 'frazrepo/vim-rainbow'
 Plug 'mileszs/ack.vim'
 Plug 'dense-analysis/ale'
+Plug 'plasticboy/vim-markdown'
 call plug#end()
 
 
