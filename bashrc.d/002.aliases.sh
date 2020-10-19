@@ -37,3 +37,5 @@ if hash tree 2>/dev/null; then
   alias lr="tt -a"
   alias ld="tt -a -d"
 fi
+
+alias clock='tty-clock  -s -c -C 5'
