@@ -116,5 +116,5 @@ let g:ale_linters = {
 \   'python': ['mypy', 'pylint', 'pycodestyle', 'pyflakes'],
 \}
 
-set mouse=
-set ttymouse=
+"set mouse=
+"set ttymouse=
