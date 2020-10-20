@@ -81,7 +81,7 @@ class DB(object):
         self.i('Query:\n' + query)
         cursor.execute(query)
         if not self._write:
-            header = [str(h[0].decode('utf-8')) for h in cursor.description]
+            header = [str(h[0]) for h in cursor.description]
             self.i("Returned Data:")
             for i, name in enumerate(header):
                 if name == '?column?':
