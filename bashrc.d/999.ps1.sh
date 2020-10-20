@@ -1,10 +1,11 @@
+#!/usr/bin/env bash
 
 _timer_start() {
     timer=${timer:-$SECONDS}
 }
 
 _timer_stop() {
-    timer_show=$(($SECONDS - $timer))
+    timer_show=$((SECONDS - timer))
     unset timer
 }
 
@@ -24,7 +25,7 @@ _git_file_count()
   branch="$(git branch 2> /dev/null)"
   if [ $? -eq 0 ]; then
     files_affected="$(gf | wc -l | awk '{print $1}')"
-    if [ "$files_affected" == "0" ]; then
+    if [[ "$files_affected" -eq 0 ]]; then
       files_affected=""
     fi
     echo "$files_affected"
@@ -45,7 +46,7 @@ _git_file_color()
   branch="$(git branch 2> /dev/null)"
   if [ $? -eq 0 ]; then
     files_affected="$(gf | wc -l | awk '{print $1}')"
-    if [ "$files_affected" == "0" ]; then
+    if [[ "$files_affected" -eq 0 ]]; then
       echo -e "\e[36m"
     else
       echo -e "\e[31m"
@@ -55,7 +56,7 @@ _git_file_color()
 
 _exit_code_colour()
 {
-  if [ "$?" != 0 ]; then
+  if [[ "$?" != 0 ]]; then
     echo -e "\e[31m"
   else
     echo -e "\e[92m"
@@ -70,7 +71,7 @@ _exit_code_colour()
 if [ -z "$PS1_OVERRIDE" ]; then
   PS1_temp=''
   if [ -n "$PS1_PRE" ]; then
-    PS1_temp=$PS1_PRE
+    PS1_temp="$PS1_PRE "
   fi
   PS1_temp=$PS1_temp'\[$(_exit_code_colour)\]$(date +%T) $(_print_time) \[\e[31m\]\[\e[35m\]\W'
   if hash git 2>/dev/null; then
