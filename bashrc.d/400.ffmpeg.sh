@@ -22,7 +22,11 @@ convertMp4()
 
 convertH265()
 {
-  ffmpeg -i "$1" -c:v libx265 -preset medium -crf 28 -c:a aac -b:a 128k "$2"
+  for f in "$@"; do
+    o="${f#*/}"
+    echo "$f -> ${o%.*}.h265.mp4"
+    ffmpeg -i "$f" -c:v libx265 -preset medium -crf 28 -c:a aac -b:a 128k "$o.h265.mp4"
+  done
 }
 
 convertAAC()
