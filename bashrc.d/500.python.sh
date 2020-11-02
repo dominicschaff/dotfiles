@@ -6,6 +6,6 @@ fi
 
 pip3_install()
 {
-  pip3 install --user --upgrade -r $DOTFILES/requirements.txt
+  python3 -m pip install --user --upgrade -r $DOTFILES/requirements.txt
 }
 
