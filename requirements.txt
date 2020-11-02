@@ -3,4 +3,12 @@ Pillow
 sty
 WeasyPrint
 youtube-dl
-
+awscli
+qr
+pylint
+pyflakes
+Pygments
+pycodestyle
+mypy
+htmlmin
+html2text
