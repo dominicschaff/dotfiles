@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-if ! hash pip3 2>/dev/null; then
+if ! hash python 2>/dev/null; then
   return
 fi
 
