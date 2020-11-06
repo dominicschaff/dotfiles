@@ -494,3 +494,12 @@ delete_empty()
 {
   sed 's/[[:blank:]]//g' | sed '/^$/d'
 }
+
+run_help()
+{
+  if [[ "$2" == '-h' ]]; then
+    sed -n '/^###/ s///p' "$1"
+    exit
+  fi
+}
+
