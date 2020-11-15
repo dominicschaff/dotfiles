@@ -39,3 +39,7 @@ if hash tree 2>/dev/null; then
 fi
 
 alias clock='tty-clock  -s -c -C 5'
+
+alias cp="cp -i"
+alias mv="mv -i"
+alias df="df -h"
