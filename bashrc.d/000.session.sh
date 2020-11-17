@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+export TERM="xterm-256color"
 export HISTIGNORE="[ ]*"
 export HISTCONTROL=ignoreboth:erasedups
 export HISTSIZE=-1
