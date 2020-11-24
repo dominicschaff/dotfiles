@@ -39,7 +39,8 @@ gt()
   if [ $# -eq 1 ]; then
     git tag -a "v$1" -m "Creating tag $1"
   else
-    echo "I only accept one argument"
+    echo "Latest tags"
+    git tag | tail
   fi
 }
 
