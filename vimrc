@@ -100,12 +100,16 @@ Plug 'frazrepo/vim-rainbow'
 Plug 'mileszs/ack.vim'
 Plug 'dense-analysis/ale'
 Plug 'plasticboy/vim-markdown'
+Plug 'dikiaap/minimalist'
 call plug#end()
 
+set t_Co=256
+syntax on
+colorscheme minimalist
+"colorscheme molokai
 
 map <C-p> :Files<CR>
 map <C-o> :NERDTreeToggle<CR>
-colorscheme molokai
 if executable('ag')
   let g:ackprg = 'ag --vimgrep'
 endif
