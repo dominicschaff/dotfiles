@@ -32,6 +32,9 @@ set path+=**                           " search sub directories for files
 set wildmenu                           " enable file menu for multi options
 set timeoutlen=0               " make esc behave instantly
 
+" Enable folding
+nnoremap <space> za
+
 " turn hybrid line numbers on
 :set number relativenumber
 :set nu rnu
@@ -69,10 +72,6 @@ nnoremap <leader>W :%s/\s\+$//<cr>:let @/=''<CR>
 autocmd BufRead,BufNewFile *.md set filetype=markdown
 au BufNewFile,BufRead *.json set filetype=json
 
-autocmd FileType python setlocal tabstop=4
-autocmd FileType python setlocal shiftwidth=4
-autocmd FileType python setlocal softtabstop=4
-
 " Make the exit of insert mode faster
 set timeoutlen=1000 ttimeoutlen=0
 
@@ -101,9 +100,15 @@ Plug 'mileszs/ack.vim'
 Plug 'dense-analysis/ale'
 Plug 'plasticboy/vim-markdown'
 Plug 'dikiaap/minimalist'
+Plug 'davidhalter/jedi-vim'
 call plug#end()
 
+
+set foldmethod=indent
+set foldlevel=99
+
 set t_Co=256
+let python_highlight_all=1
 syntax on
 colorscheme minimalist
 "colorscheme molokai
@@ -120,5 +125,10 @@ let g:ale_linters = {
 \   'python': ['mypy', 'pylint', 'pycodestyle', 'pyflakes'],
 \}
 
+let g:SimpylFold_docstring_preview=1
+
+au BufNewFile,BufRead *.py set tabstop=4
+au BufNewFile,BufRead *.py set softtabstop=4
+au BufNewFile,BufRead *.py set shiftwidth=4
 "set mouse=
 "set ttymouse=
