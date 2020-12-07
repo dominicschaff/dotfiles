@@ -98,8 +98,8 @@ Plug 'jiangmiao/auto-pairs'
 Plug 'frazrepo/vim-rainbow'
 Plug 'mileszs/ack.vim'
 Plug 'dense-analysis/ale'
-Plug 'plasticboy/vim-markdown'
 Plug 'dikiaap/minimalist'
+Plug 'tpope/vim-markdown'
 Plug 'davidhalter/jedi-vim'
 call plug#end()
 
