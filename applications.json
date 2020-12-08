@@ -11,7 +11,7 @@
     "make",
     "openssl",
     "pwgen",
-    "python3",
+    "python",
     "tmux",
     "tree",
     "vim",
