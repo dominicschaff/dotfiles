@@ -8,11 +8,8 @@ alias bmon='bmon -p wlan0'
 
 update()
 {
-  sudo apt update
-  sudo apt upgrade
-  sudo apt full-upgrade
-  sudo apt dist-upgrade
-  sudo apt autoclean
+  sudo dnf update
+  sudo dnf autoremove
 }
 
 core_count()
