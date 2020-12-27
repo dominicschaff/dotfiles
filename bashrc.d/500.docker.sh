@@ -12,7 +12,17 @@ docker_clean()
     docker rmi --force $(docker images -q)
 }
 
-docker_stop_all ()
+docker_stop_all()
 {
     docker kill $(docker ps -q)
+}
+
+docker_start()
+{
+  sudo systemctl restart docker
+}
+
+docker_stop_service()
+{
+  sudo systemctl stop docker
 }

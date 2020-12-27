@@ -4,8 +4,6 @@ if [ "$(uname -o)" != "GNU/Linux" ]; then # You are using OS X
   return
 fi
 
-alias bmon='bmon -p wlan0'
-
 update()
 {
   sudo dnf update
