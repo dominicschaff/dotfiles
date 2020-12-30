@@ -7,7 +7,6 @@ fi
 update()
 {
   sudo dnf update
-  sudo dnf autoremove
 }
 
 core_count()

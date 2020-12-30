@@ -13,4 +13,4 @@ mypy
 htmlmin
 html2text
 kb-manager
-
+bpytop
