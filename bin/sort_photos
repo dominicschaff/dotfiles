@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+mkdir -p raws
+mv *.RAF raws
+
+for f in *.JPG; do
+  date_taken="$(exiftool "$f" | grep 'Create Date' | cut -d ':' -f2- | cut -d' ' -f2 | tr ':' '-')"
+  mkdir -p "$date_taken"
+  mv "$f" "$date_taken/"
+done
+
