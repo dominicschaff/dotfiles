@@ -206,6 +206,11 @@ work_log()
   echo "$data" | jq -rc '.worklogs[] | {author:.author.name, started:.started, spent:.timeSpent, spentSeconds: .timeSpentSeconds}'
 }
 
+ticket()
+{
+  curl -s -u "$jira_auth" -H "X-Atlassian-Token: nocheck" "$jira_base/rest/api/2/issue/$1"
+}
+
 work_time()
 {
   monday="$(date -d'last sunday' +%Y%m%d)"
@@ -227,6 +232,18 @@ work_time()
   done | sort)"
   echo "Time spent this week: $(echo "$records" | cut -d'|' -f2 | awk '{ sum += $1 } END { printf "%02d:%02d:%02d",sum/3600,sum%3600/60,sum%60 }')"
   echo "$records" | cut -d'|' -f1
+}
+
+time_query()
+{
+  query="$(jq -r ".time_queries.$1.query" "$JIRA_CONFIG" | sed "s/##PROJECT##/$jira_project/" | sed "s/##USER##/$jira_user/")"
+  jql="$(jq -r ".time_queries.$1.jq" "$JIRA_CONFIG")"
+  check_not_null "$query"
+  check_not_null "$jql"
+  fetch_all_for_jql "$query" "$jql" \
+    | jq '.[] | "\(.time),\(.tag)"'
+    | grep -v null \
+    | awk 'BEGIN { FS = "," } ; { t[$2] += $1; total += $1 } END {for (x in t) printf "%20s: %8.1f : %.1f%\n",x,t[x]/3600/8,100.0*t[x]/total}'
 }
 
 ################################################################################
@@ -252,6 +269,8 @@ case "$1" in
   v|view) view_ticket "$2" ;;
   log) work_log "$2" ;;
   t|time) work_time ;;
+  tq) time_query "$2" ;;
+  ticket) ticket "$2" ;;
   *)
     echo "Unknown command specified '$1'"
     echo ""
