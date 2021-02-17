@@ -31,6 +31,7 @@ set showmatch                          " Highlight matching bracket
 set path+=**                           " search sub directories for files
 set wildmenu                           " enable file menu for multi options
 set timeoutlen=0               " make esc behave instantly
+set colorcolumn=80,120
 
 " Enable folding
 nnoremap <space> za
