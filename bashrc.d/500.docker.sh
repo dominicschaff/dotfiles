@@ -7,9 +7,11 @@ fi
 
 docker_clean()
 {
-    docker_stop_all;
-    docker rm --force $(docker ps -a -q);
-    docker rmi --force $(docker images -q)
+  docker_stop_all
+  docker system prune
+  docker container prune
+  docker image prune -a
+  docker volume prune
 }
 
 docker_stop_all()
