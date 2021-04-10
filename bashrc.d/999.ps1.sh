@@ -10,7 +10,11 @@ _timer_stop() {
 }
 
 trap '_timer_start' DEBUG
-PROMPT_COMMAND=_timer_stop
+if [[ -z "$PROMPT_COMMAND" ]]; then
+  PROMPT_COMMAND=_timer_stop
+else
+  PROMPT_COMMAND="$PROMPT_COMMAND;_timer_stop"
+fi
 
 _git_status()
 {
