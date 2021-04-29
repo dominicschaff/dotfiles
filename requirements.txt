@@ -1,17 +1,10 @@
 pg8000
 Pillow
 sty
-WeasyPrint
 youtube-dl
 awscli
 qr
-pylint
-pyflakes
 Pygments
-pycodestyle
-mypy
-htmlmin
 html2text
-kb-manager
 bpytop
 diagrams

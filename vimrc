@@ -101,7 +101,6 @@ Plug 'mileszs/ack.vim'
 Plug 'dense-analysis/ale'
 Plug 'dikiaap/minimalist'
 Plug 'tpope/vim-markdown'
-Plug 'davidhalter/jedi-vim'
 call plug#end()
 
 
@@ -122,9 +121,6 @@ endif
 
 let g:ale_fixers = {'*': ['trim_whitespace']}
 let g:ale_fix_on_save = 1
-let g:ale_linters = {
-\   'python': ['mypy', 'pylint', 'pycodestyle', 'pyflakes'],
-\}
 
 let g:SimpylFold_docstring_preview=1
 
