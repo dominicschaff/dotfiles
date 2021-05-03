@@ -72,6 +72,7 @@ nnoremap <leader>W :%s/\s\+$//<cr>:let @/=''<CR>
 " Specify the file type
 autocmd BufRead,BufNewFile *.md set filetype=markdown
 au BufNewFile,BufRead *.json set filetype=json
+autocmd BufNewFile,BufRead .envrc set syntax=bash
 
 " Make the exit of insert mode faster
 set timeoutlen=1000 ttimeoutlen=0
