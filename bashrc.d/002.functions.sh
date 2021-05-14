@@ -246,9 +246,9 @@ ex()
 
 open()
 {
-  if hash xdg-opn 2>/dev/null; then
+  if ! hash xdg-opn 2>/dev/null; then
     xdg-open "$1"
-  elif hash termux-open 2>/dev/null; then
+  elif ! hash termux-open 2>/dev/null; then
     termux-open "$1"
   fi
 }
