@@ -102,6 +102,8 @@ Plug 'mileszs/ack.vim'
 Plug 'dense-analysis/ale'
 Plug 'dikiaap/minimalist'
 Plug 'tpope/vim-markdown'
+Plug 'tpope/vim-fugitive'
+Plug 'airblade/vim-gitgutter'
 call plug#end()
 
 

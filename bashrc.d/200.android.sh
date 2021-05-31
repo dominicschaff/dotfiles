@@ -39,3 +39,11 @@ open_urls()
   done
 }
 
+download_all_apks()
+{
+  for i in $(adb shell pm list packages | awk -F':' '{print $2}'); do
+    echo "Fetching : $i"
+    adb pull "$(adb shell pm path $i | awk -F':' '{print $2}')"
+    mv base.apk $i.apk
+  done
+}
