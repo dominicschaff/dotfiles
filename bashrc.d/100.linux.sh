@@ -6,7 +6,7 @@ fi
 
 update()
 {
-  sudo dnf update
+  sudo dnf update --refresh
 }
 
 core_count()
