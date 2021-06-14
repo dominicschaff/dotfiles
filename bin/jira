@@ -238,14 +238,24 @@ time_query()
 {
   query="$(jq -r ".time_queries.$1.query" "$JIRA_CONFIG" | sed "s/##PROJECT##/$jira_project/" | sed "s/##USER##/$jira_user/")"
   jql="$(jq -r ".time_queries.$1.jq" "$JIRA_CONFIG")"
+  epic_fetch="$(jq -r ".time_queries.$1.epic_fetch" "$JIRA_CONFIG")"
+  tag_name="$(jq -r ".time_queries.$1.tag_name" "$JIRA_CONFIG")"
   check_not_null "$query"
   check_not_null "$jql"
-  echo "Tag Name,Days,Percentage of Total,epic"
+  if [[ "$epic_fetch" == "true" ]]; then
+    echo "$tag_name,Days,Percentage of Total,Epic Name"
+  else
+    echo "$tag_name,Days,Percentage of Total"
+  fi
   fetch_all_for_jql "$query" "$jql" | jq -s \
     | jq -r '.[] | "\(.time),\(.tag)"' \
     | grep -v null \
     | awk 'BEGIN { FS = "," } ; { t[$2] += $1; total += $1 } END {for (x in t) printf "%s,%.1f,%.1f %%\n",x,t[x]/3600/8,100.0*t[x]/total ; printf "Total days: %.1f\n", total/3600/8}' | while read line; do
+    if [[ "$epic_fetch" == "true" ]]; then
       echo "$line,$(ticket "$(echo "$line" | cut -d',' -f1)" | jq .fields.summary)"
+    else
+      echo "$line"
+    fi
 
   done
 }
