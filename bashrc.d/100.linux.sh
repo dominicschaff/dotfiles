@@ -7,6 +7,7 @@ fi
 update()
 {
   sudo dnf update --refresh
+  sudo flatpak update
 }
 
 core_count()
