@@ -69,6 +69,10 @@ nnoremap qa :qa<cr>
 " Clear Whitespace
 nnoremap <leader>W :%s/\s\+$//<cr>:let @/=''<CR>
 
+" Base64 things
+vnoremap <leader>64d c<c-r>=system('base64 --decode', @")<cr><esc>
+vnoremap <leader>64e c<c-r>=system('base64', @")<cr><esc>
+
 " Specify the file type
 autocmd BufRead,BufNewFile *.md set filetype=markdown
 au BufNewFile,BufRead *.json set filetype=json
