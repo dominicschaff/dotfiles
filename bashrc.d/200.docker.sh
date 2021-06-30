@@ -8,10 +8,10 @@ fi
 docker_clean()
 {
   docker_stop_all
-  docker system prune
-  docker container prune
-  docker image prune -a
-  docker volume prune
+  docker system prune --all --force
+  docker container prune --force
+  docker image prune --all --force
+  docker volume prune --force
 }
 
 docker_stop_all()
