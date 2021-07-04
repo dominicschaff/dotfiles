@@ -73,6 +73,11 @@ scale()
   ffmpeg -i "$2" -vf scale=$1 "$3"
 }
 
+scale480()
+{
+  scale "trunc(oh*a/2)*2:480" "$1" "$2"
+}
+
 scale720()
 {
   scale "trunc(oh*a/2)*2:720" "$1" "$2"
