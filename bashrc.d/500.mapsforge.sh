@@ -13,9 +13,10 @@ wget_quiet()
 maps_run()
 {
   TOOLS="graphhopper.jar"
-  wget_quiet "https://repo1.maven.org/maven2/com/graphhopper/graphhopper-web/2.2/graphhopper-web-2.2.jar" $TOOLS &
+  wget_quiet "https://repo1.maven.org/maven2/com/graphhopper/graphhopper-web/3.0/graphhopper-web-3.0.jar" $TOOLS &
   wget_quiet "https://download.geofabrik.de/africa/south-africa-latest.osm.pbf" area.osm.pbf &
-  wget_quiet "http://download.mapsforge.org/maps/v5/africa/south-africa-and-lesotho.map" area.map &
+  wget_quiet "http://download.mapsforge.org/maps/v5/africa/south-africa-and-lesotho.map" south-africa-and-lesotho.map &
+  wget_quiet "http://download.mapsforge.org/maps/world/world.map" world.map &
 
   wait
 
@@ -25,6 +26,8 @@ graphhopper:
   graph.location: area
   graph.flag_encoders: car,foot
   graph.encoded_values: road_class,road_class_link,road_environment,max_speed,road_access,surface,toll,track_type
+  datareader.preferred_language: en
+  graph.do_sort: true
   prepare.min_network_size: 1
   prepare.min_one_way_network_size: 1
   routing.non_ch.max_waypoint_distance: 1000000
@@ -52,7 +55,7 @@ server:
     bind_host: localhost
 EOF
   rm -rf area
-  java -Xmx2700m -Xms1g -server -jar "$TOOLS" import config.yml
+  java -Xmx8g -Xms1g -server -jar "$TOOLS" import config.yml
 
   if [[ "$1" == "keep" ]]; then
     echo "Not deleting base files"
