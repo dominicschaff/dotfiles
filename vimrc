@@ -108,6 +108,8 @@ Plug 'dikiaap/minimalist'
 Plug 'tpope/vim-markdown'
 Plug 'tpope/vim-fugitive'
 Plug 'airblade/vim-gitgutter'
+Plug 'Yggdroot/indentLine'
+Plug 'hashivim/vim-terraform'
 call plug#end()
 
 
@@ -131,8 +133,8 @@ let g:ale_fix_on_save = 1
 
 let g:SimpylFold_docstring_preview=1
 
-au BufNewFile,BufRead *.py set tabstop=4
-au BufNewFile,BufRead *.py set softtabstop=4
-au BufNewFile,BufRead *.py set shiftwidth=4
+autocmd FileType py setlocal ts=4 sts=4 sw=4 expandtab
+autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab
+let g:indentLine_char = '⦙'
 "set mouse=
 "set ttymouse=
