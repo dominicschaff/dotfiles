@@ -6,8 +6,20 @@ fi
 
 update()
 {
-  sudo dnf update --refresh
-  sudo flatpak update
+  if hash dnf 2>/dev/null; then
+    sudo dnf update --refresh
+  fi
+  if hash apt 2>/dev/null; then
+    sudo apt update
+    sudo apt upgrade
+    sudo apt dist-upgrade
+    sudo apt autoclean
+    sudo apt autoremove
+    sudo apt autopurge
+  fi
+  if hash flatpak 2>/dev/null; then
+    sudo flatpak update
+  fi
 }
 
 core_count()
