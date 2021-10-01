@@ -110,6 +110,7 @@ Plug 'tpope/vim-fugitive'
 Plug 'airblade/vim-gitgutter'
 Plug 'Yggdroot/indentLine'
 Plug 'hashivim/vim-terraform'
+Plug 'vim-python/python-syntax'
 call plug#end()
 
 
