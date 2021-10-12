@@ -51,7 +51,7 @@ bundle()
     return
   fi
   repo_name="$(pwd | rev | cut -d'/' -f1 | rev).bundle"
-  git bundle create "$repo_name" master
+  git bundle create "$repo_name" "$(git branch | grep '*' | cut -d' ' -f2)"
   echo "Created $repo_name"
 }
 
