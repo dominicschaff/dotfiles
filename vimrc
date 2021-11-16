@@ -97,12 +97,9 @@ Plug 'tpope/vim-sensible'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 Plug 'itchyny/lightline.vim'
-Plug 'terryma/vim-multiple-cursors'
-Plug 'scrooloose/nerdtree'
 Plug 'tomasr/molokai'
 Plug 'jiangmiao/auto-pairs'
 Plug 'frazrepo/vim-rainbow'
-Plug 'mileszs/ack.vim'
 Plug 'dense-analysis/ale'
 Plug 'dikiaap/minimalist'
 Plug 'tpope/vim-markdown'
@@ -111,6 +108,8 @@ Plug 'airblade/vim-gitgutter'
 Plug 'Yggdroot/indentLine'
 Plug 'hashivim/vim-terraform'
 Plug 'vim-python/python-syntax'
+Plug 'ycm-core/YouCompleteMe'
+Plug 'mfukar/robotframework-vim'
 call plug#end()
 
 
