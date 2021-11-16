@@ -44,4 +44,4 @@ _exit_code_colour()
 # \W = working directory
 # \$ = mode
 
-export PS1='\e[31m@office \[$(_exit_code_colour)\]$(_print_time) \[\e[31m\]\[\e[35m\]\W \[\e[00m\]\$ '
+export PS1='\[$(_exit_code_colour)\]work $(_print_time) \[\e[31m\]\[\e[35m\]\W \[\e[00m\]\$ '
