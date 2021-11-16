@@ -8,3 +8,5 @@ Pygments
 html2text
 bpytop
 diagrams
+speedtest-cli
+sshuttle
