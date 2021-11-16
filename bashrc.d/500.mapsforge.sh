@@ -13,7 +13,7 @@ wget_quiet()
 maps_run()
 {
   TOOLS="graphhopper.jar"
-  wget_quiet "https://repo1.maven.org/maven2/com/graphhopper/graphhopper-web/3.0/graphhopper-web-3.0.jar" $TOOLS &
+  wget_quiet "https://repo1.maven.org/maven2/com/graphhopper/graphhopper-web/4.0/graphhopper-web-4.0.jar" $TOOLS &
   wget_quiet "https://download.geofabrik.de/africa/south-africa-latest.osm.pbf" area.osm.pbf &
   wget_quiet "http://download.mapsforge.org/maps/v5/africa/south-africa-and-lesotho.map" south-africa-and-lesotho.map &
   wget_quiet "http://download.mapsforge.org/maps/world/world.map" world.map &
