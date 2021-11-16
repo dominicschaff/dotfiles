@@ -77,7 +77,7 @@ if [ -z "$PS1_OVERRIDE" ]; then
   if [ -n "$PS1_PRE" ]; then
     PS1_temp="$PS1_PRE "
   fi
-  PS1_temp=$PS1_temp'\h $(date +%T) \[$(_exit_code_colour)\]$(_print_time) \[\e[31m\]\[\e[35m\]\w '
+  PS1_temp=$PS1_temp'\[$(_exit_code_colour)\]\h\[\e[00m\] $(date +%T) $(_print_time) \[\e[31m\]\[\e[35m\]\w '
   if hash git 2>/dev/null; then
     export PS1_temp=$PS1_temp'\[$(_git_file_color)\]$(_git_status)'
   fi
