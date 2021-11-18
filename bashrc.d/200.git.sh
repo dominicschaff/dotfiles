@@ -6,8 +6,8 @@ fi
 
 alias g="git status"
 alias gp="git pull"
-alias gcm="git commit -m"
-alias gcam="git commit -am"
+alias gcm="git commit -S -m"
+alias gcam="git commit -S -am"
 alias gg="git push"
 alias gd="git diff"
 alias glogs="git log --oneline --decorate --color --graph --stat"
