@@ -12,12 +12,12 @@ password()
 
 pc()
 {
-  pandoc -s --standalone --toc -f markdown --highlight-style zenburn --template ~/dotfiles/pandoc/template.html -t html "$1" | sed 's/<table/<table class=\"table\"/' > "${1%.*}.html"
+  pandoc -s --standalone --toc -f markdown --highlight-style zenburn --template ~/.dotfiles/pandoc/template.html -t html "$1" | sed 's/<table/<table class=\"table\"/' > "${1%.*}.html"
 }
 
 pc_print()
 {
-  pandoc -s --standalone --toc -f markdown --highlight-style haddock --template ~/dotfiles/pandoc/template.html -t html "$1" | sed 's/<table/<table class=\"table\"/' > "${1%.*}.html"
+  pandoc -s --standalone --toc -f markdown --highlight-style haddock --template ~/.dotfiles/pandoc/template.html -t html "$1" | sed 's/<table/<table class=\"table\"/' > "${1%.*}.html"
 }
 
 fetch_markdown()
