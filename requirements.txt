@@ -10,3 +10,7 @@ bpytop
 diagrams
 speedtest-cli
 sshuttle
+flake8
+pycodestyle
+pydocstyle
+pyflakes
