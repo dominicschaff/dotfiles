@@ -108,8 +108,6 @@ Plug 'airblade/vim-gitgutter'
 Plug 'Yggdroot/indentLine'
 Plug 'hashivim/vim-terraform'
 Plug 'vim-python/python-syntax'
-Plug 'ycm-core/YouCompleteMe'
-Plug 'mfukar/robotframework-vim'
 call plug#end()
 
 
