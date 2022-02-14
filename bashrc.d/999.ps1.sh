@@ -16,26 +16,6 @@ else
   PROMPT_COMMAND="$PROMPT_COMMAND;_timer_stop"
 fi
 
-_git_status()
-{
-  branch="$(git branch 2> /dev/null | grep '*')"
-  if [[ "$?" -eq 0 ]]; then
-    echo " $(echo "$branch" | cut -d' ' -f2)"
-  fi
-}
-
-_git_file_count()
-{
-  branch="$(git branch 2> /dev/null)"
-  if [[ "$?" -eq 0 ]]; then
-    files_affected="$(gf | wc -l | awk '{print $1}')"
-    if [[ "$files_affected" -eq 0 ]]; then
-      files_affected=""
-    fi
-    echo "$files_affected"
-  fi
-}
-
 _print_time()
 {
   if [[ $timer_show -lt 60 ]]; then
@@ -58,6 +38,14 @@ _git_file_color()
   fi
 }
 
+_git_status()
+{
+  branch="$(git branch 2> /dev/null | grep '*')"
+  if [[ "$?" -eq 0 ]]; then
+    echo " $(echo "$branch" | cut -d' ' -f2)"
+  fi
+}
+
 _exit_code_colour()
 {
   if [[ "$?" != 0 ]]; then
@@ -77,11 +65,11 @@ if [ -z "$PS1_OVERRIDE" ]; then
   if [ -n "$PS1_PRE" ]; then
     PS1_temp="$PS1_PRE "
   fi
-  PS1_temp=$PS1_temp'\[$(_exit_code_colour)\]\h\[\e[00m\] $(date +%T) $(_print_time) \[\e[31m\]\[\e[35m\]\w '
+  PS1_temp=$PS1_temp'\[$(_exit_code_colour)\]$(_print_time)\[\e[00m\] $(date +%T) \[\e[31m\]\[\e[35m\]\w '
   if hash git 2>/dev/null; then
     export PS1_temp=$PS1_temp'\[$(_git_file_color)\]$(_git_status)'
   fi
-  export PS1=$PS1_temp' \[\e[00m\]\n⤷ \$ '
+  export PS1='╭─'$PS1_temp' \[\e[00m\]\n╰─\$ '
 else
   export PS1=$PS1_OVERRIDE
 fi
