@@ -14,3 +14,4 @@ flake8
 pycodestyle
 pydocstyle
 pyflakes
+thefuck
