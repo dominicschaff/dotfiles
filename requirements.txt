@@ -15,3 +15,4 @@ pycodestyle
 pydocstyle
 pyflakes
 thefuck
+icdiff
