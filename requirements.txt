@@ -16,3 +16,4 @@ pydocstyle
 pyflakes
 thefuck
 icdiff
+grip
