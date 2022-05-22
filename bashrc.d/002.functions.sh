@@ -103,7 +103,7 @@ get_ip_for_host()
 
 compress_dir()
 {
-  tar -cv $1/ | gzip -9 > archive.tar.gz
+  tar cf - "$1" | pigz -9 > "$2"
 }
 
 load_avg()
