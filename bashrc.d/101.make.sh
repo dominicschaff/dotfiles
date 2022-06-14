@@ -14,4 +14,4 @@ _make()
     COMPREPLY=( $(compgen -W "$opts" -- ${cur}) )
     return 0
 }
-complete -F _make make
+#complete -F _make make
