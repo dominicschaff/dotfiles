@@ -12,6 +12,7 @@ docker_clean()
   docker container prune --force
   docker image prune --all --force
   docker volume prune --force
+  docker network prune --force
 }
 
 docker_stop_all()
