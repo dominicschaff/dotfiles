@@ -149,6 +149,11 @@ tickets_done()
   fetch_all_for_jql "(project = $jira_project) and assignee = \"$jira_user\" and status in (Resolved, Done, Closed)" '.issues[] | "\(.fields.updated): \(.key) \(.fields.summary)"'
 }
 
+view_backlog()
+{
+  fetch_all_for_jql "(project = $jira_project) and (Sprint not in openSprints()) and status not in (Resolved, Done, Closed)" '.issues[] | "\(.key): \(.fields.summary)"'
+}
+
 ################################################################################
 # Move provided ticket to In Progress                                          #
 ################################################################################
@@ -285,6 +290,7 @@ case "$1" in
   t|time) work_time ;;
   tq) time_query "$2" ;;
   ticket) ticket "$2" ;;
+  b|backlog) view_backlog ;;
   *)
     echo "Unknown command specified '$1'"
     echo ""
