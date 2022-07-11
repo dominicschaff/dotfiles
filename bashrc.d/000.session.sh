@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 
 export TERM="xterm-256color"
-export HISTIGNORE="[ ]*"
+export HISTIGNORE="[ ]*:ls:ll:history:pwd:bg:fg"
 export HISTCONTROL=ignoreboth:erasedups
+export HISTTIMEFORMAT="%d/%m/%y %T "
 export HISTSIZE=-1
 export HISTFILESIZE=-1
 export CLICOLOR=1

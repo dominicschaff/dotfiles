@@ -20,10 +20,10 @@ for f in *.mp4; do
   file_new="$(stat --printf="%s\n" "$t")"
   fs="$((100*file_new/file_old))"
   if [[ $file_new -ge $file_old ]]; then
-    echo -e "\e[31m$fs %\e[0m = $(echo "$file_old" | nft) -> $(echo "$file_new" | nft) - Delete TMP file"
+    echo -e "\e[31m$fs %\e[0m = $(echo "$file_old" | number_format) -> $(echo "$file_new" | number_format) - Delete TMP file"
     rm "$t"
   else
-    echo -e "\e[32m$fs %\e[0m = $(echo "$file_old" | nft) -> $(echo "$file_new" | nft) - Replace orriginal with new copy"
+    echo -e "\e[32m$fs %\e[0m = $(echo "$file_old" | number_format) -> $(echo "$file_new" | number_format) - Replace orriginal with new copy"
     mv "$t" "$f"
   fi
 done

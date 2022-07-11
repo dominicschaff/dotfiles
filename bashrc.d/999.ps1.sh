@@ -1,30 +1,5 @@
 #!/usr/bin/env bash
 
-_timer_start() {
-    timer=${timer:-$SECONDS}
-}
-
-_timer_stop() {
-    timer_show=$((SECONDS - timer))
-    unset timer
-}
-
-trap '_timer_start' DEBUG
-if [[ -z "$PROMPT_COMMAND" ]]; then
-  PROMPT_COMMAND=_timer_stop
-else
-  PROMPT_COMMAND="$PROMPT_COMMAND;_timer_stop"
-fi
-
-_print_time()
-{
-  if [[ $timer_show -lt 60 ]]; then
-    echo "${timer_show}s"
-  else
-    printf "%02d:%02d" $((timer_show/60)) $((timer_show%60))
-  fi
-}
-
 _git_file_color()
 {
   branch="$(git branch 2> /dev/null)"
@@ -65,7 +40,7 @@ if [ -z "$PS1_OVERRIDE" ]; then
   if [ -n "$PS1_PRE" ]; then
     PS1_temp="$PS1_PRE "
   fi
-  PS1_temp=$PS1_temp'\[$(_exit_code_colour)\]$(_print_time)\[\e[00m\] $(date +%T) \[\e[31m\]\[\e[35m\]\w'
+  PS1_temp=$PS1_temp'\[$(_exit_code_colour)\]$(date +%T) \[\e[31m\]\[\e[35m\]\w'
   if hash git 2>/dev/null; then
     export PS1_temp=$PS1_temp'\[$(_git_file_color)\]$(_git_status)'
   fi
