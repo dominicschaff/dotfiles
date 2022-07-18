@@ -1,5 +1,5 @@
 sty
-youtube-dl
+yt-dlp
 qr
 Pygments
 html2text
