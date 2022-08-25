@@ -16,9 +16,6 @@ alias st='top -o VIRT,RES,SHR,%CPU,%MEM,TIME+,CMDLINE -q'
 alias m='mv -i'
 alias e="editor"
 
-alias weather="curl 'http://wttr.in/cape_town'"
-alias moon="curl 'http://wttr.in/Moon'"
-
 alias f="declare -F | cut -d' ' -f'3-'"
 alias h="type"
 

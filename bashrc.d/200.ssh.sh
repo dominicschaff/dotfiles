@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+if ! hash ssh 2>/dev/null; then
+  return
+fi
+
 _ssh_from_file()
 {
   grep '^Host' "$1" | grep -v '[?*]' | cut -d ' ' -f 2-
