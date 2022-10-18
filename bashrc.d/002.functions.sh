@@ -5,11 +5,6 @@ key()
   pwgen -cnB ${1:-8}
 }
 
-password()
-{
-  pwgen -cnyB ${1:-15}
-}
-
 pc()
 {
   pandoc -s --standalone --toc -f markdown --highlight-style zenburn --template ~/.dotfiles/pandoc/template.html -t html "$1" | sed 's/<table/<table class=\"table\"/' > "${1%.*}.html"
@@ -62,16 +57,6 @@ tmp()
   pwd
 }
 
-tm()
-{
-  convertMilli $1 | pbcopy
-}
-
-t()
-{
-  convertTime $1 | pbcopy
-}
-
 line()
 {
   printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' -
@@ -87,20 +72,6 @@ last_sunday()
   date -d'last sunday' +%Y-%m-%d
 }
 
-get_ip_for_host()
-{
-  for f in "$@"; do
-    echo "$f"
-    answer="$(curl -s "https://1.1.1.1/dns-query?ct=application/dns-json&name=$f")"
-    if [[ "$(echo "$answer" | jq -r '.Status')" == "0" ]]; then
-      echo "$answer" | jq -r '.Answer[] | .data' | sort -u
-    else
-      echo "Error finding IP:"
-      echo "$answer"
-    fi
-  done
-}
-
 compress_dir()
 {
   tar cf - "$1" | pigz -9 > "$2"
@@ -114,7 +85,7 @@ load_avg()
 filesize()
 {
   for f in "$@"; do
-    echo "$f => $(stat --printf="%B\n" "$f" | nft)"
+    echo "$f => $(stat --printf="%B\n" "$f" | number_format)"
   done
 }
 
@@ -128,21 +99,6 @@ get_random_tweet()
   get_tweets $1 | sort -R | head -n1 | jq -r '.title'
 }
 
-timestamp()
-{
-  if [[ $# -eq 0 ]]; then
-    date "+%s"
-  else
-    for d in "$@"; do
-      s="$d"
-      if [[ ${#s} -gt 10 ]]; then
-        s="$(echo $d | rev | cut -c 4- | rev)"
-      fi
-      date -d @$s +"%Y-%m-%d %T"
-    done
-  fi
-}
-
 do_merge()
 {
   filename=$(basename -- "$1")
@@ -152,29 +108,9 @@ do_merge()
   convert $@ -background black -flatten "output.$extension"
 }
 
-title()
-{
-  PROMPT_COMMAND="echo -ne \"\033]0;$*\007\""
-}
-
 dir_size()
 {
   du -hsc * 2>/dev/null | sort -h
-}
-
-do_we_have_internet()
-{
-  while true; do
-    ping -c 1 -t 3 google.com > /dev/null
-    if [[ $? == 0 ]]; then
-      echo 'We are connected'
-      say "We have the internets"
-      return
-    else
-      echo "No internet"
-    fi
-    sleep 5
-  done
 }
 
 mirror()
@@ -184,39 +120,11 @@ mirror()
     --recursive \
     --convert-links \
     --adjust-extension \
-    --span-hosts \
     --page-requisites \
     --no-parent \
     --quiet \
     --show-progress \
     "$1"
-}
-
-fib()
-{
-  n=$1
-  if [[ $n -lt 2 ]]; then
-    echo $n
-    return
-  fi
-  a=0
-  b=1
-  c=$((a+b))
-  for (( i = 1; i < n; i++ )); do
-    c=$((a+b))
-    a=$b
-    b=$c
-  done
-  echo $c
-}
-
-scratch()
-{
-  if [ ! -f ~/scratch.md ]; then
-    touch ~/scratch.md
-  fi
-
-  vim ~/scratch.md
 }
 
 ex()

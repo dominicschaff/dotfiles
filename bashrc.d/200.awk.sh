@@ -24,11 +24,6 @@ col_sum()
   awk '{ sum += $1 } END { print sum }'
 }
 
-wc_pretty()
-{
-  wc -l "$@" | awk '{printf(fmt,$1,$2)}' fmt="%'15.0f %s\n"
-}
-
 average_file_size()
 {
   \ls -l | file_size_stats
