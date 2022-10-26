@@ -5,7 +5,7 @@ if ! hash minikube 2>/dev/null; then
 fi
 
 alias m='minikube'
-alias ms='minikube start --mount=true --mount-string=/home/merlin/Development/ska_storage/:/host_data/'
+alias ms='minikube start --mount=true --mount-string=$HOME/Development/shared_storage/:/host_data/; minikube addons enable ingress'
 
 eval "$(minikube completion bash)"
 
