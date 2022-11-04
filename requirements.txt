@@ -1,9 +1,7 @@
 sty
 yt-dlp
-qr
 Pygments
 html2text
 diagrams
 speedtest-cli
-thefuck
 icdiff
