@@ -5,3 +5,7 @@ html2text
 diagrams
 speedtest-cli
 icdiff
+Markdown
+markdown-full-yaml-metadata
+htmlmin
+readtime

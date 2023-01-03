@@ -12,3 +12,10 @@ pip3_install()
 alias venv_init='python3 -m venv venv'
 alias venv_activate='source venv/bin/activate && pip3 install --upgrade pip'
 
+py_clean()
+{
+  for f in "$@"; do
+    isort --profile black -w 79 "$f"
+    black --line-length 79 "$f"
+  done
+}
