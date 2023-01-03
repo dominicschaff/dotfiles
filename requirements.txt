@@ -5,3 +5,5 @@ html2text
 diagrams
 speedtest-cli
 icdiff
+isort
+black

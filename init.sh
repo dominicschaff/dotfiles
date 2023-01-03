@@ -5,7 +5,7 @@ INITIAL=10
 STR_INTERMEDIATE="Lines ~ %'${ACCURACY}d"
 STR_FINAL="Lines = %'${ACCURACY}d"
 
-gcc -x c - -o ~/bin/lines <<EOF
+gcc -x c - -o ~/.bin/lines <<EOF
 #include <stdio.h>
 #include <stdlib.h>
 #include <locale.h>
