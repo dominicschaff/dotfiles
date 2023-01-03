@@ -1,0 +1,581 @@
+#!/usr/bin/env python3
+
+"""Static Generator.
+
+This can generator a static site given a directory of tagged content.
+"""
+
+# pylint: disable=broad-except
+# pylint: disable=too-many-instance-attributes
+# pylint: disable=no-member
+# pylint: disable=too-many-arguments
+
+import argparse
+import re
+import shutil
+import sys
+import tomllib
+from datetime import datetime
+from pathlib import Path
+from time import time
+
+import htmlmin
+import markdown
+import readtime
+
+
+def minify_css(css: str) -> str:
+    """Minify provided CSS."""
+
+    # remove comments - this will break a lot of hacks :-P
+    css = re.sub(
+        r"\s*/\*\s*\*/", "$$HACK1$$", css
+    )  # preserve IE<6 comment hack
+    css = re.sub(r"/\*[\s\S]*?\*/", "", css)
+    css = css.replace("$$HACK1$$", "/**/")  # preserve IE<6 comment hack
+
+    # url() doesn't need quotes
+    css = re.sub(r'url\((["\'])([^)]*)\1\)', r"url(\2)", css)
+
+    # spaces may be safely collapsed
+    css = re.sub(r"\s+", " ", css)
+
+    # shorten collapsable colors: #aabbcc to #abc
+    css = re.sub(
+        r"#([0-9a-f])\1([0-9a-f])\2([0-9a-f])\3(\s|;)", r"#\1\2\3\4", css
+    )
+
+    # fragment values can loose zeros
+    css = re.sub(r":\s*0(\.\d+([cm]m|e[mx]|in|p[ctx]))\s*;", r":\1;", css)
+
+    output = []
+    for rule in re.findall(r"([^{]+){([^}]*)}", css):
+
+        # we don't need spaces around operators
+        selectors = [
+            re.sub(
+                r"(?<=[\[\(>+=])\s+|\s+(?=[=~^$*|>+\]\)])",
+                r"",
+                selector.strip(),
+            )
+            for selector in rule[0].split(",")
+        ]
+
+        # order is important, but we still want to discard repetitions
+        properties = {}
+        porder = []
+        for prop in re.findall("(.*?):(.*?)(;|$)", rule[1]):
+            key = prop[0].strip().lower()
+            if key not in porder:
+                porder.append(key)
+            properties[key] = prop[1].strip()
+
+        # output rule if it contains any declarations
+        if properties:
+            props = "".join([f"{key}:{properties[key]};" for key in porder])[
+                :-1
+            ]
+
+            output.append(f"{','.join(selectors)}{{{props}}}")
+    return "".join(output)
+
+
+def make_plural(word: str) -> str:
+    """Make input word a plural."""
+
+    # Check if word is ending with s,x,z or is
+    # ending with ah, eh, ih, oh,uh,dh,gh,kh,ph,rh,th
+    if re.search("[sxz]$", word) or re.search("[^aeioudgkprt]h$", word):
+
+        # Make it plural by adding es in end
+        return re.sub("$", "es", word)
+
+    # Check if word is ending with ay,ey,iy,oy,uy
+    if re.search("y$", word):
+
+        # Make it plural by removing y from end adding ies to end
+        return re.sub("y$", "ies", word)
+
+    # In all the other cases
+    # Make the plural of word by adding s in end
+    return word + "s"
+
+
+def get_text_file_content(file_name) -> str:
+    """Get contents of text file."""
+    if isinstance(file_name, str):
+        file_name = Path(file_name)
+    with file_name.open("r", encoding="utf-8") as file_pointer:
+        return file_pointer.read()
+
+
+class SiteGenerator:
+    """Static Site Generator, works primarily with tags."""
+
+    def __init__(
+        self,
+        name,
+        input_dir,
+        output_dir,
+        verbose,
+        wpm=265,
+        css_file=None,
+        navigation_links=None,
+        collection_name=None,
+    ):
+        self._markdown = markdown.Markdown(extensions=["full_yaml_metadata"])
+        self._name = name
+        self._files = {}
+        self._tags = {}
+        self._content = {}
+        self.regex_tag = re.compile(r"[^a-z0-9]")
+        self.regex_item = re.compile(r"[^a-z0-9_-]")
+        self._output = Path(output_dir)
+        self._input = Path(input_dir)
+        self._verbose = verbose
+        self._wpm = wpm
+        self._nav = []
+        self._collection_name = collection_name
+        self._collection_name_plural = collection_name
+        if navigation_links is not None:
+            for nav in navigation_links:
+                if isinstance(nav, dict):
+                    self._nav.append(nav)
+                else:
+                    items = nav.split("=")
+                    self._nav.append({"url": items[1], "title": items[0]})
+        self._css = """
+body {
+    margin: 40px auto;
+    max-width: 650px;
+    line-height: 1.6;
+    font-size: 14px;
+    background: #212121;
+    color: #E0E0E0;
+    font-family:Roboto,Ubuntu,open sans,helvetica neue,sans-serif;
+}
+h1, h2, h3 {
+    line-height:1.2
+}
+a {
+  color: #90CAF9;
+  text-decoration: none;
+}
+.muted {
+    font-size: 0.8em;
+}
+a:visited {
+  color: #90CAF9;
+}
+a:hover {
+  color: #F990CA;
+  text-decoration: underline;
+}
+.navbar {
+  background-color: #333;
+  position: fixed;
+  top: 0;
+}
+.navbar a {
+  float: left;
+  display: block;
+  padding: 10px;
+}
+.content {
+    padding-top: 20px;
+}
+.tag {
+   border-radius: 30px;
+   background-color: #333333;
+   padding: 5px 10px 5px 10px;
+   border:none;
+   white-space: nowrap;
+}
+img {max-width:650px; border-radius:10%;}
+a>svg {height:52px;width:52px;}
+"""
+        if css_file is not None:
+            css = Path(css_file)
+            if css.exists():
+                self._css = get_text_file_content(css)
+
+    def _l(self, line: str):
+        if self._verbose:
+            print(f"{datetime.now().time()} : {line}", file=sys.stderr)
+
+    def scan(self, start=None):
+        """Scan directory structure, and record all files."""
+        if start is None:
+            self._files = {"md": [], "static": []}
+            start = self._input
+        for file in start.iterdir():
+            if file.is_dir():
+                self.scan(file)
+            else:
+                if file.name.endswith(".md"):
+                    self._files["md"].append(file)
+                else:
+                    self._files["static"].append(file)
+
+    def process_all(self):
+        """Process all files."""
+        for md_file in self._files["md"]:
+            self.process(md_file)
+
+    def process(self, md_file: Path):
+        """Process a file, and get all meta info on the text"""
+        self._l(f"Processing ... {md_file}")
+        data = self.process_file(md_file)
+
+        if "tags" in data["headers"]:
+            for tag_tmp in data["headers"]["tags"]:
+                tag = tag_tmp.lower()
+                if tag not in self._tags:
+                    self._tags[tag] = {
+                        "title": tag.title(),
+                        "items": [],
+                        "link": "tags/"
+                        + self.regex_tag.sub("_", tag.lower())
+                        + ".html",
+                    }
+                self._tags[tag]["items"].append(md_file)
+
+            data["tags"] = data["headers"]["tags"]
+        else:
+            data["tags"] = []
+        data["link"] = self.regex_item.sub("_", md_file.stem.lower()) + ".html"
+        self._content[str(md_file)] = data
+
+    def process_file(self, md_file: Path) -> dict:
+        """Process giving MarkDown file."""
+        content = get_text_file_content(md_file)
+
+        text = self._markdown.convert(content)
+        headers = self._markdown.Meta
+
+        output = {
+            "title": headers.get("title", md_file.name),
+            "headers": headers,
+            "content": text,
+            "modified": md_file.stat().st_mtime,
+            "readtime": readtime.of_html(text, wpm=self._wpm),
+        }
+        self._markdown.reset()
+        return output
+
+    def _write(self, filepath, title, body):
+        """Write out the content, with adding the surrounding code."""
+        self._l(f"Output: {filepath}")
+        out = self._output / filepath
+        if out.exists():
+            raise ValueError(f"{filepath} already exists")
+        if len(self._nav) > 0:
+            nav = "".join(
+                [
+                    f"""<a href="{a['url']}">{a["title"]}</a> """
+                    for a in self._nav
+                ]
+            )
+            nav_out = f"""<div class="navbar tag">{nav}</div>"""
+        else:
+            nav_out = ""
+        content = f"""<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=yes">
+        <title>{title}</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <style>{minify_css(self._css)}</style>
+    </head>
+    <body>
+        {nav_out}
+        <div class="content">{body}</div>
+    </body>
+</html>"""
+
+        with (self._output / filepath).open("w") as outfile:
+            outfile.write(
+                htmlmin.minify(
+                    content, remove_comments=True, remove_empty_space=True
+                )
+            )
+
+    def clean_output(self):
+        """Clean the output directory if exists, or create."""
+        if self._output.exists():
+            for link in self._output.iterdir():
+                if link.is_dir():
+                    try:
+                        shutil.rmtree(link)
+                    except Exception:
+                        pass
+                else:
+                    link.unlink()
+        else:
+            self._output.mkdir(exist_ok=True)
+
+    ################################################################################
+    # Collection Builder functions
+    ################################################################################
+
+    def collection_output_index(self):
+        """Create homepage."""
+        data = [content for _, content in self._content.items()]
+        data.sort(reverse=True, key=lambda d: d["modified"])
+        newest = [
+            f"""<a href="/{self._collection_name}/{d['link']}">{d['title']}
+            <span class="muted">({d['readtime']})</span></a>"""
+            for d in data[:25]
+        ]
+        popular_tags = [
+            {"tag": name, "count": len(tag["items"])}
+            for name, tag in self._tags.items()
+        ]
+        popular_tags.sort(reverse=True, key=lambda d: d["count"])
+        tags = [
+            f"""<a href="{self._tags[d['tag']]['link']}">{self._tags[d['tag']]['title']}
+            <span class="muted">({d['count']})</span></a>"""
+            for d in popular_tags[:25]
+        ]
+        tpl = f"""<h1>Newest {self._collection_name_plural.title()}:</h1>
+        {"<br />".join(newest)}
+        <h1>Popular Tags:</h1>
+        {"<br />".join(tags)}
+        """
+
+        self._write("index.html", "Home", tpl)
+
+    def collection_output_tags(self):
+        """Create tag list page, and all individual tag pages."""
+        tags_all = []
+        tags = [v for _, v in self._tags.items()]
+        tags.sort(key=lambda d: d["title"])
+        for tag in tags:
+            tags_all.append(
+                f"""<a class="tag" href="/{tag['link']}">{tag['title']}
+                ({len(tag['items'])})</a>"""
+            )
+            items = [self._content[str(i)] for i in tag["items"]]
+            items.sort(key=lambda i: i["title"])
+            links = [
+                f"""<a href="/{self._collection_name}/{i['link']}">{i['title']}
+                <span class="muted">({i['readtime']})</span></a>"""
+                for i in items
+            ]
+            tpl = f"""<h1>{tag['title']}
+            <span class="muted">({len(tag['items'])})</span></h1>
+            {"<br />".join(links)}"""
+            self._write(tag["link"], tag["title"], tpl)
+        self._write(
+            "tags.html", "Tags", f"""<h1>All Tags</h1>{", ".join(tags_all)}"""
+        )
+
+    def collection_output_collection(self):
+        """Create collection list page, and all inidividual item pages"""
+        collection = [c for _, c in self._content.items()]
+        collection.sort(key=lambda d: d["title"])
+        item_links = [
+            f"""<a href="/{self._collection_name}/{item['link']}">{item['title']}
+            <span class="muted">({item['readtime']})</span></a>"""
+            for item in collection
+        ]
+        self._write(
+            f"{self._collection_name_plural}.html",
+            f"All {self._collection_name_plural.title()}",
+            f"""<h1>All {self._collection_name_plural.title()}</h1>
+            {"<br />".join(item_links)}""",
+        )
+
+        for item in collection:
+            tags = [
+                f"""<a class="tag"
+                href="/tags/{self.regex_tag.sub("_", tag.lower())}.html">
+                {tag.title()}</a>"""
+                for tag in item["tags"]
+            ]
+            self._write(
+                f"{self._collection_name}/{item['link']}",
+                item["title"],
+                f"""<h1>{item['title']}
+                <span class="muted">{item['readtime']}</h1>
+                <p>Tags: {", ".join(tags)}</p>
+                <br />
+                {item['content']}""",
+            )
+
+    ################################################################################
+    # Blog Builder functions
+    ################################################################################
+
+    ################################################################################
+    # Site Builder functions
+    ################################################################################
+
+    def site_output_static(self):
+        for file in self._files["static"]:
+            name = list(file.parts[1:])
+            p = self._output
+            for n in name:
+                p = p / n
+            p.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy(file, p)
+
+    def site_output_md(self):
+        for file in self._files["md"]:
+            name = list(file.parts[1:])
+            name[-1] = name[-1].replace(".md", ".html")
+            p = Path(name[0])
+            for n in name[1:]:
+                p = p / n
+            (self._output / p).parent.mkdir(parents=True, exist_ok=True)
+            data = self.process_file(file)
+            self._write(p, data["title"], data["content"])
+
+    ################################################################################
+    # Generate functions
+    ################################################################################
+
+    def generate_collection(self):
+        """Generate a collection."""
+        if self._collection_name is None:
+            print("Error: collection_name is not set")
+        self._collection_name = self._collection_name.lower()
+        self._collection_name_plural = make_plural(self._collection_name)
+        if "/index.html" not in [u["url"] for u in self._nav]:
+            self._nav.append({"url": "/index.html", "title": "Home"})
+        self._nav.extend(
+            [
+                {"url": "/tags.html", "title": "Tags"},
+                {
+                    "url": f"/{self._collection_name_plural}.html",
+                    "title": self._collection_name_plural.title(),
+                },
+            ]
+        )
+        self.scan()
+        self.clean_output()
+        self.process_all()
+        (self._output / "tags").mkdir(exist_ok=True)
+        (self._output / self._collection_name).mkdir(exist_ok=True)
+        self.collection_output_index()
+        self.collection_output_tags()
+        self.collection_output_collection()
+        print(f"Tag count: {len(self._tags)}")
+        print(f"Collection count: {len(self._content)}")
+
+    def generate_site(self):
+        """Generate a site."""
+        self.scan()
+        self.clean_output()
+        self.site_output_static()
+        self.site_output_md()
+
+    def generate_blog(self):
+        """Generate a blog."""
+        self.scan()
+        self.clean_output()
+
+    def generate(self, mode: str):
+        """Generate output based on given mode."""
+        if mode == "collection":
+            self.generate_collection()
+        elif mode == "site":
+            self.generate_site()
+        elif mode == "blog":
+            self.generate_blog()
+        else:
+            print(f"No such mode {mode}")
+
+
+def main():
+    """Main function."""
+    start = time()
+    parser = argparse.ArgumentParser(description="Run the Site Creator")
+    parser.add_argument(
+        "-o",
+        "--output",
+        help="Set output directory",
+        default="public",
+        type=str,
+    )
+    parser.add_argument(
+        "-i",
+        "--input",
+        help="Set input directory",
+        default="collection",
+        type=str,
+    )
+    parser.add_argument(
+        "-v",
+        "--verbose",
+        help="Print Progress",
+        action="store_true",
+        default=False,
+    )
+    parser.add_argument(
+        "--wpm",
+        help="Override default words per minute",
+        default=265,
+        type=int,
+    )
+    parser.add_argument(
+        "--mode", help="Set mode (site, collection)", default="site", type=str
+    )
+    parser.add_argument(
+        "--css",
+        help="Override current css content with provided file",
+        default=None,
+        type=str,
+    )
+    parser.add_argument(
+        "--nav", help="Add a navigation item: Title=Link", action="append"
+    )
+    parser.add_argument("--name", help="Site name", default="Site", type=str)
+    parser.add_argument(
+        "--collection_name",
+        help="Mode:Collection name",
+        default="collection",
+        type=str,
+    )
+    parser.add_argument(
+        "--config", help="Config File", default="config.toml", type=str
+    )
+
+    args = parser.parse_args()
+
+    config_file = Path(args.config)
+    if config_file.exists():
+        with config_file.open("rb") as file:
+            config = tomllib.load(file)
+            if "name" in config:
+                args.name = config["name"]
+            if "input" in config:
+                args.input = config["input"]
+            if "output" in config:
+                args.output = config["output"]
+            if "mode" in config:
+                args.mode = config["mode"]
+            if "verbose" in config:
+                args.verbose = config["verbose"]
+            if "collection_name" in config:
+                args.collection_name = config["collection_name"]
+            if "nav" in config and isinstance(config["nav"], list):
+                args.nav = config["nav"]
+
+    sg = SiteGenerator(
+        name=args.name,
+        input_dir=args.input,
+        output_dir=args.output,
+        verbose=args.verbose,
+        wpm=args.wpm,
+        css_file=args.css,
+        navigation_links=args.nav,
+        collection_name=args.collection_name,
+    )
+    sg.generate(args.mode)
+    end = time()
+    print(f"We took {end-start} seconds")
+
+
+if __name__ == "__main__":
+    main()
