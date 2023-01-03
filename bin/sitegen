@@ -14,7 +14,10 @@ import argparse
 import re
 import shutil
 import sys
-import tomllib
+try:
+    import tomllib
+except ImportError:
+    import toml as tomllib
 from datetime import datetime
 from pathlib import Path
 from time import time
@@ -545,22 +548,22 @@ def main():
 
     config_file = Path(args.config)
     if config_file.exists():
-        with config_file.open("rb") as file:
-            config = tomllib.load(file)
-            if "name" in config:
-                args.name = config["name"]
-            if "input" in config:
-                args.input = config["input"]
-            if "output" in config:
-                args.output = config["output"]
-            if "mode" in config:
-                args.mode = config["mode"]
-            if "verbose" in config:
-                args.verbose = config["verbose"]
-            if "collection_name" in config:
-                args.collection_name = config["collection_name"]
-            if "nav" in config and isinstance(config["nav"], list):
-                args.nav = config["nav"]
+        confg_content = get_text_file_content(config_file)
+        config = tomllib.loads(confg_content)
+        if "name" in config:
+            args.name = config["name"]
+        if "input" in config:
+            args.input = config["input"]
+        if "output" in config:
+            args.output = config["output"]
+        if "mode" in config:
+            args.mode = config["mode"]
+        if "verbose" in config:
+            args.verbose = config["verbose"]
+        if "collection_name" in config:
+            args.collection_name = config["collection_name"]
+        if "nav" in config and isinstance(config["nav"], list):
+            args.nav = config["nav"]
 
     sg = SiteGenerator(
         name=args.name,
