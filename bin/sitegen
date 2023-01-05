@@ -235,6 +235,8 @@ a>svg {height:52px;width:52px;}
         """Generate an internal link."""
         if uri.startswith("http"):
             return uri
+        while uri[0] == '/':
+            uri = uri[1:]
         return f"{self._base_href}/{uri}"
 
     def scan(self, start=None):
