@@ -14,14 +14,17 @@ import argparse
 import re
 import shutil
 import sys
+
 try:
     import tomllib
 except ImportError:
     import toml as tomllib
-from datetime import datetime
+
+from datetime import datetime, timezone
 from pathlib import Path
 from time import time
 
+import html2text
 import htmlmin
 import markdown
 import readtime
@@ -104,6 +107,16 @@ def make_plural(word: str) -> str:
     return word + "s"
 
 
+def strip_empty_lines(string):
+    """Remove empty lines from string start and end."""
+    lines = string.splitlines()
+    while lines and not lines[0].strip():
+        lines.pop(0)
+    while lines and not lines[-1].strip():
+        lines.pop()
+    return "\n".join(lines)
+
+
 def get_text_file_content(file_name) -> str:
     """Get contents of text file."""
     if isinstance(file_name, str):
@@ -125,8 +138,12 @@ class SiteGenerator:
         css_file=None,
         navigation_links=None,
         collection_name=None,
+        base_href=None,
+        description=None,
+        rss=False,
     ):
         self._markdown = markdown.Markdown(extensions=["full_yaml_metadata"])
+        self._html2text = html2text.HTML2Text()
         self._name = name
         self._files = {}
         self._tags = {}
@@ -140,6 +157,14 @@ class SiteGenerator:
         self._nav = []
         self._collection_name = collection_name
         self._collection_name_plural = collection_name
+        self._base_href = base_href
+        self._description = (
+            description
+            if description is not None and len(description) > 0
+            else name
+        )
+        self._tz = datetime.now().astimezone().tzinfo
+        self._rss = rss
         if navigation_links is not None:
             for nav in navigation_links:
                 if isinstance(nav, dict):
@@ -206,6 +231,12 @@ a>svg {height:52px;width:52px;}
         if self._verbose:
             print(f"{datetime.now().time()} : {line}", file=sys.stderr)
 
+    def link(self, uri: str) -> str:
+        """Generate an internal link."""
+        if uri.startswith("http"):
+            return uri
+        return f"{self._base_href}/{uri}"
+
     def scan(self, start=None):
         """Scan directory structure, and record all files."""
         if start is None:
@@ -253,41 +284,45 @@ a>svg {height:52px;width:52px;}
         """Process giving MarkDown file."""
         content = get_text_file_content(md_file)
 
-        text = self._markdown.convert(content)
+        text = self._markdown.reset().convert(content)
         headers = self._markdown.Meta
 
-        output = {
+        return {
             "title": headers.get("title", md_file.name),
             "headers": headers,
             "content": text,
-            "modified": md_file.stat().st_mtime,
+            "modified": datetime.fromtimestamp(
+                md_file.stat().st_mtime, tz=self._tz
+            ),
             "readtime": readtime.of_html(text, wpm=self._wpm),
         }
-        self._markdown.reset()
-        return output
 
     def _write(self, filepath, title, body):
         """Write out the content, with adding the surrounding code."""
         self._l(f"Output: {filepath}")
         out = self._output / filepath
+
         if out.exists():
             raise ValueError(f"{filepath} already exists")
+
         if len(self._nav) > 0:
             nav = "".join(
                 [
-                    f"""<a href="{a['url']}">{a["title"]}</a> """
+                    f"""<a href="{self.link(a['url'])}">{a["title"]}</a> """
                     for a in self._nav
                 ]
             )
             nav_out = f"""<div class="navbar tag">{nav}</div>"""
         else:
             nav_out = ""
+
         content = f"""<!DOCTYPE html>
 <html lang="en">
     <head>
         <meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=yes">
         <title>{title}</title>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta name="description" content="{self._description}">
         <style>{minify_css(self._css)}</style>
     </head>
     <body>
@@ -317,6 +352,37 @@ a>svg {height:52px;width:52px;}
         else:
             self._output.mkdir(exist_ok=True)
 
+    def create_rss(self, output_file, content):
+        """Create an RSS feed."""
+        if not self._rss:
+            return
+        items = "\n".join(
+            [
+                f"""<item>
+<link>{c['link']}</link>
+<description>{strip_empty_lines(c['description'])}</description>
+<pubDate>{c['date'].strftime('%a, %d %b %Y %H:%M:%S %Z')}</pubDate>
+</item>"""
+                for c in content
+            ]
+        )
+
+        now = datetime.now()
+
+        template = f"""<?xml version="1.0"?>
+<rss version="2.0">
+      <title>{self._name}</title>
+      <link>{self._base_href}</link>
+      <description>{self._description}</description>
+      <language>en-uk</language>
+      <pubDate>{now.strftime('%a, %d %b %Y %H:%M:%S %Z')}</pubDate>
+      <lastBuildDate>{now.strftime('%a, %d %b %Y %H:%M:%S %Z')}</lastBuildDate>
+      {items}
+</rss>
+"""
+        with output_file.open("w") as outfile:
+            outfile.write(template)
+
     ################################################################################
     # Collection Builder functions
     ################################################################################
@@ -326,17 +392,28 @@ a>svg {height:52px;width:52px;}
         data = [content for _, content in self._content.items()]
         data.sort(reverse=True, key=lambda d: d["modified"])
         newest = [
-            f"""<a href="/{self._collection_name}/{d['link']}">{d['title']}
+            f"""<a href="{self.link(f"{self._collection_name}/{d['link']}")}">{d['title']}
             <span class="muted">({d['readtime']})</span></a>"""
             for d in data[:25]
         ]
+        self.create_rss(
+            self._output / "feed.rss",
+            [
+                {
+                    "link": self.link(f"{self._collection_name}/{d['link']}"),
+                    "description": self._html2text.handle(d["content"])[:250],
+                    "date": d["modified"],
+                }
+                for d in data[:25]
+            ],
+        )
         popular_tags = [
             {"tag": name, "count": len(tag["items"])}
             for name, tag in self._tags.items()
         ]
         popular_tags.sort(reverse=True, key=lambda d: d["count"])
         tags = [
-            f"""<a href="{self._tags[d['tag']]['link']}">{self._tags[d['tag']]['title']}
+            f"""<a href="{self.link(self._tags[d['tag']]['link'])}">{self._tags[d['tag']]['title']}
             <span class="muted">({d['count']})</span></a>"""
             for d in popular_tags[:25]
         ]
@@ -355,13 +432,13 @@ a>svg {height:52px;width:52px;}
         tags.sort(key=lambda d: d["title"])
         for tag in tags:
             tags_all.append(
-                f"""<a class="tag" href="/{tag['link']}">{tag['title']}
+                f"""<a class="tag" href="{self.link(tag['link'])}">{tag['title']}
                 ({len(tag['items'])})</a>"""
             )
             items = [self._content[str(i)] for i in tag["items"]]
             items.sort(key=lambda i: i["title"])
             links = [
-                f"""<a href="/{self._collection_name}/{i['link']}">{i['title']}
+                f"""<a href="{self.link(f"{self._collection_name}/{i['link']}")}">{i['title']}
                 <span class="muted">({i['readtime']})</span></a>"""
                 for i in items
             ]
@@ -378,7 +455,7 @@ a>svg {height:52px;width:52px;}
         collection = [c for _, c in self._content.items()]
         collection.sort(key=lambda d: d["title"])
         item_links = [
-            f"""<a href="/{self._collection_name}/{item['link']}">{item['title']}
+            f"""<a href="{self.link(f"{self._collection_name}/{item['link']}")}">{item['title']}
             <span class="muted">({item['readtime']})</span></a>"""
             for item in collection
         ]
@@ -392,7 +469,7 @@ a>svg {height:52px;width:52px;}
         for item in collection:
             tags = [
                 f"""<a class="tag"
-                href="/tags/{self.regex_tag.sub("_", tag.lower())}.html">
+                href="{self.link(f"tags/{self.regex_tag.sub('_', tag.lower())}.html")}">
                 {tag.title()}</a>"""
                 for tag in item["tags"]
             ]
@@ -448,9 +525,9 @@ a>svg {height:52px;width:52px;}
             self._nav.append({"url": "/index.html", "title": "Home"})
         self._nav.extend(
             [
-                {"url": "/tags.html", "title": "Tags"},
+                {"url": "tags.html", "title": "Tags"},
                 {
-                    "url": f"/{self._collection_name_plural}.html",
+                    "url": f"{self._collection_name_plural}.html",
                     "title": self._collection_name_plural.title(),
                 },
             ]
@@ -463,8 +540,8 @@ a>svg {height:52px;width:52px;}
         self.collection_output_index()
         self.collection_output_tags()
         self.collection_output_collection()
-        print(f"Tag count: {len(self._tags)}")
-        print(f"Collection count: {len(self._content)}")
+        self._l(f"Tag count: {len(self._tags)}")
+        self._l(f"Collection count: {len(self._content)}")
 
     def generate_site(self):
         """Generate a site."""
@@ -543,8 +620,46 @@ def main():
     parser.add_argument(
         "--config", help="Config File", default="config.toml", type=str
     )
+    parser.add_argument("--base_href", help="Base HREF", default="", type=str)
+    parser.add_argument(
+        "--description", help="Site Description", default="", type=str
+    )
+    parser.add_argument(
+        "--rss",
+        help="Create an RSS feed",
+        action="store_true",
+        default=False,
+    )
+
+    parser.add_argument(
+        "--example_config",
+        help="Generate Example Config",
+        default=False,
+        action="store_true",
+    )
 
     args = parser.parse_args()
+
+    if args.example_config:
+        print(
+            """
+name = "Site name"
+input = "src"
+mode = "collection|site|blog"
+output = "output"
+verbose = true
+collection_name = "items"
+rss = true
+base_href = "http://localhost:8000"
+description = "My Awesome Static Site"
+
+nav = [
+  { title = "Home", url = "/index.html" },
+  { title = "Google", url = "https://google.com/" },
+]
+"""
+        )
+        sys.exit(0)
 
     config_file = Path(args.config)
     if config_file.exists():
@@ -564,6 +679,12 @@ def main():
             args.collection_name = config["collection_name"]
         if "nav" in config and isinstance(config["nav"], list):
             args.nav = config["nav"]
+        if "base_href" in config:
+            args.base_href = config["base_href"]
+        if "description" in config:
+            args.description = config["description"]
+        if "rss" in config:
+            args.rss = config["rss"]
 
     sg = SiteGenerator(
         name=args.name,
@@ -574,10 +695,13 @@ def main():
         css_file=args.css,
         navigation_links=args.nav,
         collection_name=args.collection_name,
+        base_href=args.base_href,
+        description=args.description,
+        rss=args.rss,
     )
     sg.generate(args.mode)
     end = time()
-    print(f"We took {end-start} seconds")
+    sg._l(f"We took {end-start} seconds")
 
 
 if __name__ == "__main__":
