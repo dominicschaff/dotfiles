@@ -536,8 +536,7 @@ a>svg {height:52px;width:52px;}
         for item in collection:
             tags = [
                 f"""<a class="tag"
-                href="{self.link(f"tags/{self.regex_tag.sub('_', tag.lower())}.html")}">
-                {tag.title()}</a>"""
+                href="{self.link(f"tags/{self.regex_tag.sub('_', tag.lower())}.html")}">{tag.title()}</a>"""
                 for tag in item["tags"]
             ]
             published = item["modified"].strftime("%Y-%m-%d")
