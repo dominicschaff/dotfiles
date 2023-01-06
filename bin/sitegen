@@ -147,6 +147,9 @@ class SiteGenerator:
         self._name = name
         self._files = {}
         self._tags = {}
+        self._authors = {}
+        self._author_less = []
+        self._tag_less = []
         self._content = {}
         self.regex_tag = re.compile(r"[^a-z0-9]")
         self.regex_item = re.compile(r"[^a-z0-9_-]")
@@ -235,7 +238,7 @@ a>svg {height:52px;width:52px;}
         """Generate an internal link."""
         if uri.startswith("http"):
             return uri
-        while uri[0] == '/':
+        while uri[0] == "/":
             uri = uri[1:]
         return f"{self._base_href}/{uri}"
 
@@ -263,7 +266,7 @@ a>svg {height:52px;width:52px;}
         self._l(f"Processing ... {md_file}")
         data = self.process_file(md_file)
 
-        if "tags" in data["headers"]:
+        if "tags" in data["headers"] and len(data["headers"]["tags"]) > 0:
             for tag_tmp in data["headers"]["tags"]:
                 tag = tag_tmp.lower()
                 if tag not in self._tags:
@@ -279,6 +282,15 @@ a>svg {height:52px;width:52px;}
             data["tags"] = data["headers"]["tags"]
         else:
             data["tags"] = []
+            self._tag_less.append(md_file)
+
+        if "author" in data["headers"] and len(data["headers"]["author"]) > 0:
+            author = data["headers"]["author"]
+            if author not in self._authors:
+                self._authors[author] = []
+            self._authors[author].append(md_file)
+        else:
+            self._author_less.append(md_file)
         data["link"] = self.regex_item.sub("_", md_file.stem.lower()) + ".html"
         self._content[str(md_file)] = data
 
@@ -297,6 +309,7 @@ a>svg {height:52px;width:52px;}
                 md_file.stat().st_mtime, tz=self._tz
             ),
             "readtime": readtime.of_html(text, wpm=self._wpm),
+            "file": md_file,
         }
 
     def _write(self, filepath, title, body):
@@ -427,29 +440,81 @@ a>svg {height:52px;width:52px;}
 
         self._write("index.html", "Home", tpl)
 
+    def _output_tag_page(self, tag):
+        items = [self._content[str(i)] for i in tag["items"]]
+        items.sort(key=lambda i: i["title"])
+        links = [
+            f"""<a href="{self.link(f"{self._collection_name}/{i['link']}")}">{i['title']}
+            <span class="muted">({i['readtime']})</span></a>"""
+            for i in items
+        ]
+        tpl = f"""<h1>{tag['title']}
+        <span class="muted">({len(tag['items'])})</span></h1>
+        {"<br />".join(links)}"""
+        return tpl
+
     def collection_output_tags(self):
         """Create tag list page, and all individual tag pages."""
         tags_all = []
         tags = [v for _, v in self._tags.items()]
         tags.sort(key=lambda d: d["title"])
+        if len(self._tag_less) > 0:
+            tags_all.append(
+                f"""<a class="tag" href="{self.link("tags/untagged.html")}">Untagged
+                ({len(self._tag_less)})</a>"""
+            )
+            self._write(
+                "tags/untagged.html",
+                "Untagged",
+                self._output_tag_page(
+                    {"items": self._tag_less, "title": "Untagged"}
+                ),
+            )
         for tag in tags:
             tags_all.append(
                 f"""<a class="tag" href="{self.link(tag['link'])}">{tag['title']}
                 ({len(tag['items'])})</a>"""
             )
-            items = [self._content[str(i)] for i in tag["items"]]
-            items.sort(key=lambda i: i["title"])
-            links = [
-                f"""<a href="{self.link(f"{self._collection_name}/{i['link']}")}">{i['title']}
-                <span class="muted">({i['readtime']})</span></a>"""
-                for i in items
-            ]
-            tpl = f"""<h1>{tag['title']}
-            <span class="muted">({len(tag['items'])})</span></h1>
-            {"<br />".join(links)}"""
-            self._write(tag["link"], tag["title"], tpl)
+            self._write(tag["link"], tag["title"], self._output_tag_page(tag))
         self._write(
             "tags.html", "Tags", f"""<h1>All Tags</h1>{", ".join(tags_all)}"""
+        )
+
+    def collection_output_authors(self):
+        """Create tag list page, and all individual tag pages."""
+        authors_all = []
+        authors = [a for a, v in self._authors.items()]
+        authors.sort()
+        if len(self._author_less) > 0:
+            authors_all.append(
+                f"""<a class="tag" href="{self.link("authors/unauthored.html")}">No Author
+                ({len(self._author_less)})</a>"""
+            )
+            self._write(
+                "authors/unauthored.html",
+                "No Author",
+                self._output_tag_page(
+                    {"items": self._author_less, "title": "No Author"}
+                ),
+            )
+        for author in authors:
+            items = self._authors[author]
+            author_link = (
+                "authors/" + self.regex_tag.sub("_", author.lower()) + ".html"
+            )
+            authors_all.append(
+                f"""<a class="tag" href="{self.link(author_link)}">{author}
+                ({len(items)})</a>"""
+            )
+            self._write(
+                author_link,
+                author,
+                self._output_tag_page({"title": author, "items": items}),
+            )
+        self._write(
+            "authors.html",
+            "Authors",
+            f"""<h1>All Authors</h1>{", ".join(authors_all)}""",
         )
 
     def collection_output_collection(self):
@@ -475,11 +540,35 @@ a>svg {height:52px;width:52px;}
                 {tag.title()}</a>"""
                 for tag in item["tags"]
             ]
+            published = item["modified"].strftime("%Y-%m-%d")
+            if (
+                "published" in item["headers"]
+                and len(item["headers"]["published"]) > 0
+            ):
+                published = item["headers"]["published"]
+            author = ""
+            if (
+                "author" in item["headers"]
+                and len(item["headers"]["author"]) > 0
+            ):
+                author = f""", Written by: <span class="tag">{item['headers']['author']}</span>"""
+
+            source = ""
+            if (
+                "source" in item["headers"]
+                and len(item["headers"]["source"]) > 0
+            ):
+                if isinstance(item["headers"]["source"], list):
+                    if len(item["headers"]["source"][0]) > 0:
+                        source = f""", <a target="_blank" href="{item['headers']['source'][0]}">Source</a>"""
+                else:
+                    source = f""", <a target="_blank" href="{item['headers']['source']}">Source</a>"""
             self._write(
                 f"{self._collection_name}/{item['link']}",
                 item["title"],
                 f"""<h1>{item['title']}
                 <span class="muted">{item['readtime']}</h1>
+                <p>Published on <span class="tag">{published}</span>{author}{source}</p>
                 <p>Tags: {", ".join(tags)}</p>
                 <br />
                 {item['content']}""",
@@ -525,6 +614,15 @@ a>svg {height:52px;width:52px;}
         self._collection_name_plural = make_plural(self._collection_name)
         if "/index.html" not in [u["url"] for u in self._nav]:
             self._nav.append({"url": "/index.html", "title": "Home"})
+        self.scan()
+        self.clean_output()
+        self.process_all()
+        if len(self._authors.keys()) > 0:
+            self._nav.extend([{"url": "authors.html", "title": "Authors"}])
+            (self._output / "authors").mkdir(exist_ok=True)
+        (self._output / "tags").mkdir(exist_ok=True)
+        (self._output / self._collection_name).mkdir(exist_ok=True)
+
         self._nav.extend(
             [
                 {"url": "tags.html", "title": "Tags"},
@@ -534,15 +632,14 @@ a>svg {height:52px;width:52px;}
                 },
             ]
         )
-        self.scan()
-        self.clean_output()
-        self.process_all()
-        (self._output / "tags").mkdir(exist_ok=True)
-        (self._output / self._collection_name).mkdir(exist_ok=True)
+
         self.collection_output_index()
         self.collection_output_tags()
+        if len(self._authors.keys()) > 0:
+            self.collection_output_authors()
         self.collection_output_collection()
         self._l(f"Tag count: {len(self._tags)}")
+        self._l(f"Author count: {len(self._authors)}")
         self._l(f"Collection count: {len(self._content)}")
 
     def generate_site(self):
