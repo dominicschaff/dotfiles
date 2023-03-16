@@ -4,24 +4,7 @@ if ! hash adb 2>/dev/null; then
   return
 fi
 
-export ANDROID_HOME=~/Library/Android/sdk
-export PATH="$PATH:$ANDROID_HOME/tools/bin"
-
-pull()
-{
-  for a in "$@"; do
-    adb pull "$a"
-  done
-}
-
-push()
-{
-  for a in "$@"; do
-    adb push "$a" /sdcard/
-  done
-}
-
-open_urls()
+adb_open_urls()
 {
   c=""
   output="$(adb devices)"
@@ -39,7 +22,7 @@ open_urls()
   done
 }
 
-download_all_apks()
+adb_download_all_apks()
 {
   for i in $(adb shell pm list packages | awk -F':' '{print $2}'); do
     echo "Fetching : $i"
