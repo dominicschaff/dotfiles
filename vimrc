@@ -97,7 +97,7 @@ Plug 'tpope/vim-sensible'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 Plug 'itchyny/lightline.vim'
-Plug 'tomasr/molokai'
+"Plug 'tomasr/molokai'
 Plug 'jiangmiao/auto-pairs'
 Plug 'frazrepo/vim-rainbow'
 Plug 'dense-analysis/ale'
@@ -119,7 +119,6 @@ colorscheme minimalist
 "colorscheme molokai
 
 map <C-p> :Files<CR>
-map <C-o> :NERDTreeToggle<CR>
 if executable('ag')
   let g:ackprg = 'ag --vimgrep'
 endif
@@ -134,3 +133,4 @@ autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab
 let g:indentLine_char = '⦙'
 "set mouse=
 "set ttymouse=
+
