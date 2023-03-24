@@ -545,6 +545,11 @@ a>svg {height:52px;width:52px;}
                 and len(item["headers"]["published"]) > 0
             ):
                 published = item["headers"]["published"]
+            if (
+                "date" in item["headers"]
+                and len(item["headers"]["date"]) > 0
+            ):
+                published = item["headers"]["date"]
             author = ""
             if (
                 "author" in item["headers"]
