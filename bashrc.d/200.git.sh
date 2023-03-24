@@ -13,12 +13,24 @@ alias gd="git diff"
 alias glogs="git log --oneline --decorate --color --graph --stat"
 alias glog="git log --oneline --decorate --color --graph --all"
 alias glogdiff="git log -p --color --full-diff"
-alias master="git checkout master; git remote update -p; gp"
 alias gf="git status --porcelain"
 alias aws_deploy="gl | pbcopy; read; gh | pbcopy"
 alias gds="git diff --stat"
 alias gb="cd \$(git rev-parse --show-toplevel)"
 alias gr="git remote -v"
+
+gm()
+{
+  if git branch | grep -q main; then
+    git checkout main
+    git pull
+  elif git branch | grep -q master; then
+    git checkout master
+    git pull
+  else
+    echo "Unknown git main branch"
+  fi
+}
 
 gn()
 {
