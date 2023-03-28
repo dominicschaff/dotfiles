@@ -49,6 +49,10 @@ set pastetoggle=<F2>
 
 " Setup some keymaps
 
+" Shortcut to squash git commits
+
+nnoremap <leader>s ciws<esc>
+
 " Make level 1 heading
 nnoremap <leader>1 yypVr=
 

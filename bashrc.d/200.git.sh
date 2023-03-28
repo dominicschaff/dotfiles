@@ -19,6 +19,17 @@ alias gds="git diff --stat"
 alias gb="cd \$(git rev-parse --show-toplevel)"
 alias gr="git remote -v"
 
+rebase()
+{
+  if git branch | grep -q main; then
+    git rebase -i main
+  elif git branch | grep -q master; then
+    git rebase -i master
+  else
+    echo "Unknown git main branch"
+  fi
+}
+
 gm()
 {
   if git branch | grep -q main; then
