@@ -3,8 +3,8 @@
 This file will pretty print a valid CSV file
 """
 
-from csv import reader
 import sys
+from csv import reader
 
 
 def pretty_print(csv_file):
@@ -15,9 +15,9 @@ def pretty_print(csv_file):
     """
     spamreader = reader(csv_file)
     rows = [row for row in spamreader if len(row) > 0]
-    col_sizes = [max([len(j[i]) for j in rows])for i in range(len(rows[0]))]
-    fields = '|' + ''.join([' %%-%ds |' % i for i in col_sizes])
-    line = '+' + '+'.join(['-'*(i+2) for i in col_sizes]) + '+'
+    col_sizes = [max([len(j[i]) for j in rows]) for i in range(len(rows[0]))]
+    fields = "|" + "".join([f" %-{i}s |" for i in col_sizes])
+    line = "+" + "+".join(["-" * (i + 2) for i in col_sizes]) + "+"
     print(line)
     print(fields % tuple(rows[0]))
     print(line)
@@ -29,5 +29,5 @@ def pretty_print(csv_file):
 if len(sys.argv) != 2:
     print("Need File!")
     sys.exit(1)
-with open(sys.argv[1], 'r') as csvfile:
+with open(sys.argv[1], "r") as csvfile:
     pretty_print(csvfile)

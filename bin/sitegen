@@ -56,7 +56,6 @@ def minify_css(css: str) -> str:
 
     output = []
     for rule in re.findall(r"([^{]+){([^}]*)}", css):
-
         # we don't need spaces around operators
         selectors = [
             re.sub(
@@ -92,13 +91,11 @@ def make_plural(word: str) -> str:
     # Check if word is ending with s,x,z or is
     # ending with ah, eh, ih, oh,uh,dh,gh,kh,ph,rh,th
     if re.search("[sxz]$", word) or re.search("[^aeioudgkprt]h$", word):
-
         # Make it plural by adding es in end
         return re.sub("$", "es", word)
 
     # Check if word is ending with ay,ey,iy,oy,uy
     if re.search("y$", word):
-
         # Make it plural by removing y from end adding ies to end
         return re.sub("y$", "ies", word)
 
@@ -545,10 +542,7 @@ a>svg {height:52px;width:52px;}
                 and len(item["headers"]["published"]) > 0
             ):
                 published = item["headers"]["published"]
-            if (
-                "date" in item["headers"]
-                and len(item["headers"]["date"]) > 0
-            ):
+            if "date" in item["headers"] and len(item["headers"]["date"]) > 0:
                 published = item["headers"]["date"]
             author = ""
             if (

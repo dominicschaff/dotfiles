@@ -1,23 +1,34 @@
 #!/usr/bin/env python3
 
-from csv import writer
-from datetime import datetime as d
-from datetime import time, date
-from decimal import Decimal
 import configparser
 import json as j
 import os
 import sys
+from csv import writer
+from datetime import date
+from datetime import datetime as d
+from datetime import time
+from decimal import Decimal
+
 import pg8000 as pg
 
 
 def blankNone(val):
     """Convert None to blank string"""
-    return '' if val is None else val
+    return "" if val is None else val
 
 
 class DB(object):
-    def __init__(self, info=False, json=False, csv=False, rows=False, insert=False, tiny=False, write=False):
+    def __init__(
+        self,
+        info=False,
+        json=False,
+        csv=False,
+        rows=False,
+        insert=False,
+        tiny=False,
+        write=False,
+    ):
         self._json = json
         self._csv = csv
         self._rows = rows
@@ -40,7 +51,9 @@ class DB(object):
         if self._config is None:
             raise ValueError("Config file is required")
         for section_name in self._config.sections():
-            if dbName == self._config.get(section_name, "switch") or dbName == self._config.get(section_name, "short"):
+            if dbName == self._config.get(
+                section_name, "switch"
+            ) or dbName == self._config.get(section_name, "short"):
                 self._db_name = section_name
                 return True
         return False
@@ -58,7 +71,7 @@ class DB(object):
         password = self._config.get(self._db_name, "password")
         port = self._config.get(self._db_name, "port", fallback=5432)
 
-        self.i('Connecting')
+        self.i("Connecting")
         self.i("Host: " + host)
         self.i("Database: " + database)
         self.i("UserName: " + user)
@@ -67,9 +80,9 @@ class DB(object):
             database=database,
             user=user,
             password=password,
-            port=int(port)
+            port=int(port),
         )
-        self.i('Connected')
+        self.i("Connected")
 
     def disconnect(self):
         self._conn.close()
@@ -78,13 +91,13 @@ class DB(object):
         if self._conn is None:
             raise ValueError("A connection is required")
         cursor = self._conn.cursor()
-        self.i('Query:\n' + query)
+        self.i("Query:\n" + query)
         cursor.execute(query)
         if not self._write:
             header = [str(h[0]) for h in cursor.description]
             self.i("Returned Data:")
             for i, name in enumerate(header):
-                if name == '?column?':
+                if name == "?column?":
                     header[i] = "column%d" % (i + 1)
             if self._csv:
                 spamwriter = writer(sys.stdout, lineterminator="\n")
@@ -109,8 +122,21 @@ class DB(object):
                 print("CREATE TABLE data (%s);" % (h))
                 row = cursor.fetchone()
                 while row is not None:
-                    v = "'" + ("','".join([str(blankNone(c)).replace("'", "").replace(",", "") for c in row])) + "'"
-                    print("INSERT INTO data (%s) VALUES (%s);"%(h, v))
+                    v = (
+                        "'"
+                        + (
+                            "','".join(
+                                [
+                                    str(blankNone(c))
+                                    .replace("'", "")
+                                    .replace(",", "")
+                                    for c in row
+                                ]
+                            )
+                        )
+                        + "'"
+                    )
+                    print("INSERT INTO data (%s) VALUES (%s);" % (h, v))
                     row = cursor.fetchone()
 
             elif self._json:
@@ -140,7 +166,7 @@ class DB(object):
             else:
                 self.pc(header, cursor.fetchall())
         else:
-            self.i('Done with write operation. Committing...')
+            self.i("Done with write operation. Committing...")
             self._conn.commit()
         cursor.close()
 
@@ -154,12 +180,12 @@ class DB(object):
             for i, col in enumerate(row):
                 size[i] = max([size[i], len(str(col))])
 
-        f = ''.join(['%%-%ds | ' % i for i in size])
-        l = '+'.join(['-' * (i + 2) for i in size])
-        l = '+-' + l[1:] + '+'
-        f = '| ' + f[:-1]
+        f = "".join(["%%-%ds | " % i for i in size])
+        l = "+".join(["-" * (i + 2) for i in size])
+        l = "+-" + l[1:] + "+"
+        f = "| " + f[:-1]
         s = f % tuple(header)
-        self.i('Results')
+        self.i("Results")
         print(l)
         print(s)
         print(l)
@@ -173,16 +199,15 @@ class DB(object):
             for i, col in enumerate(row):
                 size[i] = max([size[i], len(str(col))])
 
-        f = ' : '.join(['%%-%ds'%i for i in size])
-        self.i('Results')
+        f = " : ".join(["%%-%ds" % i for i in size])
+        self.i("Results")
         print(f % tuple(h))
-        print(' : '.join(['-' * i for i in size]))
+        print(" : ".join(["-" * i for i in size]))
         for r in d:
             print(f % tuple([blankNone(s) for s in r]))
 
 
-if __name__ == '__main__':
-
+if __name__ == "__main__":
     if len(sys.argv) < 2:
         sys.exit(1)
 
@@ -200,49 +225,49 @@ if __name__ == '__main__':
 
     while f:
         f = False
-        if a[0] == '-info':
+        if a[0] == "-info":
             a = a[1:]
             info = True
             f = True
 
-        if a[0] == '-json' or a[0] == '-j':
+        if a[0] == "-json" or a[0] == "-j":
             a = a[1:]
             json = True
             f = True
 
-        if a[0] == '-csv' or a[0] == '-c':
+        if a[0] == "-csv" or a[0] == "-c":
             a = a[1:]
             csv = True
             f = True
 
-        if a[0] == '-rows' or a[0] == '-r':
+        if a[0] == "-rows" or a[0] == "-r":
             a = a[1:]
             rows = True
             f = True
 
-        if a[0] == '-insert' or a[0] == '-i':
+        if a[0] == "-insert" or a[0] == "-i":
             a = a[1:]
             insert = True
             f = True
 
-        if a[0] == '-table' or a[0] == '-t':
+        if a[0] == "-table" or a[0] == "-t":
             a = a[1:]
             json = False
             csv = False
             rows = False
             f = True
 
-        if a[0] == '-tiny' or a[0] == '-s':
+        if a[0] == "-tiny" or a[0] == "-s":
             a = a[1:]
             tiny = True
             f = True
 
-        if a[0] == '-write' or a[0] == '-w':
+        if a[0] == "-write" or a[0] == "-w":
             a = a[1:]
             write = True
 
     dbObject = DB(info, json, csv, rows, insert, tiny, write)
-    s = os.path.expanduser('~/.psql.cfg')
+    s = os.path.expanduser("~/.psql.cfg")
     dbObject.config(s)
     if len(a) == 2:
         if not dbObject.setDb(a[0]):

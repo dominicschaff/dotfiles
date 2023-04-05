@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
-from PIL import Image, ImageDraw
 import sys
 
+from PIL import Image, ImageDraw
+
 if len(sys.argv) < 2:
-  print("Provide image paths as arguments")
-  sys.exit(1)
+    print("Provide image paths as arguments")
+    sys.exit(1)
 
 
 pixelBlocks = 50
@@ -12,28 +13,39 @@ pixelBlocks = 50
 files = sys.argv[1:]
 
 for f in files:
-  im = Image.open(f)
+    im = Image.open(f)
 
-  img = Image.new('RGB', im.size, (0,0,0))
+    img = Image.new("RGB", im.size, (0, 0, 0))
 
-  blockHeight = im.size[1] / pixelBlocks
-  blockWidth = im.size[0] / pixelBlocks
-  points = blockWidth * blockHeight
+    blockHeight = im.size[1] / pixelBlocks
+    blockWidth = im.size[0] / pixelBlocks
+    points = blockWidth * blockHeight
 
-  d = ImageDraw.Draw(img)
-  pix = im.load()
-  for i in range(pixelBlocks):
-    for j in range(pixelBlocks):
-      avg = [0,0,0]
-      for x in range(int(blockWidth)):
-        for y in range(int(blockHeight)):
-          c = pix[blockWidth*i+x,blockHeight*j+y]
-          avg[0] += c[0]
-          avg[1] += c[1]
-          avg[2] += c[2]
-      avgColour = (int(avg[0]/points), int(avg[1]/points), int(avg[2]/points))
-      d.rectangle([blockWidth*i, blockHeight*j, blockWidth*(i+1), blockHeight*(j+1)], fill=avgColour, outline=avgColour)
+    d = ImageDraw.Draw(img)
+    pix = im.load()
+    for i in range(pixelBlocks):
+        for j in range(pixelBlocks):
+            avg = [0, 0, 0]
+            for x in range(int(blockWidth)):
+                for y in range(int(blockHeight)):
+                    c = pix[blockWidth * i + x, blockHeight * j + y]
+                    avg[0] += c[0]
+                    avg[1] += c[1]
+                    avg[2] += c[2]
+            avgColour = (
+                int(avg[0] / points),
+                int(avg[1] / points),
+                int(avg[2] / points),
+            )
+            d.rectangle(
+                [
+                    blockWidth * i,
+                    blockHeight * j,
+                    blockWidth * (i + 1),
+                    blockHeight * (j + 1),
+                ],
+                fill=avgColour,
+                outline=avgColour,
+            )
 
-
-
-  img.save("test.png")
+    img.save("test.png")
