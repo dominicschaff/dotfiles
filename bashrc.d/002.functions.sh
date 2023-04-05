@@ -110,7 +110,7 @@ do_merge()
 
 dir_size()
 {
-  du -hsc * 2>/dev/null | sort -h
+  du -hsc .[^.]* * 2>/dev/null | sort -h
 }
 
 mirror()
