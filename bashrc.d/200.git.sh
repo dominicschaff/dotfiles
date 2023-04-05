@@ -19,6 +19,11 @@ alias gds="git diff --stat"
 alias gb="cd \$(git rev-parse --show-toplevel)"
 alias gr="git remote -v"
 
+gi()
+{
+  echo "$(git branch 2> /dev/null | grep '*' | cut -d' ' -f2-) : $(git status --porcelain | wc -l)"
+}
+
 rebase()
 {
   if git branch | grep -q main; then
