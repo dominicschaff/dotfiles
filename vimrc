@@ -110,6 +110,7 @@ Plug 'tpope/vim-markdown'
 Plug 'tpope/vim-fugitive'
 Plug 'airblade/vim-gitgutter'
 Plug 'vim-python/python-syntax'
+Plug 'webdevel/tabulous'
 call plug#end()
 
 
@@ -138,3 +139,9 @@ let g:indentLine_char = '⦙'
 "set mouse=
 "set ttymouse=
 
+
+" Tab Controls:
+map <leader>tn :tabnew<cr>
+map <leader>t<leader> :tabnext<cr>
+map <leader>tc :tabclose<cr>
+map <C-i> :tabnext<cr>
