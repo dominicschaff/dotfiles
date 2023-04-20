@@ -174,14 +174,16 @@ class SiteGenerator:
                     self._nav.append({"url": items[1], "title": items[0]})
         self._css = """
 body {
-    margin-top: 40px;
-    margin-inline: auto;
-    width: min(100% - 25px, 650px);
     line-height: 1.6;
     font-size: 14px;
     background: #212121;
     color: #E0E0E0;
     font-family:Roboto,Ubuntu,open sans,helvetica neue,sans-serif;
+}
+.content {
+    margin-top: 50px;
+    margin-inline: auto;
+    width: min(100% - 25px, 650px);
 }
 h1, h2, h3 {
     line-height:1.2
@@ -190,9 +192,6 @@ a {
   color: #90CAF9;
   text-decoration: none;
 }
-.muted {
-    font-size: 0.8em;
-}
 a:visited {
   color: #90CAF9;
 }
@@ -200,18 +199,24 @@ a:hover {
   color: #F990CA;
   text-decoration: underline;
 }
+.muted {
+    font-size: 0.8em;
+}
 .navbar {
   background-color: #333;
   position: fixed;
   top: 0;
+  left: 0px;
+  width: 100%;
+}
+.navbar-links {
+  width: min(100% - 25px, 650px);
+  margin-inline: auto;
 }
 .navbar a {
   float: left;
   display: block;
   padding: 10px;
-}
-.content {
-    padding-top: 20px;
 }
 .tag {
    border-radius: 30px;
@@ -219,6 +224,7 @@ a:hover {
    padding: 5px 10px 5px 10px;
    border:none;
    white-space: nowrap;
+   line-height: 2;
 }
 img {max-width:650px; border-radius:10%;}
 a>svg {height:52px;width:52px;}
@@ -323,9 +329,9 @@ a>svg {height:52px;width:52px;}
                 [
                     f"""<a href="{self.link(a['url'])}">{a["title"]}</a> """
                     for a in self._nav
-                ]
+                ] + ["""<a onclick="topFunction()" id="myBtn" title="Go to top">Top</a>"""]
             )
-            nav_out = f"""<div class="navbar tag">{nav}</div>"""
+            nav_out = f"""<div class="navbar"><div class="navbar-links">{nav}</div></div>"""
         else:
             nav_out = ""
 
@@ -342,6 +348,7 @@ a>svg {height:52px;width:52px;}
         {nav_out}
         <div class="content">{body}</div>
     </body>
+    <script>function topFunction() {{document.body.scrollTop = 0; document.documentElement.scrollTop = 0;}}</script>
 </html>"""
 
         with (self._output / filepath).open("w") as outfile:
@@ -458,7 +465,7 @@ a>svg {height:52px;width:52px;}
         tags.sort(key=lambda d: d["title"])
         if len(self._tag_less) > 0:
             tags_all.append(
-                f"""<a class="tag" href="{self.link("tags/untagged.html")}">Untagged
+                f"""<a href="{self.link("tags/untagged.html")}">Untagged
                 ({len(self._tag_less)})</a>"""
             )
             self._write(
@@ -470,12 +477,12 @@ a>svg {height:52px;width:52px;}
             )
         for tag in tags:
             tags_all.append(
-                f"""<a class="tag" href="{self.link(tag['link'])}">{tag['title']}
+                f"""<a href="{self.link(tag['link'])}">{tag['title']}
                 ({len(tag['items'])})</a>"""
             )
             self._write(tag["link"], tag["title"], self._output_tag_page(tag))
         self._write(
-            "tags.html", "Tags", f"""<h1>All Tags</h1>{", ".join(tags_all)}"""
+            "tags.html", "Tags", f"""<h1>All Tags</h1>{"<br />".join(tags_all)}"""
         )
 
     def collection_output_authors(self):
@@ -501,7 +508,7 @@ a>svg {height:52px;width:52px;}
                 "authors/" + self.regex_tag.sub("_", author.lower()) + ".html"
             )
             authors_all.append(
-                f"""<a class="tag" href="{self.link(author_link)}">{author}
+                f"""<a href="{self.link(author_link)}">{author}
                 ({len(items)})</a>"""
             )
             self._write(
@@ -512,7 +519,7 @@ a>svg {height:52px;width:52px;}
         self._write(
             "authors.html",
             "Authors",
-            f"""<h1>All Authors</h1>{", ".join(authors_all)}""",
+            f"""<h1>All Authors</h1>{"<br />".join(authors_all)}""",
         )
 
     def collection_output_collection(self):
@@ -550,7 +557,10 @@ a>svg {height:52px;width:52px;}
                 "author" in item["headers"]
                 and len(item["headers"]["author"]) > 0
             ):
-                author = f""", Written by: <span class="tag">{item['headers']['author']}</span>"""
+                author_link = self.link(
+                    "authors/" + self.regex_tag.sub("_", item['headers']['author'].lower()) + ".html"
+                )
+                author = f""", Written by: <a class="tag" href="{author_link}">{item['headers']['author']}</a>"""
 
             source = ""
             if (
