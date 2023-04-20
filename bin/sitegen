@@ -639,6 +639,32 @@ a>svg {height:52px;width:52px;}
         self._l(f"Tag count: {len(self._tags)}")
         self._l(f"Author count: {len(self._authors)}")
         self._l(f"Collection count: {len(self._content)}")
+        seconds = sum(
+            item["readtime"].seconds for _, item in self._content.items()
+        )
+        max_seconds = max(
+            item["readtime"].seconds for _, item in self._content.items()
+        )
+        self._l(f"Total Read time: {self._seconds_to_string(seconds)}")
+        self._l(f"Longest Read time: {self._seconds_to_string(max_seconds)}")
+        self._l(
+            f"Average Read time: {self._seconds_to_string(seconds//len(self._content))}"
+        )
+
+    def _seconds_to_string(self, seconds):
+        minutes = seconds // 60
+        hours = minutes // 60
+        days = minutes // 24
+        hours = hours % 24
+        minutes = minutes % 60
+        seconds = seconds % 60
+
+        if days > 0:
+            return f"{days} days {hours:02}:{minutes:02}:{seconds:02}"
+        elif hours > 0:
+            return f"{hours:02}:{minutes:02}:{seconds:02}"
+        else:
+            return f"{minutes:02}:{seconds:02}"
 
     def generate_site(self):
         """Generate a site."""
