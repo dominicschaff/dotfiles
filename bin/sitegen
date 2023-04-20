@@ -138,6 +138,8 @@ class SiteGenerator:
         base_href=None,
         description=None,
         rss=False,
+        favicon=None,
+        favicon_type=None
     ):
         self._markdown = markdown.Markdown(extensions=["full_yaml_metadata"])
         self._html2text = html2text.HTML2Text()
@@ -163,6 +165,8 @@ class SiteGenerator:
             if description is not None and len(description) > 0
             else name
         )
+        if favicon is not None and favicon_type is not None:
+            self._favicon = f"""<link rel="shortcut icon" type="{favicon_type}" href="{favicon}">"""
         self._tz = datetime.now().astimezone().tzinfo
         self._rss = rss
         if navigation_links is not None:
@@ -342,6 +346,7 @@ a>svg {height:52px;width:52px;}
         <title>{title}</title>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <meta name="description" content="{self._description}">
+        {self._favicon}
         <style>{minify_css(self._css)}</style>
     </head>
     <body>
@@ -771,6 +776,18 @@ def main():
         default=False,
         action="store_true",
     )
+    parser.add_argument(
+        "--favicon",
+        help="Set the favicon icon",
+        default=None,
+        type=str
+    )
+    parser.add_argument(
+        "--favicon-type",
+        help="Set the favicon icon type",
+        default=None,
+        type=str
+    )
 
     args = parser.parse_args()
 
@@ -786,6 +803,8 @@ collection_name = "items"
 rss = true
 base_href = "http://localhost:8000"
 description = "My Awesome Static Site"
+favicon = "data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏁</text></svg>"
+favicon_type = "image/svg+xml"
 
 nav = [
   { title = "Home", url = "/index.html" },
@@ -819,6 +838,10 @@ nav = [
             args.description = config["description"]
         if "rss" in config:
             args.rss = config["rss"]
+        if "favicon" in config:
+            args.favicon = config["favicon"]
+        if "favicon_type" in config:
+            args.favicon_type = config['favicon_type']
 
     sg = SiteGenerator(
         name=args.name,
@@ -832,6 +855,8 @@ nav = [
         base_href=args.base_href,
         description=args.description,
         rss=args.rss,
+        favicon=args.favicon,
+        favicon_type=args.favicon_type
     )
     sg.generate(args.mode)
     end = time()
