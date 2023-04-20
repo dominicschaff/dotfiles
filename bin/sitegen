@@ -174,8 +174,9 @@ class SiteGenerator:
                     self._nav.append({"url": items[1], "title": items[0]})
         self._css = """
 body {
-    margin: 40px auto;
-    max-width: 650px;
+    margin-top: 40px;
+    margin-inline: auto;
+    width: min(100% - 25px, 650px);
     line-height: 1.6;
     font-size: 14px;
     background: #212121;
