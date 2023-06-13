@@ -4,8 +4,7 @@ if ! hash minikube 2>/dev/null; then
   return
 fi
 
-alias m='minikube'
-alias ms='minikube start --mount=true --mount-string=$HOME/Development/shared_storage/:/host_data/; minikube addons enable ingress'
+export MINIKUBE_IN_STYLE=false
 
 alias mk_docker='eval $(minikube docker-env)'
 
