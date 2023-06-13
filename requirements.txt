@@ -1,12 +1,19 @@
-sty
+# Apps
 yt-dlp
-Pygments
-html2text
 diagrams
 speedtest-cli
+
+# Helpers
+Pygments
+sty
+
+# Dev Tools
 icdiff
 isort
 black
+
+# Things for the sitegen
+html2text
 Markdown
 markdown-full-yaml-metadata
 htmlmin
