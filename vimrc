@@ -32,7 +32,6 @@ set path+=**                           " search sub directories for files
 set wildmenu                           " enable file menu for multi options
 set timeoutlen=0               " make esc behave instantly
 set colorcolumn=80,100,120
-
 " Enable folding
 nnoremap <space> za
 
@@ -111,6 +110,8 @@ Plug 'tpope/vim-fugitive'
 Plug 'airblade/vim-gitgutter'
 Plug 'vim-python/python-syntax'
 Plug 'webdevel/tabulous'
+Plug 'preservim/nerdtree'
+Plug 'Xuyuanp/nerdtree-git-plugin'
 call plug#end()
 
 
@@ -122,6 +123,13 @@ let python_highlight_all=1
 syntax on
 colorscheme minimalist
 "colorscheme molokai
+
+" NerdTree options:
+map <C-o> :NERDTree<CR>
+autocmd VimEnter * NERDTree | wincmd p
+nnoremap <C-t> :NERDTreeToggle<CR>
+autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | quit | endif
+
 
 map <C-p> :Files<CR>
 if executable('ag')
