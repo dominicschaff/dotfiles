@@ -6,11 +6,13 @@ speedtest-cli
 # Helpers
 Pygments
 sty
+ping3
 
 # Dev Tools
 icdiff
 isort
 black
+pylint
 
 # Things for the sitegen
 html2text
