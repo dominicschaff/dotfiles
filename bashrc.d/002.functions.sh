@@ -74,7 +74,9 @@ last_sunday()
 
 compress_dir()
 {
-  tar cf - "$1" | pigz -9 > "$2"
+  for x in "$@"; do
+    tar cf - "$x" | pigz -9 > "$x.tar.gz"
+  done
 }
 
 load_avg()
