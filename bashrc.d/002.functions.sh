@@ -74,9 +74,15 @@ last_sunday()
 
 compress_dir()
 {
-  for x in "$@"; do
-    tar cf - "$x" | pigz -9 > "$x.tar.gz"
-  done
+  if [[ $# -eq 1 ]]; then
+    echo "Compressing $1 to $1.tar.gz"
+    tar cf - "$1" | pigz -9 > "$1.tar.gz"
+  elif [[ $# -eq 2 ]]; then
+    echo "Compressing $1 to $2"
+    tar cf - "$1" | pigz -9 > "$2"
+  else
+    echo "Only 1 or 2 arguments are expected"
+  fi
 }
 
 load_avg()

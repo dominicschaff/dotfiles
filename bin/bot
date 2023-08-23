@@ -1,16 +1,32 @@
 #!/usr/bin/env bash
-TOKEN="$(cat $HOME/.bot.token)"
-PREVIOUS_UPDATE="$HOME/.bot.lastupdate"
+
+if [[ -z "$BOT_HOME" ]]; then
+  echo "BOT_HOME is not defined";
+  exit
+fi
+
+if [[ ! -d "$BOT_HOME" ]]; then
+  echo "BOT_HOME ($BOT_HOME) is not a directory";
+  exit
+fi
+
+if [[ ! -f "$BOT_HOME/token" ]]; then
+  echo "Not token found in BOT_HOME/token"
+  exit
+fi
+
+TOKEN="$(cat "$BOT_HOME/token")"
+PREVIOUS_UPDATE="$BOT_HOME/lastupdate"
 URL='https://api.telegram.org/bot'
-PEOPLE=~/.bot.people
+PEOPLE="$BOT_HOME/people"
 
 getPerson(){
-  grep "$1" $PEOPLE | head -n1 | cut -d':' -f2
+  grep "$1" "$PEOPLE" | head -n1 | cut -d':' -f2
 }
 
 pe()
 {
-  if ! grep -q "$1" $PEOPLE ; then
+  if ! grep -q "$1" "$PEOPLE" ; then
     echo "Person not found: $1"
     exit 1
   fi
@@ -44,21 +60,21 @@ getUpdates() {
 # { "update": ".update_id", "recevied_on": ".message.date", "userid": ".message.from.id", "username": ".message.from.username", "message": ".message.text" }
 
     last="0"
-    if [ -e $PREVIOUS_UPDATE ]; then
-        last="$(cat $PREVIOUS_UPDATE)"
+    if [ -e "$PREVIOUS_UPDATE" ]; then
+        last="$(cat "$PREVIOUS_UPDATE")"
     fi
     messages="$(curl -s "$URL$TOKEN/getUpdates?timeout=30&offset=$last" -d update_id="$1")"
     echo "$messages" | jq -c '.result[] | { "update": .update_id, "recevied_on": .message.date, "userid": .message.from.id, "username": .message.from.username, "message": .message.text}'
-    echo "$messages" | jq -r '.result[] | "\(.message.from.username):\(.message.from.id)"' | while read a; do
-        echo "$a" >> $PEOPLE
+    echo "$messages" | jq -r '.result[] | "\(.message.from.username):\(.message.from.id)"' | while read -r a; do
+        echo "$a" >> "$PEOPLE"
     done
-    last="$(echo "$messages" | jq -r '.result[] | "\(.update_id)"' | while read a; do
+    last="$(echo "$messages" | jq -r '.result[] | "\(.update_id)"' | while read -r a; do
         echo "$a"
     done | sort -n | tail -n1)"
-    echo "$((last+1))" > $PREVIOUS_UPDATE
+    echo "$((last+1))" > "$PREVIOUS_UPDATE"
 
-    sort -u $PEOPLE > $PEOPLE.tmp
-    mv $PEOPLE.tmp $PEOPLE
+    sort -u "$PEOPLE" > "$PEOPLE.tmp"
+    mv "$PEOPLE.tmp" "$PEOPLE"
 }
 
 case $1 in
@@ -66,36 +82,36 @@ case $1 in
       getMe
       ;;
     m|msg)
-      sendMessage $2 "$3"
+      sendMessage "$2" "$3"
       ;;
     i|img)
-      sendPhoto $2 "$3"
+      sendPhoto "$2" "$3"
       ;;
     f|doc)
-      sendDocument $2 "$3"
+      sendDocument "$2" "$3"
       ;;
     l|loc)
-      sendLocation $2 "$3" "$4"
+      sendLocation "$2" "$3" "$4"
       ;;
     u|get)
-      getUpdates $2
+      getUpdates "$2"
       ;;
     p|people)
-      if [ -e $PEOPLE ]; then
+      if [ -e "$PEOPLE" ]; then
         echo "People:"
-        cat $PEOPLE
+        cat "$PEOPLE"
       else
         echo "No People Saved"
       fi
       ;;
-    h|help)
+    h|help|-h|--help)
       echo "me - Get info about the current bot"
       echo "m|msg <person_id> 'message' - send a message"
       echo "i|img <person_id> path - send an image"
       echo "f|doc <person_id> path - send a document"
       echo "l|loc <person_id> <latitude> <longitude> - send a location"
       echo "p|people - list people we can talk to"
-      echo "uget|* - get all unreceived messages"
+      echo "u|get|* - get all unreceived messages"
       ;;
     *)
       getUpdates 0
