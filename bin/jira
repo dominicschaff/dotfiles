@@ -64,9 +64,10 @@ fetch_all_for_jql()
   JQL="$(urlencode "$1")"
   raw_data_previous="$(curl -s -u "$jira_auth" -H 'Content-Type: application/json' "$jira_base/rest/api/2/search?jql=$JQL")"
 
-  echo "$raw_data_previous" | jq -r "$2" 2>/dev/null
-
   total="$(echo "$raw_data_previous" | jq -r '. | "\(.total)"')"
+  if [[ $total -ge 0 ]]; then
+    echo "$raw_data_previous" | jq -r "$2" 2>/dev/null
+  fi
   if [[ $total -ge 50 ]]; then
     for i in $(seq 50 50 "$total"); do
       curl -s -u "$jira_auth" -H 'Content-Type: application/json' "$jira_base/rest/api/2/search?jql=$JQL&startAt=$i" | jq -r "$2" 2>/dev/null
@@ -119,21 +120,10 @@ my_board()
 
   jq_query='.issues[] | "\(.key): \(.fields.summary)"'
 
-
-  echo "To Do:"
-  fetch_all_for_jql "$base_query AND Status IN (Registered) ORDER BY Rank ASC" "$jq_query" | nl
-
-  echo -e "\nIn Progress:"
-  fetch_all_for_jql "$base_query AND Status IN (\"In Progress\") ORDER BY Rank ASC" "$jq_query" | nl
-
-  echo -e "\nTesting:"
-  fetch_all_for_jql "$base_query AND Status IN (Testing) ORDER BY Rank ASC" "$jq_query" | nl
-
-  echo -e "\nOther:"
-  fetch_all_for_jql "$base_query AND Status NOT IN (Registered, \"In Progress\", Testing, Done, Resolved, Closed) ORDER BY Rank ASC" "$jq_query" | nl
-
-  echo -e "\nDone:"
-  fetch_all_for_jql "$base_query AND Status IN (Done, Resolved, Closed) ORDER BY Rank ASC" "$jq_query" | nl
+  jq -r '.board | keys_unsorted | .[]' "$JIRA_CONFIG" | while read -r line; do
+    lines="$(fetch_all_for_jql "$base_query AND ($(jq -r ".board.\"$line\"" $JIRA_CONFIG)) ORDER BY Rank ASC" "$jq_query" | nl)"
+    echo -e "$line:\n$lines\n"
+  done
 }
 
 ################################################################################
