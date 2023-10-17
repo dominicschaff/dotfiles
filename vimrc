@@ -83,6 +83,9 @@ vnoremap <leader>64e c<c-r>=system('base64', @")<cr><esc>
 autocmd BufRead,BufNewFile *.md set filetype=markdown
 au BufNewFile,BufRead *.json set filetype=json
 autocmd BufNewFile,BufRead .envrc set syntax=bash
+autocmd BufNewFile,BufRead *.rst set spell spelllang=en_gb
+autocmd BufNewFile,BufRead *.md set spell spelllang=en_gb
+autocmd BufNewFile,BufRead README set spell spelllang=en_gb
 
 " Make the exit of insert mode faster
 set timeoutlen=1000 ttimeoutlen=0
