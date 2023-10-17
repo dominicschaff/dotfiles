@@ -53,10 +53,13 @@ set pastetoggle=<F2>
 nnoremap <leader>s ciws<esc>
 
 " Make level 1 heading
-nnoremap <leader>1 yypVr=
+nnoremap <leader>1 yypVr=$
 
 " Make level 2 heading
-nnoremap <leader>2 yypVr-
+nnoremap <leader>2 yypVr-$
+
+" Make level 3 heading
+nnoremap <leader>3 yypVr^$
 
 " Clear search term
 nnoremap <leader><space> :noh<cr>
@@ -112,6 +115,7 @@ Plug 'vim-python/python-syntax'
 Plug 'webdevel/tabulous'
 Plug 'preservim/nerdtree'
 Plug 'Xuyuanp/nerdtree-git-plugin'
+Plug 'towolf/vim-helm'
 call plug#end()
 
 
@@ -126,9 +130,9 @@ colorscheme minimalist
 
 " NerdTree options:
 map <C-o> :NERDTree<CR>
-autocmd VimEnter * NERDTree | wincmd p
+" autocmd VimEnter * NERDTree | wincmd p
 nnoremap <C-t> :NERDTreeToggle<CR>
-autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | quit | endif
+" autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | quit | endif
 
 
 map <C-p> :Files<CR>
