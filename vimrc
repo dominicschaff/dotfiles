@@ -83,9 +83,8 @@ vnoremap <leader>64e c<c-r>=system('base64', @")<cr><esc>
 autocmd BufRead,BufNewFile *.md set filetype=markdown
 au BufNewFile,BufRead *.json set filetype=json
 autocmd BufNewFile,BufRead .envrc set syntax=bash
-autocmd BufNewFile,BufRead *.rst set spell spelllang=en_gb
-autocmd BufNewFile,BufRead *.md set spell spelllang=en_gb
-autocmd BufNewFile,BufRead README set spell spelllang=en_gb
+autocmd BufNewFile,BufRead README setlocal spell spelllang=en_gb
+autocmd FileType md,rst,text setlocal spell spelllang=en_gb
 
 " Make the exit of insert mode faster
 set timeoutlen=1000 ttimeoutlen=0
@@ -163,3 +162,19 @@ map <leader>tn :tabnew<cr>
 map <leader>t<leader> :tabnext<cr>
 map <leader>tc :tabclose<cr>
 map <C-i> :tabnext<cr>
+
+" Spell check things
+let s:merlin_spell_check_enabled = 0
+
+function! ToggleSpellCheckMode()
+  if s:merlin_spell_check_enabled
+    setlocal nospell
+    let s:merlin_spell_check_enabled = 0
+  else
+    setlocal spell spelllang=en_gb
+    let s:merlin_spell_check_enabled = 1
+  endif
+endfunction
+
+map <C-s> :call ToggleSpellCheckMode()<cr>
+inoremap <C-s> <C-o>:call ToggleSpellCheckMode()<cr>
