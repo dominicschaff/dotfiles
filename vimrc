@@ -105,7 +105,7 @@ Plug 'tpope/vim-sensible'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 Plug 'itchyny/lightline.vim'
-"Plug 'tomasr/molokai'
+Plug 'tomasr/molokai'
 Plug 'jiangmiao/auto-pairs'
 Plug 'frazrepo/vim-rainbow'
 Plug 'dense-analysis/ale'
@@ -118,6 +118,7 @@ Plug 'webdevel/tabulous'
 Plug 'preservim/nerdtree'
 Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'towolf/vim-helm'
+Plug 'tomtom/tcomment_vim'
 call plug#end()
 
 
@@ -128,7 +129,7 @@ set t_Co=256
 let python_highlight_all=1
 syntax on
 colorscheme minimalist
-"colorscheme molokai
+" colorscheme molokai
 
 " NerdTree options:
 map <C-o> :NERDTree<CR>
