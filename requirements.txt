@@ -13,6 +13,7 @@ icdiff
 isort
 black
 pylint
+poetry
 
 # Things for the sitegen
 html2text
