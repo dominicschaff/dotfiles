@@ -4,8 +4,8 @@
 
 syntax on                              " Enable syntax viewer
 
-filetype indent on                     " Enable per file type indentation
 filetype plugin on                     " Enable filetype detection
+filetype indent on                     " Enable per file type indentation
 
 let g:indentLine_char = '⦙'            " Set the indent character
 let mapleader=","                      " Change the leader character to a ,
@@ -16,7 +16,7 @@ let g:netrw_liststyle=3                " Filebrowser tree view
 set autoindent                         " enable auto indenting
 set autoread                           " Autoread file on change
 set background=dark                    " Make background dark for theming
-set backspace=eol,start,indent         " Set what we backspace past
+set backspace=2                        " Set what we backspace past
 set cindent                            " enable indeting in a c-style
 set cmdheight=1                        " Set command bar to be 1 line high
 set colorcolumn=80,100,120             " Mark columns
@@ -40,22 +40,29 @@ set magic                              " Enable regular expressions
 set mouse=                             " Disable mouse
 set nobackup                           " Disables the backup file
 set noerrorbells                       " Remove error sound
+set nomodeline                         " Disable modeline, security something
+set nojoinspaces                       " Removes double space after punctuation
+set splitbelow                         " Make new splits go to the bottom
+set splitright                         " Make new splits go to the right
 set nofoldenable                       " Switches off code folding
 set noshowmode                         " Switch off the showing of the Mode
 set noswapfile                         " Disables the swap file
 set novisualbell                       " Remove error flash
-set nowb                               " Disable write backup
+set nowritebackup                      " Disable write backup
 set number                             " Enables the line numbering
 set number relativenumber              " turn relative line numbers on
 set path+=**                           " search sub directories for files
 set ruler                              " Enable the sizing at the bottom
 set shiftwidth=2                       " Allows for backspace of 4 characters
+set shiftround                         " Uses multiple of shiftwidth when indenting
 set showcmd                            " show last used command
 set showmatch                          " Highlight matching bracket
 set smartcase                          " Allows case sensitive search if first letter is Uppercase
 set smartindent                        " enable smart indenting
 set smarttab                           " more tabbing
 set so=5                               " Always have 5 lines around the cursor
+set termencoding=utf-8                 " set the terminal encoding
+set encoding=utf-8                     " set file encoding
 set softtabstop=2                      " Tabbing in a line
 set t_Co=256                           " Enable full colour support
 set t_vb=                              " Disable beeping
@@ -67,6 +74,8 @@ set ttyfast                            " Sets rendering mode to be faster (slow 
 set ttymouse=                          " Disable mouse
 set whichwrap+=<,>,h,l                 " Set backspace behaviour"
 set wildmenu                           " enable file menu for multi options
+set wildmode=list:full                 " show list of autocomplete
+set title
 
 " Add options to ignore in lists
 set wildignore=*.o,*~,*.pyc,*/.git/*,*/.hg/*,*/.svn/*,*/.DS_Store
