@@ -243,6 +243,10 @@ let g:ale_linters_ignore = {
       \ 'python': ['mypy'],
       \}
 
+let g:ale_echo_msg_error_str = 'ERR'
+let g:ale_echo_msg_warning_str = 'WARN'
+let g:ale_echo_msg_format = '[%linter%] %severity%: [%code%] %s'
+
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Spellcheck configuration
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
