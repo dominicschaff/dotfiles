@@ -116,7 +116,7 @@ nnoremap <leader>1 yypVr=$
 nnoremap <leader>2 yypVr-$
 
 " Make level 3 heading
-nnoremap <leader>3 yypVr^$
+nnoremap <leader>3 yypVr~$
 
 " Clear search term
 nnoremap <leader><space> :noh<cr>

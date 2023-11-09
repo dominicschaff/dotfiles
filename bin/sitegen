@@ -230,7 +230,7 @@ a:hover {
    white-space: nowrap;
    line-height: 2;
 }
-img {max-width:650px; border-radius:10%;}
+img {width:100%; border-radius:10%;}
 a>svg {height:52px;width:52px;}
 """
         if css_file is not None:
@@ -442,10 +442,32 @@ a>svg {height:52px;width:52px;}
             <span class="muted">({d['count']})</span></a>"""
             for d in popular_tags[:25]
         ]
+        seconds = sum(
+            item["readtime"].seconds for _, item in self._content.items()
+        )
+        max_seconds = max(
+            item["readtime"].seconds for _, item in self._content.items()
+        )
+        data = [item for _, item in self._content.items() if item["readtime"].seconds == max_seconds]
+        longest_stories = [
+            f"""<a href="{self.link(f"{self._collection_name}/{d['link']}")}">{d['title']}
+            <span class="muted">({d['readtime']})</span></a>"""
+            for d in data
+        ]
+
         tpl = f"""<h1>Newest {self._collection_name_plural.title()}:</h1>
         {"<br />".join(newest)}
         <h1>Popular Tags:</h1>
         {"<br />".join(tags)}
+        <h1>Stats:</h1>
+        <ul>
+            <li>Count of Tags: {len(self._tags)}</li>
+            <li>Count of Authors: {len(self._authors)}</li>
+            <li>Count of Stories: {len(self._content)}</li>
+            <li>Total Read Time: {self._seconds_to_string(seconds)}</li>
+            <li>Average Read time: {self._seconds_to_string(seconds//len(self._content))}</li>
+            <li>Longest Read time: {self._seconds_to_string(max_seconds)} [{", ".join(longest_stories)}]</li>
+        </ul>
         """
 
         self._write("index.html", "Home", tpl)
