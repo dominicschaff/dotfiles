@@ -293,7 +293,7 @@ a>svg {height:52px;width:52px;}
             self._tag_less.append(md_file)
 
         if "author" in data["headers"] and len(data["headers"]["author"]) > 0:
-            author = data["headers"]["author"]
+            author = data["headers"]["author"].lower()
             if author not in self._authors:
                 self._authors[author] = []
             self._authors[author].append(md_file)
@@ -595,8 +595,9 @@ a>svg {height:52px;width:52px;}
                 and len(item["headers"]["source"]) > 0
             ):
                 if isinstance(item["headers"]["source"], list):
-                    if len(item["headers"]["source"][0]) > 0:
-                        source = f""", <a target="_blank" href="{item['headers']['source'][0]}">Source</a>"""
+                    for index, s in enumerate(item["headers"]["source"]):
+                        if len(s) > 0:
+                            source += f""", <a target="_blank" href="{item['headers']['source'][0]}">Source {index+1}</a>"""
                 else:
                     source = f""", <a target="_blank" href="{item['headers']['source']}">Source</a>"""
             self._write(
@@ -604,7 +605,7 @@ a>svg {height:52px;width:52px;}
                 item["title"],
                 f"""<h1>{item['title']}
                 <span class="muted">{item['readtime']}</h1>
-                <p>Published on <span class="tag">{published}</span>{author}{source}</p>
+                <p>Published on <span class="tag">{published.strip()}</span>{author.strip()}{source}</p>
                 <p>Tags: {", ".join(tags)}</p>
                 <br />
                 {item['content']}""",
