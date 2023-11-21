@@ -21,3 +21,4 @@ Markdown
 markdown-full-yaml-metadata
 htmlmin
 readtime
+markdown-include

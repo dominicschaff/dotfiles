@@ -33,6 +33,7 @@ import html2text
 import htmlmin
 import markdown
 import readtime
+from markdown.extensions.wikilinks import WikiLinkExtension
 
 # Custome log level:
 PROGRESS = logging.WARNING + 1
@@ -154,7 +155,19 @@ class SiteGenerator:
             self.logger = logging.getLogger(__name__)
         else:
             self.logger = logger
-        self._markdown = markdown.Markdown(extensions=["full_yaml_metadata"])
+        self._markdown = markdown.Markdown(
+            extensions=[
+                WikiLinkExtension(base_url="", end_url=".html"),
+                "markdown_include.include",
+                "abbr",
+                "sane_lists",
+                "smarty",
+                "def_list",
+                "attr_list",
+                "toc",
+                "full_yaml_metadata",
+            ]
+        )
         self._html2text = html2text.HTML2Text()
         self._name = name
         self._files = {}
@@ -248,6 +261,26 @@ a:hover {
 }
 img {width:100%; border-radius:10%;}
 a>svg {height:52px;width:52px;}
+.toc {
+    background: #333333;
+    border-radius:2em;
+    border: 1px solid #aaa;
+    display: table;
+    font-size: 95%;
+    margin-bottom: 1em;
+    padding: 20px;
+    width: auto;
+}
+
+.toc_title {
+    font-weight: 700;
+    text-align: center;
+}
+
+.toc li, .toc ul, .toc ul li{
+    list-style: outside none none !important;
+    padding-inline-start: 0.5em;
+}
 """
         if css_file is not None:
             css = Path(css_file)
@@ -284,12 +317,18 @@ a>svg {height:52px;width:52px;}
     def process_all(self):
         """Process all files."""
         for md_file in self._files["md"]:
-            self.process(md_file)
+            try:
+                self.process(md_file)
+            except Exception as e:
+                self.logger.error("Error Processing: %s", md_file.name)
+                self.logger.exception(e)
 
     def process(self, md_file: Path):
         """Process a file, and get all meta info on the text"""
         self.logger.info("Processing ... %s", md_file.name)
         data = self.process_file(md_file)
+        if data is None:
+            return
 
         if "tags" in data["headers"] and len(data["headers"]["tags"]) > 0:
             for tag_tmp in data["headers"]["tags"]:
@@ -319,7 +358,7 @@ a>svg {height:52px;width:52px;}
             self._authors[author].append(md_file)
         else:
             self._author_less.append(md_file)
-        data["link"] = self.regex_item.sub("_", md_file.stem.lower()) + ".html"
+        data["link"] = self.regex_item.sub("_", md_file.stem) + ".html"
         self._content[str(md_file)] = data
 
     def process_file(self, md_file: Path) -> dict:
@@ -328,10 +367,12 @@ a>svg {height:52px;width:52px;}
 
         text = self._markdown.reset().convert(content)
         headers = self._markdown.Meta
+        toc = self._markdown.toc
 
         return {
             "title": headers.get("title", md_file.name),
             "headers": headers,
+            "toc": toc,
             "content": text,
             "modified": datetime.fromtimestamp(
                 md_file.stat().st_mtime, tz=self._tz
@@ -649,6 +690,7 @@ a>svg {height:52px;width:52px;}
                 <p>Published on <span class="tag">{published.strip()}</span>{author.strip()}{source}</p>
                 <p>Tags: {", ".join(tags)}</p>
                 <br />
+                {item['toc']}
                 {item['content']}""",
             )
 
@@ -720,7 +762,7 @@ a>svg {height:52px;width:52px;}
             ]
         )
 
-        start =time()
+        start = time()
         self._progress("Output home page...")
         self.collection_output_index()
         self._progress("Output tag page(s)...")
@@ -735,8 +777,12 @@ a>svg {height:52px;width:52px;}
         self._progress(f"Took {end-start:.2f} seconds to output all files")
 
         self._progress(f"Tag count: {len(self._tags)}")
-        self._progress(f"Author count: {len(self._authors)}", )
-        self._progress(f"Collection count: {len(self._content)}", )
+        self._progress(
+            f"Author count: {len(self._authors)}",
+        )
+        self._progress(
+            f"Collection count: {len(self._content)}",
+        )
         seconds = sum(
             item["readtime"].seconds for _, item in self._content.items()
         )
@@ -968,7 +1014,9 @@ custom_tags = [
     )
     sg.generate(args.mode)
     end = time()
-    sg._progress(f"We took {end-start:.2f} seconds", )
+    sg._progress(
+        f"We took {end-start:.2f} seconds",
+    )
 
 
 if __name__ == "__main__":
