@@ -136,25 +136,20 @@ class SiteGenerator:
 
     def __init__(
         self,
-        name,
-        input_dir,
-        output_dir,
-        wpm=265,
-        css_file=None,
-        navigation_links=None,
-        collection_name=None,
-        base_href=None,
-        description=None,
-        rss=False,
-        favicon=None,
-        favicon_type=None,
-        custom_tags=None,
-        logger=None,
+        config_file: Path,
+        test_run = False
     ):
-        if logger is None:
-            self.logger = logging.getLogger(__name__)
-        else:
-            self.logger = logger
+        self.logger = logging.getLogger(__name__)
+
+        if not config_file.exists():
+            logger.error(
+                "Config file doesn't exist: %s", config_file.name
+                    )
+            sys.exit(1)
+        self._config = tomllib.loads(get_text_file_content(config_file))
+        self._test_mode = test_run
+
+
         self._markdown = markdown.Markdown(
             extensions=[
                 WikiLinkExtension(base_url="", end_url=".html"),
@@ -169,7 +164,7 @@ class SiteGenerator:
             ]
         )
         self._html2text = html2text.HTML2Text()
-        self._name = name
+        self._name = self._config.get('name', "Example Site")
         self._files = {}
         self._tags = {}
         self._authors = {}
@@ -178,33 +173,30 @@ class SiteGenerator:
         self._content = {}
         self.regex_tag = re.compile(r"[^a-z0-9]")
         self.regex_item = re.compile(r"[^A-Za-z0-9_-]")
-        self._output = Path(output_dir)
-        self._input = Path(input_dir)
-        self._wpm = wpm
+        self._output = Path(self._config.get('output', 'public'))
+        self._input = Path(self._config.get('input', 'src'))
+        self._wpm = self._config.get('wpm', 265)
         self._nav = []
-        self._collection_name = collection_name
-        self._collection_name_plural = collection_name
-        self._base_href = base_href
-        self._description = (
-            description
-            if description is not None and len(description) > 0
-            else name
-        )
+        self._collection_name = self._config.get('collection_name', 'posts')
+        self._collection_name_plural = self._collection_name
+        self._base_href = self._config.get('base_href', '')
+        self._description = self._config.get('description', self._name)
         self._custom_tags = {}
+        custom_tags = self._config.get('custom_tags', None)
         if isinstance(custom_tags, list):
             for mapping in custom_tags:
                 self._custom_tags[mapping["from"]] = mapping["to"]
+
+        favicon = self._config.get('favicon', None)
+        favicon_type = self._config.get('favicon_type', None)
         if favicon is not None and favicon_type is not None:
             self._favicon = f"""<link rel="shortcut icon" type="{favicon_type}" href="{favicon}">"""
         self._tz = datetime.now().astimezone().tzinfo
-        self._rss = rss
+        self._rss = self._config.get('rss', False)
+        navigation_links = self._config.get('nav', None)
         if isinstance(navigation_links, list):
             for nav in navigation_links:
-                if isinstance(nav, dict):
-                    self._nav.append(nav)
-                else:
-                    items = nav.split("=")
-                    self._nav.append({"url": items[1], "title": items[0]})
+                self._nav.append(nav)
         self._css = """
 body {
     line-height: 1.6;
@@ -282,8 +274,8 @@ a>svg {height:52px;width:52px;}
     padding-inline-start: 0.5em;
 }
 """
-        if css_file is not None:
-            css = Path(css_file)
+        if self._config.get('css', None) is not None:
+            css = Path(self._config['css'])
             if css.exists():
                 self._css = get_text_file_content(css)
         self.logger.debug("Custom Tags:")
@@ -316,7 +308,8 @@ a>svg {height:52px;width:52px;}
 
     def process_all(self):
         """Process all files."""
-        for md_file in self._files["md"]:
+        files = self._files['md'][:10] if self._test_mode else self._files['md']
+        for md_file in files:
             try:
                 self.process(md_file)
             except Exception as e:
@@ -828,8 +821,9 @@ a>svg {height:52px;width:52px;}
         self.scan()
         self.clean_output()
 
-    def generate(self, mode: str):
+    def generate(self):
         """Generate output based on given mode."""
+        mode = self._config['mode']
         if mode == "collection":
             self.generate_collection()
         elif mode == "site":
@@ -844,24 +838,17 @@ def main():
     """Main function."""
     start = time()
     parser = argparse.ArgumentParser(description="Run the Site Creator")
-    parser.add_argument(
-        "-o",
-        "--output",
-        help="Set output directory",
-        default="public",
-        type=str,
-    )
-    parser.add_argument(
-        "-i",
-        "--input",
-        help="Set input directory",
-        default="collection",
-        type=str,
-    )
+    parser.add_argument('-c', '--config', help="Config file to use", default="config.toml", type=str)
     parser.add_argument(
         "-v",
         "--verbose",
         help="Print Progress",
+        action="store_true",
+        default=False,
+    )
+    parser.add_argument(
+        "--test",
+        help="Do a test run",
         action="store_true",
         default=False,
     )
@@ -871,62 +858,12 @@ def main():
         action="store_true",
         default=False,
     )
-    parser.add_argument(
-        "--wpm",
-        help="Override default words per minute",
-        default=265,
-        type=int,
-    )
-    parser.add_argument(
-        "--mode", help="Set mode (site, collection)", default="site", type=str
-    )
-    parser.add_argument(
-        "--css",
-        help="Override current css content with provided file",
-        default=None,
-        type=str,
-    )
-    parser.add_argument(
-        "--nav", help="Add a navigation item: Title=Link", action="append"
-    )
-    parser.add_argument(
-        "--custom-tags", help="Add a custom tag map: from=to", action="append"
-    )
-    parser.add_argument("--name", help="Site name", default="Site", type=str)
-    parser.add_argument(
-        "--collection_name",
-        help="Mode:Collection name",
-        default="collection",
-        type=str,
-    )
-    parser.add_argument(
-        "--config", help="Config File", default="config.toml", type=str
-    )
-    parser.add_argument("--base_href", help="Base HREF", default="", type=str)
-    parser.add_argument(
-        "--description", help="Site Description", default="", type=str
-    )
-    parser.add_argument(
-        "--rss",
-        help="Create an RSS feed",
-        action="store_true",
-        default=False,
-    )
 
     parser.add_argument(
         "--example_config",
         help="Generate Example Config",
         default=False,
         action="store_true",
-    )
-    parser.add_argument(
-        "--favicon", help="Set the favicon icon", default=None, type=str
-    )
-    parser.add_argument(
-        "--favicon-type",
-        help="Set the favicon icon type",
-        default=None,
-        type=str,
     )
 
     args = parser.parse_args()
@@ -966,56 +903,11 @@ custom_tags = [
     )
     logging.addLevelName(PROGRESS, "PROGRESS")
 
-    logger = logging.getLogger(__name__)
-
-    config_file = Path(args.config)
-    if config_file.exists():
-        confg_content = get_text_file_content(config_file)
-        config = tomllib.loads(confg_content)
-        if "name" in config:
-            args.name = config["name"]
-        if "input" in config:
-            args.input = config["input"]
-        if "output" in config:
-            args.output = config["output"]
-        if "mode" in config:
-            args.mode = config["mode"]
-        if "verbose" in config:
-            args.verbose = config["verbose"]
-        if "collection_name" in config:
-            args.collection_name = config["collection_name"]
-        if "nav" in config and isinstance(config["nav"], list):
-            args.nav = config["nav"]
-        if "custom_tags" in config and isinstance(config["custom_tags"], list):
-            args.custom_tags = config["custom_tags"]
-        if "base_href" in config:
-            args.base_href = config["base_href"]
-        if "description" in config:
-            args.description = config["description"]
-        if "rss" in config:
-            args.rss = config["rss"]
-        if "favicon" in config:
-            args.favicon = config["favicon"]
-        if "favicon_type" in config:
-            args.favicon_type = config["favicon_type"]
-
     sg = SiteGenerator(
-        name=args.name,
-        input_dir=args.input,
-        output_dir=args.output,
-        wpm=args.wpm,
-        css_file=args.css,
-        navigation_links=args.nav,
-        collection_name=args.collection_name,
-        base_href=args.base_href,
-        description=args.description,
-        rss=args.rss,
-        favicon=args.favicon,
-        favicon_type=args.favicon_type,
-        custom_tags=args.custom_tags,
-        logger=logger,
+        config_file=Path(args.config),
+        test_run=args.test
     )
-    sg.generate(args.mode)
+    sg.generate()
     end = time()
     sg._progress(
         f"We took {end-start:.2f} seconds",
