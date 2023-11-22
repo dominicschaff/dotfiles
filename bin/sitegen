@@ -131,24 +131,43 @@ def get_text_file_content(file_name) -> str:
         return file_pointer.read()
 
 
+def seconds_to_string(seconds, include_milliseconds=False):
+    """Convert seconds to a nice string."""
+    minutes = seconds // 60
+    hours = minutes // 60
+    days = minutes // 24
+    milliseconds = int((seconds - int(seconds)) * 1000)
+
+    hours = int(hours % 24)
+    minutes = int(minutes % 60)
+    seconds = int(seconds % 60)
+
+    str_seconds = f"{seconds:02}"
+    if include_milliseconds:
+        str_seconds = f"{str_seconds}.{milliseconds:04}"
+
+    if days > 0:
+        return f"{days} days {hours:02}:{minutes:02}:{str_seconds}"
+    if hours > 0:
+        return f"{hours:02}:{minutes:02}:{str_seconds}"
+    if minutes > 0:
+        return f"{minutes:02}:{str_seconds}"
+    return f"{str_seconds} seconds"
+
+
 class SiteGenerator:
     """Static Site Generator, works primarily with tags."""
 
-    def __init__(
-        self,
-        config_file: Path,
-        test_run = False
-    ):
+    def __init__(self, config_file: Path, test_run=False):
         self.logger = logging.getLogger(__name__)
 
         if not config_file.exists():
-            logger.error(
+            self.logger.error(
                 "Config file doesn't exist: %s", config_file.name
-                    )
+            )
             sys.exit(1)
         self._config = tomllib.loads(get_text_file_content(config_file))
         self._test_mode = test_run
-
 
         self._markdown = markdown.Markdown(
             extensions=[
@@ -164,7 +183,7 @@ class SiteGenerator:
             ]
         )
         self._html2text = html2text.HTML2Text()
-        self._name = self._config.get('name', "Example Site")
+        self._name = self._config.get("name", "Example Site")
         self._files = {}
         self._tags = {}
         self._authors = {}
@@ -173,27 +192,29 @@ class SiteGenerator:
         self._content = {}
         self.regex_tag = re.compile(r"[^a-z0-9]")
         self.regex_item = re.compile(r"[^A-Za-z0-9_-]")
-        self._output = Path(self._config.get('output', 'public'))
-        self._input = Path(self._config.get('input', 'src'))
-        self._wpm = self._config.get('wpm', 265)
+        self._output = Path(self._config.get("output", "public"))
+        self._input = Path(self._config.get("input", "src"))
+        self._wpm = self._config.get("wpm", 265)
         self._nav = []
-        self._collection_name = self._config.get('collection_name', 'posts')
+        self._collection_name = self._config.get("collection_name", "posts")
         self._collection_name_plural = self._collection_name
-        self._base_href = self._config.get('base_href', '')
-        self._description = self._config.get('description', self._name)
+        self._base_href = self._config.get("base_href", "")
+        if self._base_href[-1] != "/":
+            self._base_href += "/"
+        self._description = self._config.get("description", self._name)
         self._custom_tags = {}
-        custom_tags = self._config.get('custom_tags', None)
+        custom_tags = self._config.get("custom_tags", None)
         if isinstance(custom_tags, list):
             for mapping in custom_tags:
                 self._custom_tags[mapping["from"]] = mapping["to"]
 
-        favicon = self._config.get('favicon', None)
-        favicon_type = self._config.get('favicon_type', None)
+        favicon = self._config.get("favicon", None)
+        favicon_type = self._config.get("favicon_type", None)
         if favicon is not None and favicon_type is not None:
             self._favicon = f"""<link rel="shortcut icon" type="{favicon_type}" href="{favicon}">"""
         self._tz = datetime.now().astimezone().tzinfo
-        self._rss = self._config.get('rss', False)
-        navigation_links = self._config.get('nav', None)
+        self._rss = self._config.get("rss", False)
+        navigation_links = self._config.get("nav", None)
         if isinstance(navigation_links, list):
             for nav in navigation_links:
                 self._nav.append(nav)
@@ -253,31 +274,16 @@ a:hover {
 }
 img {width:100%; border-radius:10%;}
 a>svg {height:52px;width:52px;}
-.toc {
-    background: #333333;
-    border-radius:2em;
-    border: 1px solid #aaa;
-    display: table;
-    font-size: 95%;
-    margin-bottom: 1em;
-    padding: 20px;
-    width: auto;
-}
-
-.toc_title {
-    font-weight: 700;
-    text-align: center;
-}
-
-.toc li, .toc ul, .toc ul li{
-    list-style: outside none none !important;
-    padding-inline-start: 0.5em;
-}
 """
-        if self._config.get('css', None) is not None:
-            css = Path(self._config['css'])
+        if self._config.get("css", None) is not None:
+            css = Path(self._config["css"])
             if css.exists():
-                self._css = get_text_file_content(css)
+                css_content = get_text_file_content(css)
+                if self._config.get("css_append", False):
+                    self._css += "\n" + css_content
+                else:
+                    self._css = css_content
+        self._css = minify_css(self._css)
         self.logger.debug("Custom Tags:")
         self.logger.debug(self._custom_tags)
 
@@ -290,7 +296,7 @@ a>svg {height:52px;width:52px;}
             return uri
         while uri[0] == "/":
             uri = uri[1:]
-        return f"{self._base_href}/{uri}"
+        return f"{self._base_href}{uri}"
 
     def scan(self, start=None):
         """Scan directory structure, and record all files."""
@@ -308,7 +314,9 @@ a>svg {height:52px;width:52px;}
 
     def process_all(self):
         """Process all files."""
-        files = self._files['md'][:10] if self._test_mode else self._files['md']
+        files = (
+            self._files["md"][:10] if self._test_mode else self._files["md"]
+        )
         for md_file in files:
             try:
                 self.process(md_file)
@@ -323,23 +331,29 @@ a>svg {height:52px;width:52px;}
         if data is None:
             return
 
-        if "tags" in data["headers"] and len(data["headers"]["tags"]) > 0:
-            for tag_tmp in data["headers"]["tags"]:
-                tag = tag_tmp.lower()
-                tag_link = tag
-                if tag_link in self._custom_tags:
-                    tag_link = self._custom_tags[tag_link]
-                if tag not in self._tags:
-                    self._tags[tag] = {
-                        "title": tag.title(),
-                        "items": [],
-                        "link": "tags/"
-                        + self.regex_tag.sub("_", tag_link)
-                        + ".html",
-                    }
-                self._tags[tag]["items"].append(md_file)
+        if "tags" in data["headers"]:
+            if isinstance(data["headers"]["tags"], list):
+                for tag_tmp in data["headers"]["tags"]:
+                    tag = tag_tmp.lower()
+                    tag_link = tag
+                    if tag_link in self._custom_tags:
+                        tag_link = self._custom_tags[tag_link]
+                    if tag not in self._tags:
+                        self._tags[tag] = {
+                            "title": tag.title(),
+                            "items": [],
+                            "link": "tags/"
+                            + self.regex_tag.sub("_", tag_link)
+                            + ".html",
+                        }
+                    self._tags[tag]["items"].append(md_file)
 
-            data["tags"] = data["headers"]["tags"]
+                data["tags"] = data["headers"]["tags"]
+            else:
+                self.logger.error(
+                    "File %s has the wrong type for 'tags'", md_file.name
+                )
+                data["tags"] = []
         else:
             data["tags"] = []
             self._tag_less.append(md_file)
@@ -361,8 +375,8 @@ a>svg {height:52px;width:52px;}
         text = self._markdown.reset().convert(content)
         headers = self._markdown.Meta
         toc = self._markdown.toc
-        if toc.replace('\n' , '') == """<div class="toc"><ul></ul></div>""":
-            toc = ''
+        if toc.replace("\n", "") == """<div class="toc"><ul></ul></div>""":
+            toc = ""
 
         return {
             "title": headers.get("title", md_file.name),
@@ -406,7 +420,7 @@ a>svg {height:52px;width:52px;}
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <meta name="description" content="{self._description}">
         {self._favicon}
-        <style>{minify_css(self._css)}</style>
+        <style>{self._css}</style>
     </head>
     <body>
         {nav_out}
@@ -526,9 +540,9 @@ a>svg {height:52px;width:52px;}
         Count of Tags: {len(self._tags)}<br />
         Count of Authors: {len(self._authors)}<br />
         Count of Stories: {len(self._content)}<br />
-        Total Read Time: {self._seconds_to_string(seconds)}<br />
-        Average Read time: {self._seconds_to_string(seconds//len(self._content))}<br />
-        Longest Read time: {self._seconds_to_string(max_seconds)} [{", ".join(longest_stories)}]<br />
+        Total Read Time: {seconds_to_string(seconds)}<br />
+        Average Read time: {seconds_to_string(seconds//len(self._content))}<br />
+        Longest Read time: {seconds_to_string(max_seconds)} [{", ".join(longest_stories)}]<br />
         """
 
         self._write("index.html", "Home", tpl)
@@ -639,7 +653,7 @@ a>svg {height:52px;width:52px;}
         for item in collection:
             tags = [
                 f"""<a class="tag"
-                href="{self.link(f"tags/{self._tags[tag.lower()]['link']}")}">{tag.title()}</a>"""
+                href="{self.link(self._tags[tag.lower()]['link'])}">{tag.title()}</a>"""
                 for tag in item["tags"]
             ]
             published = item["modified"].strftime("%Y-%m-%d")
@@ -675,7 +689,7 @@ a>svg {height:52px;width:52px;}
                             source += f""", <a target="_blank" href="{item['headers']['source'][0]}">Source {index+1}</a>"""
                 else:
                     source = f""", <a target="_blank" href="{item['headers']['source']}">Source</a>"""
-            tags_html = ''
+            tags_html = ""
             if len(tags) > 0:
                 tags_html = f"""<p>Tags: {", ".join(tags)}</p>"""
             self._write(
@@ -727,7 +741,8 @@ a>svg {height:52px;width:52px;}
     def generate_collection(self):
         """Generate a collection."""
         if self._collection_name is None:
-            print("Error: collection_name is not set")
+            self.logger.error("Collection_name is not set")
+            sys.exit(1)
         self._collection_name = self._collection_name.lower()
         self._collection_name_plural = make_plural(self._collection_name)
         if "/index.html" not in [u["url"] for u in self._nav]:
@@ -740,7 +755,9 @@ a>svg {height:52px;width:52px;}
         start = time()
         self.process_all()
         end = time()
-        self._progress(f"Took {end-start:.2f} seconds to process all files")
+        self._progress(
+            f"Took {seconds_to_string(end-start, True)} to process all files"
+        )
         self._progress("Make initial directories...")
         if len(self._authors.keys()) > 0:
             self._nav.extend([{"url": "authors.html", "title": "Authors"}])
@@ -770,7 +787,9 @@ a>svg {height:52px;width:52px;}
         self.collection_output_collection()
 
         end = time()
-        self._progress(f"Took {end-start:.2f} seconds to output all files")
+        self._progress(
+            f"Took {seconds_to_string(end-start, True)} to output all files"
+        )
 
         self._progress(f"Tag count: {len(self._tags)}")
         self._progress(
@@ -786,28 +805,14 @@ a>svg {height:52px;width:52px;}
             item["readtime"].seconds for _, item in self._content.items()
         )
         self._progress(
-            f"Total Read time: {self._seconds_to_string(seconds)}",
+            f"Total Read time: {seconds_to_string(seconds)}",
         )
         self._progress(
-            f"Longest Read time: {self._seconds_to_string(max_seconds)}",
+            f"Longest Read time: {seconds_to_string(max_seconds)}",
         )
         self._progress(
-            f"Average Read time: {self._seconds_to_string(seconds//len(self._content))}",
+            f"Average Read time: {seconds_to_string(seconds//len(self._content))}",
         )
-
-    def _seconds_to_string(self, seconds):
-        minutes = seconds // 60
-        hours = minutes // 60
-        days = minutes // 24
-        hours = hours % 24
-        minutes = minutes % 60
-        seconds = seconds % 60
-
-        if days > 0:
-            return f"{days} days {hours:02}:{minutes:02}:{seconds:02}"
-        if hours > 0:
-            return f"{hours:02}:{minutes:02}:{seconds:02}"
-        return f"{minutes:02}:{seconds:02}"
 
     def generate_site(self):
         """Generate a site."""
@@ -823,22 +828,29 @@ a>svg {height:52px;width:52px;}
 
     def generate(self):
         """Generate output based on given mode."""
-        mode = self._config['mode']
+        mode = self._config["mode"]
         if mode == "collection":
             self.generate_collection()
         elif mode == "site":
             self.generate_site()
         elif mode == "blog":
-            self.generate_blog()
+            self.logger.warning("Blog type is not available yet")
+            # self.generate_blog()
         else:
-            print(f"No such mode {mode}")
+            self.logger.error("No such mode %s", mode)
 
 
 def main():
     """Main function."""
     start = time()
     parser = argparse.ArgumentParser(description="Run the Site Creator")
-    parser.add_argument('-c', '--config', help="Config file to use", default="config.toml", type=str)
+    parser.add_argument(
+        "-c",
+        "--config",
+        help="Config file to use",
+        default="config.toml",
+        type=str,
+    )
     parser.add_argument(
         "-v",
         "--verbose",
@@ -903,10 +915,7 @@ custom_tags = [
     )
     logging.addLevelName(PROGRESS, "PROGRESS")
 
-    sg = SiteGenerator(
-        config_file=Path(args.config),
-        test_run=args.test
-    )
+    sg = SiteGenerator(config_file=Path(args.config), test_run=args.test)
     sg.generate()
     end = time()
     sg._progress(
