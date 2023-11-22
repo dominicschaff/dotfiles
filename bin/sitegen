@@ -374,12 +374,14 @@ a>svg {height:52px;width:52px;}
 
         text = self._markdown.reset().convert(content)
         headers = self._markdown.Meta
+        if headers is None:
+            headers = {}
         toc = self._markdown.toc
         if toc.replace("\n", "") == """<div class="toc"><ul></ul></div>""":
             toc = ""
 
         return {
-            "title": headers.get("title", md_file.name),
+            "title": headers.get("title", md_file.stem),
             "headers": headers,
             "toc": toc,
             "content": text,
@@ -438,6 +440,8 @@ a>svg {height:52px;width:52px;}
 
     def clean_output(self):
         """Clean the output directory if exists, or create."""
+        if self._config.get("clean", False):
+            return
         if self._output.exists():
             for link in self._output.iterdir():
                 if link.is_dir():
@@ -726,7 +730,7 @@ a>svg {height:52px;width:52px;}
         """Output a markdown file."""
         for file in self._files["md"]:
             name = list(file.parts[1:])
-            name[-1] = name[-1].replace(".md", ".html")
+            name[-1] = name[-1].replace(".md", ".html").replace(' ', '_')
             p = Path(name[0])
             for n in name[1:]:
                 p = p / n
@@ -816,9 +820,13 @@ a>svg {height:52px;width:52px;}
 
     def generate_site(self):
         """Generate a site."""
+        self._progress("Locating Files...")
         self.scan()
+        self._progress("Delete Previous Files...")
         self.clean_output()
+        self._progress("Output Static Content...")
         self.site_output_static()
+        self._progress("Output Markdown Content...")
         self.site_output_md()
 
     def generate_blog(self):
@@ -828,6 +836,7 @@ a>svg {height:52px;width:52px;}
 
     def generate(self):
         """Generate output based on given mode."""
+        start = time()
         mode = self._config["mode"]
         if mode == "collection":
             self.generate_collection()
@@ -838,11 +847,14 @@ a>svg {height:52px;width:52px;}
             # self.generate_blog()
         else:
             self.logger.error("No such mode %s", mode)
+        end = time()
+        self._progress(
+            f"We took {seconds_to_string(end-start, True)} for the entire process",
+        )
 
 
 def main():
     """Main function."""
-    start = time()
     parser = argparse.ArgumentParser(description="Run the Site Creator")
     parser.add_argument(
         "-c",
@@ -917,10 +929,6 @@ custom_tags = [
 
     sg = SiteGenerator(config_file=Path(args.config), test_run=args.test)
     sg.generate()
-    end = time()
-    sg._progress(
-        f"We took {end-start:.2f} seconds",
-    )
 
 
 if __name__ == "__main__":
