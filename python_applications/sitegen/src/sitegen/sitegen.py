@@ -66,7 +66,7 @@ class SiteGenerator:
             nav=[],
             custom_tags={},
             wpm=config.get("wpm", 265),
-            clean=config.get("clean", False),
+            clean=config.get("clean", True),
         )
         self._test_mode = test_run
 
@@ -97,6 +97,7 @@ class SiteGenerator:
         self._tag_less = []
         self._content = {}
         self._file_links = {}
+        self._extra_navs = []
 
         # Common Settings
         self.regex_tag = re.compile(r"[^a-z0-9]")
@@ -140,14 +141,13 @@ class SiteGenerator:
         self.logger.info("Create RSS       : %s", "yes" if self.config.rss else "no")
 
     def _generate_nav_bar(self):
-        if len(self.config.nav) > 0:
-            nav = "".join(
-                [f"""<a href="{self.link(a['url'])}">{a["title"]}</a> """ for a in self.config.nav]
-                + ["""<a onclick="topFunction()" id="myBtn" title="Go to top">Top</a>"""]
-            )
-            return f"""<div class="navbar"><div class="navbar-links">{nav}</div></div>"""
+        nav = "".join(
+            [f"""<a href="{a['url']}">{a["title"]}</a>""" for a in self.config.nav]
+            + [f"""<a href="{self.link(a['url'])}">{a["title"]}</a>""" for a in self._extra_navs]
+            + ["""<a onclick="topFunction()" id="myBtn" title="Go to top">Top</a>"""]
+        )
+        return f"""<div class="navbar"><div class="navbar-links">{nav}</div></div>"""
 
-        return ""
 
     def _linkify_file(self, file: Path):
         base_link = self.regex_item.sub("_", file.stem)
@@ -176,6 +176,8 @@ class SiteGenerator:
     def link(self, uri: str) -> str:
         """Generate an internal link."""
         if uri.startswith("http"):
+            return uri
+        if uri.startswith(self.config.base_href):
             return uri
         while uri[0] == "/":
             uri = uri[1:]
@@ -298,7 +300,7 @@ class SiteGenerator:
 
     def clean_output(self):
         """Clean the output directory if exists, or create."""
-        if self.config.clean:
+        if not self.config.clean:
             return
         if self.config.output.exists():
             for link in self.config.output.iterdir():
@@ -352,7 +354,7 @@ class SiteGenerator:
         data = [content for _, content in self._content.items()]
         data.sort(reverse=True, key=lambda d: d["modified"])
         newest = [
-            f"""<a href="{self.link(f"{self.config.collection_name}/{d['link']}")}">{d['title']}
+            f"""<a href="{self.link(d['link'])}">{d['title']}
             <span class="muted">({d['readtime']})</span></a>"""
             for d in data[:25]
         ]
@@ -406,7 +408,7 @@ class SiteGenerator:
         items = [self._content[str(i)] for i in tag["items"]]
         items.sort(key=lambda i: i["title"])
         links = [
-            f"""<a href="{self.link(f"{self.config.collection_name}/{i['link']}")}">{i['title']}
+            f"""<a href="{self.link(i['link'])}">{i['title']}
             <span class="muted">({i['readtime']})</span></a>"""
             for i in items
         ]
@@ -595,12 +597,12 @@ class SiteGenerator:
         self._progress(f"Took {seconds_to_string(end-start, True)} to process all files")
         self._progress("Make initial directories...")
         if len(self._authors.keys()) > 0:
-            self.config.nav.extend([{"url": "authors.html", "title": "Authors"}])
+            self._extra_navs.extend([{"url": "authors.html", "title": "Authors"}])
             (self.config.output / "authors").mkdir(exist_ok=True)
         (self.config.output / "tags").mkdir(exist_ok=True)
         (self.config.output / self.config.collection_name).mkdir(exist_ok=True)
 
-        self.config.nav.extend(
+        self._extra_navs.extend(
             [
                 {"url": "tags.html", "title": "Tags"},
                 {
