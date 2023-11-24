@@ -166,7 +166,7 @@ class SiteGenerator:
         """Output the WikiLink."""
         if label in self._file_links:
             return f"{self.config.base_href}{base}{self._file_links[label]}{end}"
-        return f"{self.config.base_href}{base}{label.lower().replace(' ', '_')}{end}"
+        return f"{self.config.base_href}{base}{label}{end}"
 
     def _progress(self, message):
         self.logger.log(PROGRESS, message)

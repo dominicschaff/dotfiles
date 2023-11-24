@@ -33,15 +33,8 @@ body {
     padding-bottom: 5em;
 }
 h1, h2, h3 {
+    scroll-margin-top: 4em;
     line-height:1.2
-}
-
-h1 {
-  padding-top: 0.5em;
-}
-
-h2, h3 {
-  padding-top: 3em;
 }
 a {
   color: #90CAF9;
