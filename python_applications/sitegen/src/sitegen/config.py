@@ -6,6 +6,9 @@ from .utils import make_plural
 
 # pylint: disable=too-few-public-methods
 
+TEST_COUNT = 100
+PROGRESS_STEP_PERCENTAGE = 10
+
 
 class Modes:
     """Modes available to the generator."""
@@ -27,9 +30,18 @@ body {
     margin-top: 50px;
     margin-inline: auto;
     width: min(100% - 25px, 650px);
+    padding-bottom: 5em;
 }
 h1, h2, h3 {
     line-height:1.2
+}
+
+h1 {
+  padding-top: 0.5em;
+}
+
+h2, h3 {
+  padding-top: 3em;
 }
 a {
   color: #90CAF9;
@@ -62,15 +74,29 @@ a:hover {
   padding: 10px;
 }
 .tag {
-   border-radius: 30px;
-   background-color: #333333;
-   padding: 5px 10px 5px 10px;
-   border:none;
-   white-space: nowrap;
-   line-height: 2;
+  border-radius: 30px;
+  background-color: #333333;
+  padding: 0.2em 0.5em;
+  border:none;
+  white-space: nowrap;
+  line-height: 2;
 }
 img {width:100%; border-radius:10%;}
 a>svg {height:52px;width:52px;}
+
+#to_top {
+  position: fixed;
+  bottom: 0.5em;
+  right: 0.5em;
+}
+
+#to_top > button {
+  background-color: #212121;
+  color: white;
+  padding: 0.5em 0.5em;
+  border-radius: 1em;
+  border-color: #F7567C;
+}
 """
 
 DEFAULT_CONFIG_FILE = f"""

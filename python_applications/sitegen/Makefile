@@ -2,11 +2,11 @@ shell:
 	poetry install
 	poetry shell
 
-setup:
+build:
 	-rm -rf dist
-# 	poetry export -o requirements.txt
 	poetry build
-# 	pip install --user --no-cache-dir --no-compile -r requirements.txt
+
+install: build
 	pip install --user --no-cache-dir --no-compile dist/*.whl
 
 clean:

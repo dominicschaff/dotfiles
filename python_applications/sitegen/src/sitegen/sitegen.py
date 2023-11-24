@@ -33,7 +33,7 @@ import markdown
 import readtime
 from markdown.extensions.wikilinks import WikiLinkExtension
 
-from .config import DEFAULT_CONFIG_FILE, DEFAULT_CSS, Modes, SiteConfig
+from .config import DEFAULT_CONFIG_FILE, DEFAULT_CSS, Modes, SiteConfig, TEST_COUNT, PROGRESS_STEP_PERCENTAGE
 from .utils import get_text_file_content, minify_css, seconds_to_string, strip_empty_lines
 
 # Custome log level:
@@ -144,10 +144,8 @@ class SiteGenerator:
         nav = "".join(
             [f"""<a href="{a['url']}">{a["title"]}</a>""" for a in self.config.nav]
             + [f"""<a href="{self.link(a['url'])}">{a["title"]}</a>""" for a in self._extra_navs]
-            + ["""<a onclick="topFunction()" id="myBtn" title="Go to top">Top</a>"""]
         )
         return f"""<div class="navbar"><div class="navbar-links">{nav}</div></div>"""
-
 
     def _linkify_file(self, file: Path):
         base_link = self.regex_item.sub("_", file.stem)
@@ -200,8 +198,12 @@ class SiteGenerator:
 
     def process_all(self):
         """Process all files."""
-        files = self._files["md"][:10] if self._test_mode else self._files["md"]
-        for md_file in files:
+        files = self._files["md"][:TEST_COUNT] if self._test_mode else self._files["md"]
+        count = len(files)
+        steps = len(files)//PROGRESS_STEP_PERCENTAGE
+        for index, md_file in enumerate(files):
+            if index % steps == 0:
+                self._progress(f"Busy... {100*(index+1)/count:.0f} %")
             try:
                 self.process(md_file)
             except Exception as e:
@@ -291,6 +293,13 @@ class SiteGenerator:
     <body>
         {self._nav_out}
         <div class="content">{body}</div>
+        <div id="to_top">
+            <button onclick="topFunction()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                    <path d="M6 18h12v2H6zm6-14.414-6.707 6.707 1.414 1.414L11 7.414V16h2V7.414l4.293 4.293 1.414-1.414z" fill="#F7567C"></path>
+                </svg>
+            </button>
+        </div>
     </body>
     <script>function topFunction() {{document.body.scrollTop = 0; document.documentElement.scrollTop = 0;}}</script>
 </html>"""
@@ -384,7 +393,7 @@ class SiteGenerator:
             item for _, item in self._content.items() if item["readtime"].seconds == max_seconds
         ]
         longest_stories = [
-            f"""<a href="{self.link(f"{self.config.collection_name}/{d['link']}")}">{d['title']}
+            f"""<a href="{self.link(d['link'])}">{d['title']}
             <span class="muted">({d['readtime']})</span></a>"""
             for d in data
         ]
@@ -490,7 +499,7 @@ class SiteGenerator:
         collection = [c for _, c in self._content.items()]
         collection.sort(key=lambda d: d["title"])
         item_links = [
-            f"""<a href="{self.link(f"{self.config.collection_name}/{item['link']}")}">{item['title']}
+            f"""<a href="{self.link(item['link'])}">{item['title']}
             <span class="muted">({item['readtime']})</span></a>"""
             for item in collection
         ]
@@ -524,9 +533,17 @@ class SiteGenerator:
             source = ""
             if "source" in item["headers"] and len(item["headers"]["source"]) > 0:
                 if isinstance(item["headers"]["source"], list):
-                    for index, s in enumerate(item["headers"]["source"]):
-                        if len(s) > 0:
-                            source += f""", <a target="_blank" href="{item['headers']['source'][0]}">Source {index+1}</a>"""
+                    if len(item["headers"]["source"]) == 1:
+                        source = f""" | <a target="_blank" href="{item["headers"]["source"][0]}">Source</a>"""
+                    else:
+                        source = " | Sources: " + (
+                            ",".join(
+                                [
+                                    f"""<a target="_blank" href="{source}">{index+1}</a>"""
+                                    for index, source in enumerate(item["headers"]["source"])
+                                ]
+                            )
+                        )
                 else:
                     source = (
                         f""", <a target="_blank" href="{item['headers']['source']}">Source</a>"""
@@ -541,7 +558,6 @@ class SiteGenerator:
                 <span class="muted">{item['readtime']}</h1>
                 <p>Published on <span class="tag">{published.strip()}</span>{author.strip()}{source}</p>
                 {tags_html}
-                <br />
                 {item['toc']}
                 {item['content']}""",
             )
@@ -566,8 +582,12 @@ class SiteGenerator:
 
     def site_output_md(self):
         """Output a markdown file."""
-        files = self._files["md"][:10] if self._test_mode else self._files["md"]
-        for file in files:
+        files = self._files["md"][:TEST_COUNT] if self._test_mode else self._files["md"]
+        count = len(files)
+        steps = len(files)//PROGRESS_STEP_PERCENTAGE
+        for index, file in enumerate(files):
+            if index % steps == 0:
+                self._progress(f"Busy... {100*(index+1)/count:.0f} %")
             name = list(file.parts[1:])
             name[-1] = name[-1].replace(".md", ".html").replace(" ", "_")
             p = Path(name[0])
