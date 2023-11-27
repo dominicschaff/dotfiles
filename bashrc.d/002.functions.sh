@@ -30,7 +30,7 @@ convertMilli()
   convertTime $(echo $1 | rev | cut -c 4- | rev)
 }
 
-print_all_them_colors()
+colours_all_styles()
 {
   for x in 0 1 4 5 7 8; do
     for i in `seq 30 37`; do
@@ -41,6 +41,13 @@ print_all_them_colors()
     done
   done
   echo ""
+}
+
+colours_all_numbered()
+{
+  for i in {0..255}; do
+    printf "\x1b[38;5;${i}mcolour${i}\x1b[0m\n"
+  done
 }
 
 tmp()
