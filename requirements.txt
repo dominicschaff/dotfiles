@@ -15,10 +15,8 @@ black
 pylint
 poetry
 
-# Things for the sitegen
+# Convert HTML to Markdown
 html2text
-Markdown
-markdown-full-yaml-metadata
-htmlmin
-readtime
-markdown-include
+
+# Webscrapping
+pywebcopy

@@ -188,7 +188,6 @@ Plug 'tpope/vim-sensible'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 Plug 'itchyny/lightline.vim'
-Plug 'tomasr/molokai'
 Plug 'jiangmiao/auto-pairs'
 Plug 'frazrepo/vim-rainbow'
 Plug 'dense-analysis/ale'
@@ -202,6 +201,8 @@ Plug 'preservim/nerdtree'
 Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'towolf/vim-helm'
 Plug 'tomtom/tcomment_vim'
+Plug 'tpope/vim-endwise'
+Plug 'severin-lemaignan/vim-minimap'
 call plug#end()
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -209,16 +210,28 @@ call plug#end()
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 try
+  " colorscheme monokai
   colorscheme minimalist
-  " colorscheme molokai
 catch
 endtry
+
+" autocmd BufEnter * colorscheme default
+" autocmd BufEnter *.php colorscheme Tomorrow-Night
+" autocmd BufEnter *.py colorscheme Tomorrow
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Plugin Configuration
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
+" Minimap:
+
+let g:minimap_highlight='Visual'
+
 " NerdTree options:
+let g:minimap_show='<leader>ms'
+let g:minimap_update='<leader>mu'
+let g:minimap_close='<leader>mc'
+let g:minimap_toggle='<leader>mt'
 
 " Open the tree
 map <C-o> :NERDTree<CR>
