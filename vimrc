@@ -217,6 +217,7 @@ endtry
 
 " Completely disable background colour
 hi Normal guibg=NONE ctermbg=NONE
+hi NonText guibg=NONE ctermbg=NONE
 highlight ColorColumn ctermbg=235
 
 " autocmd BufEnter * colorscheme default
