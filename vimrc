@@ -215,6 +215,10 @@ try
 catch
 endtry
 
+" Completely disable background colour
+hi Normal guibg=NONE ctermbg=NONE
+highlight ColorColumn ctermbg=235
+
 " autocmd BufEnter * colorscheme default
 " autocmd BufEnter *.php colorscheme Tomorrow-Night
 " autocmd BufEnter *.py colorscheme Tomorrow
