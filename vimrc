@@ -258,7 +258,7 @@ endif
 
 " ALE settings, trim whitespace on save, ignore mypy
 let g:ale_linters_ignore = {
-      \ 'python': ['mypy'],
+      \ 'python': ['mypy', 'flake8'],
       \}
 
 let g:ale_echo_msg_error_str = 'ERR'
