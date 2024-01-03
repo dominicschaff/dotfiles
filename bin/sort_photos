@@ -2,9 +2,10 @@
 
 mkdir -p raws
 mv *.RAF raws
+mv *.dng raws
 
-for f in *.JPG; do
-  date_taken="$(exiftool "$f" | grep 'Create Date' | cut -d ':' -f2- | cut -d' ' -f2 | tr ':' '-')"
+for f in *.JPG *.jpg *.jpeg *.JPEG; do
+  date_taken="$(exiftool "$f" | grep 'Create Date' | head -n1 | cut -d ':' -f2- | cut -d' ' -f2 | tr ':' '-')"
   mkdir -v -p "$date_taken"
   mv -v "$f" "$date_taken/"
 done
