@@ -5,51 +5,6 @@ key()
   pwgen -cnB ${1:-8}
 }
 
-pc()
-{
-  pandoc -s --standalone --toc -f markdown --highlight-style zenburn --template ~/.dotfiles/pandoc/template.html -t html "$1" | sed 's/<table/<table class=\"table\"/' > "${1%.*}.html"
-}
-
-pc_print()
-{
-  pandoc -s --standalone --toc -f markdown --highlight-style haddock --template ~/.dotfiles/pandoc/template.html -t html "$1" | sed 's/<table/<table class=\"table\"/' > "${1%.*}.html"
-}
-
-fetch_markdown()
-{
-  curl --data "read=1" --data "u=$1" "http://fuckyeahmarkdown.com/go/"
-}
-
-convertTime()
-{
-  date -d @$(echo $1) +"%Y-%m-%d %T"
-}
-
-convertMilli()
-{
-  convertTime $(echo $1 | rev | cut -c 4- | rev)
-}
-
-colours_all_styles()
-{
-  for x in 0 1 4 5 7 8; do
-    for i in `seq 30 37`; do
-      for a in `seq 40 47`; do
-        echo -ne "\e[$x;$i;$a""m\\\e[$x;$i;$a""m\e[0;37;40m "
-      done
-      echo
-    done
-  done
-  echo ""
-}
-
-colours_all_numbered()
-{
-  for i in {0..255}; do
-    printf "\x1b[38;5;${i}mcolour${i}\x1b[0m\n"
-  done
-}
-
 tmp()
 {
   if [ -d "$HOME/tmp" ]; then
@@ -67,16 +22,6 @@ tmp()
 line()
 {
   printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' -
-}
-
-last_monday()
-{
-  date -d'last week last monday' +%Y-%m-%d
-}
-
-last_sunday()
-{
-  date -d'last sunday' +%Y-%m-%d
 }
 
 compress_dir()
@@ -104,42 +49,9 @@ filesize()
   done
 }
 
-get_tweets()
-{
-  curl -s "https://twitrss.me/twitter_user_to_rss/?user=$1" | xq '.rss.channel.item[]' | jq -c .
-}
-
-get_random_tweet()
-{
-  get_tweets $1 | sort -R | head -n1 | jq -r '.title'
-}
-
-do_merge()
-{
-  filename=$(basename -- "$1")
-  extension="${filename##*.}"
-  filename="${filename%.*}"
-  base="$1"
-  convert $@ -background black -flatten "output.$extension"
-}
-
 dir_size()
 {
   du -hsc .[^.]* * 2>/dev/null | sort -h
-}
-
-mirror()
-{
-  wget \
-    --mirror \
-    --recursive \
-    --convert-links \
-    --adjust-extension \
-    --page-requisites \
-    --no-parent \
-    --quiet \
-    --show-progress \
-    "$1"
 }
 
 ex()

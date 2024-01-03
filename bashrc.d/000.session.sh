@@ -10,3 +10,9 @@ export CLICOLOR=1
 export TIMEFORMAT='r: %R, u: %U, s: %S'
 export BASH_LIB="$DOTFILES/bash_library.sh"
 
+
+# Turn on parallel history
+shopt -s histappend
+
+# Turn on checkwinsize
+shopt -s checkwinsize

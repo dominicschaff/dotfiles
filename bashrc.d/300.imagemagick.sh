@@ -4,6 +4,15 @@ if ! hash convert 2>/dev/null; then
   return
 fi
 
+do_merge()
+{
+  filename=$(basename -- "$1")
+  extension="${filename##*.}"
+  filename="${filename%.*}"
+  base="$1"
+  convert $@ -background black -flatten "output.$extension"
+}
+
 cut_3_screens()
 {
   for f in "$@"; do
