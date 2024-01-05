@@ -320,8 +320,7 @@ class SiteGenerator:
                         pass
                 else:
                     link.unlink()
-        else:
-            self.config.output.mkdir(exist_ok=True)
+        self.config.output.mkdir(exist_ok=True)
 
     def create_rss(self, output_file, content):
         """Create an RSS feed."""
@@ -608,6 +607,8 @@ class SiteGenerator:
             self.config.nav.append({"url": "/index.html", "title": "Home"})
         self._progress("Locating Files...")
         self.scan()
+        self._progress(f"Located {len(self._files['md'])} md files")
+        self._progress(f"Located {len(self._files['static'])} static files")
         self._progress("Clean Previous Files...")
         self.clean_output()
         self._progress("Processing Files...")
@@ -671,6 +672,8 @@ class SiteGenerator:
         """Generate a site."""
         self._progress("Locating Files...")
         self.scan()
+        self._progress(f"Located {len(self._files['md'])} md files")
+        self._progress(f"Located {len(self._files['static'])} static files")
         self._progress("Delete Previous Files...")
         self.clean_output()
         self._progress("Output Static Content...")
