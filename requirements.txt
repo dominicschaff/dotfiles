@@ -13,10 +13,6 @@ icdiff
 isort
 black
 pylint
-poetry
 
 # Convert HTML to Markdown
 html2text
-
-# Webscrapping
-pywebcopy
