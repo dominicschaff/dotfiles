@@ -113,15 +113,6 @@ stop_motion_complete_1080()
   rm scaled-*.jpg temp-*.mp4
 }
 
-gifConvert()
-{
-    for f in *.gif; do
-        ffmpeg -i "$f" -c:v libvpx -crf 12 -b:v 500K "${f%.*}.webm"
-        convertMp4 "${f%.*}.webm"
-        rm "${f%.*}.webm"
-    done
-}
-
 gifenc()
 {
   palette="/tmp/palette.png"
