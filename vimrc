@@ -203,16 +203,19 @@ Plug 'towolf/vim-helm'
 Plug 'tomtom/tcomment_vim'
 Plug 'tpope/vim-endwise'
 Plug 'severin-lemaignan/vim-minimap'
+Plug 'joshdick/onedark.vim'
 call plug#end()
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Theme changes
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
+let g:onedark_termcolors = 256
+set termguicolors
 try
   " colorscheme monokai
-  colorscheme minimalist
-catch
+  " colorscheme minimalist
+  colorscheme onedark
+  catch
 endtry
 
 " Completely disable background colour
