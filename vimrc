@@ -129,7 +129,7 @@ nnoremap <Leader>vr :source $MYVIMRC<CR>
 " Make directions use screen and not lines
 nnoremap <Up> gk
 nnoremap <Down> gj
-inoremap <Up> <C-o>gk
+inoremap <Up> <C-O>gk
 inoremap <Down> <C-O>gj
 
 " Tab Controls
@@ -145,10 +145,14 @@ vnoremap <leader>64d c<c-r>=system('base64 --decode', @")<cr><esc>
 vnoremap <leader>64e c<c-r>=system('base64', @")<cr><esc>
 
 " Make ctrl + direction switch between tabs/buffers
-map <C-Up> :bp<cr>
-map <C-Left> :tabprevious<cr>
-map <C-Right> :tabnext<cr>
-map <C-Down> :bn<cr>
+map <C-Up> <C-w>k
+map <C-Left> :bp
+map <C-Right> :bn
+map <C-Down> <C-w>j
+imap <C-Up> <C-O><C-w>k
+imap <C-Left> :bp
+imap <C-Right> :bn
+imap <C-Down> <C-O><C-w>j
 
 " Remap start of line to be first non-blank character
 map 0 ^
