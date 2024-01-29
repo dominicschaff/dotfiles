@@ -146,12 +146,12 @@ vnoremap <leader>64e c<c-r>=system('base64', @")<cr><esc>
 
 " Make ctrl + direction switch between tabs/buffers
 map <C-Up> <C-w>k
-map <C-Left> :bp
-map <C-Right> :bn
+map <C-Left> :bp<cr>
+map <C-Right> :bn<cr>
 map <C-Down> <C-w>j
 imap <C-Up> <C-O><C-w>k
-imap <C-Left> :bp
-imap <C-Right> :bn
+imap <C-Left> <C-O>:bp<cr>
+imap <C-Right> <C-O>:bn<cr>
 imap <C-Down> <C-O><C-w>j
 
 " Remap start of line to be first non-blank character
