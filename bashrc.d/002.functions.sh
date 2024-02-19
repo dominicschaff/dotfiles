@@ -88,3 +88,19 @@ open()
     termux-open "$1"
   fi
 }
+
+convert_extensions_to_lower_case()
+{
+  for f in *; do
+    if [ -f "$f" ]; then
+      extension="${f##*.}"
+      filename="${f%.*}"
+      extension_lower="$(echo "$extension" | tr '[:upper:]' '[:lower:]')"
+
+      if [[ "$extension" != "$extension_lower" ]]; then
+        echo "Moving: $f -> $filename.$extension_lower"
+        mv "$f" "$filename.$extension_lower"
+      fi
+    fi
+  done
+}
