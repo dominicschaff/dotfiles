@@ -35,6 +35,7 @@ set ignorecase                         " Make search case insensitive
 set incsearch                          " Allow incremental search
 set laststatus=2                       " When must the status line be displayed
 set lazyredraw                         " speed up the redraw behaviour
+set linebreak                          " Display linebreak at breakat character
 set list                               " Show the invisible characters
 set magic                              " Enable regular expressions
 set mouse=                             " Disable mouse
@@ -340,3 +341,18 @@ map <F5> :call CompileRun()<CR>
 imap <F5> <Esc>:call CompileRun()<CR>
 vmap <F5> <Esc>:call CompileRun()<CR>
 
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Run a format based on filetype
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+func! LocalFormat()
+exec "w"
+if &filetype == 'python'
+    exec "!isort -profile black %"
+    exec "!black %"
+endif
+endfunc
+
+map <F2> :call LocalFormat()<CR>
+imap <F2> <Esc>:call LocalFormat()<CR>
+vmap <F2> <Esc>:call LocalFormat()<CR>
