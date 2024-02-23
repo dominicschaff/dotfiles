@@ -11,7 +11,7 @@ packages = [
 [tool.poetry.dependencies]
 python = "^3.11"
 html2text = "2020.1.16"
-markdown = "3.5.1"
+markdown = "3.5.2"
 markdown-full-yaml-metadata = "2.2.1"
 htmlmin = "0.1.12"
 readtime = "3.0.0"
@@ -23,8 +23,8 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.dev-dependencies]
-isort = "5.12.0"
-black = "23.3.0"
+isort = "5.13.2"
+black = "24.2.0"
 
 [tool.isort]
 profile = "black"
