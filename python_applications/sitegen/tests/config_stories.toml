@@ -1,0 +1,17 @@
+name = "Short Stories"
+input = "stories"
+mode = "collection"
+output = "public"
+collection_name = "story"
+clean = true
+base_href = "/"
+description = "Site for short stories"
+
+nav = [
+  { title = "Home", url = "/index.html" },
+]
+
+custom_tags = [
+  { from = "🧚‍♀️", to = "custom_fairy_tales" },
+  { from = "🐶", to = "custom_animal" }
+]
