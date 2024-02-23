@@ -202,7 +202,7 @@ class SiteGenerator:
         count = len(files)
         steps = len(files)//PROGRESS_STEP_PERCENTAGE
         for index, md_file in enumerate(files):
-            if index % steps == 0:
+            if steps==0 or index % steps == 0:
                 self._progress(f"Busy... {100*(index+1)/count:.0f} %")
             try:
                 self.process(md_file)
@@ -243,8 +243,8 @@ class SiteGenerator:
         if "author" in data["headers"] and len(data["headers"]["author"]) > 0:
             author = data["headers"]["author"].lower()
             if author not in self._authors:
-                self._authors[author] = []
-            self._authors[author].append(md_file)
+                self._authors[author] = {"name": data["headers"]["author"], "files":[]}
+            self._authors[author]["files"].append(md_file)
         else:
             self._author_less.append(md_file)
         data["link"] = str(self._linkify_file(md_file)) + ".html"
@@ -476,16 +476,16 @@ class SiteGenerator:
                 self._output_tag_page({"items": self._author_less, "title": "No Author"}),
             )
         for author in authors:
-            items = self._authors[author]
+            items = self._authors[author]["files"]
             author_link = "authors/" + self.regex_tag.sub("_", author.lower()) + ".html"
             authors_all.append(
-                f"""<a href="{self.link(author_link)}">{author}
+                f"""<a href="{self.link(author_link)}">{self._authors[author]['name']}
                 ({len(items)})</a>"""
             )
             self._write(
                 author_link,
-                author,
-                self._output_tag_page({"title": author, "items": items}),
+                self._authors[author]['name'],
+                self._output_tag_page({"title": self._authors[author]['name'], "items": items}),
             )
         self._write(
             "authors.html",

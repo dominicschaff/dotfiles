@@ -12,3 +12,8 @@ install: build
 clean:
 	poetry run isort src
 	poetry run black src
+
+test:
+	poetry install --only-root
+	cd tests; sitegen --config config_stories.toml
+	cd tests/public; python -m http.server
