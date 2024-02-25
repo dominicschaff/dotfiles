@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "sitegen"
-version = "0.1.23"
+version = "0.1.24"
 description = ""
 authors = ["Dominic Schaff <dominic@schaff.dev>"]
 readme = "README.md"
@@ -10,7 +10,7 @@ packages = [
 
 [tool.poetry.dependencies]
 python = "^3.11"
-html2text = "2020.1.16"
+html2text = "2024.2.25"
 markdown = "3.5.2"
 markdown-full-yaml-metadata = "2.2.1"
 htmlmin = "0.1.12"
