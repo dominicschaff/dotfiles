@@ -103,12 +103,12 @@ files = [
 
 [[package]]
 name = "html2text"
-version = "2024.2.25"
+version = "2024.2.26"
 description = "Turn HTML into equivalent Markdown-structured text."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "html2text-2024.2.25.tar.gz", hash = "sha256:a197e7acaba5b5e46ff9f132b6fbeb89428c9155b5a971d7d9c343ebeb1019d3"},
+    {file = "html2text-2024.2.26.tar.gz", hash = "sha256:05f8e367d15aaabc96415376776cdd11afd5127a77fce6e36afc60c563ca2c32"},
 ]
 
 [[package]]
@@ -277,13 +277,13 @@ tests = ["pytest"]
 
 [[package]]
 name = "markdown2"
-version = "2.4.12"
+version = "2.4.13"
 description = "A fast and complete Python implementation of Markdown"
 optional = false
 python-versions = ">=3.5, <4"
 files = [
-    {file = "markdown2-2.4.12-py2.py3-none-any.whl", hash = "sha256:98f47591006f0ace0644cbece03fed6f3845513286f6c6e9f8bcf6a575174e2c"},
-    {file = "markdown2-2.4.12.tar.gz", hash = "sha256:1bc8692696954d597778e0e25713c14ca56d87992070dedd95c17eddaf709204"},
+    {file = "markdown2-2.4.13-py2.py3-none-any.whl", hash = "sha256:855bde5cbcceb9beda7c80efdf7f406c23e6079172c497fcfce22fdce998e892"},
+    {file = "markdown2-2.4.13.tar.gz", hash = "sha256:18ceb56590da77f2c22382e55be48c15b3c8f0c71d6398def387275e6c347a9f"},
 ]
 
 [package.extras]
@@ -445,4 +445,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "45431242a412bc89b8d5f9d0f701ebf6a68927e0f3b616b7f264db9c02e5a941"
+content-hash = "4cfa61882079b52356a0267569baf467c3730db3aa8066f974379e4d43c6e6d4"
