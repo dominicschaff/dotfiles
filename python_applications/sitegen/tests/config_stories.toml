@@ -7,8 +7,9 @@ clean = true
 base_href = "/"
 description = "Site for short stories"
 
+home = { title = "Home", url = "/index.html" }
+
 nav = [
-  { title = "Home", url = "/index.html" },
 ]
 
 custom_tags = [

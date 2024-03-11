@@ -1,4 +1,5 @@
 """Configuration for the SiteGenerator."""
+
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -27,7 +28,7 @@ body {
     font-family:Roboto,Ubuntu,open sans,helvetica neue,sans-serif;
 }
 .content {
-    margin-top: 50px;
+    margin-top: 4em;
     margin-inline: auto;
     width: min(100% - 25px, 650px);
     padding-bottom: 5em;
@@ -49,22 +50,6 @@ a:hover {
 }
 .muted {
     font-size: 0.8em;
-}
-.navbar {
-  background-color: #333;
-  position: fixed;
-  top: 0;
-  left: 0px;
-  width: 100%;
-}
-.navbar-links {
-  width: min(100% - 25px, 650px);
-  margin-inline: auto;
-}
-.navbar a {
-  float: left;
-  display: block;
-  padding: 10px;
 }
 .tag {
   border-radius: 30px;
@@ -90,6 +75,86 @@ a>svg {height:52px;width:52px;}
   border-radius: 1em;
   border-color: #F7567C;
 }
+
+nav {
+  background-color: #333;
+  color: snow;
+  display: flex;
+  justify-content: space-between;
+  position: fixed;
+  top: 0;
+  left: 0px;
+  width: 100%;
+}
+.navbar-links {
+  width: min(100% - 25px, 650px);
+  margin-inline: auto;
+}
+
+nav > .navbar-links > .home {
+  float: left;
+  margin: 1em 0em;
+}
+
+nav ul {
+  /* Make the markers disappear */
+  list-style-type: none;
+  float: right;
+}
+
+nav ul li {
+  /* Puts the elements in a single line */
+  display: inline-flex;
+  margin: 0em 1em;
+}
+
+/* These two lines make the checkbox and the label disappear when we are in desktop mode. */
+nav input[type="checkbox"], nav label {
+  display: none;
+}
+
+/* This start to get interesting: we go into mobile phone mode */
+@media (max-width: 576px) {
+  /* Here is the magic: if the checkbox is not marked, the adjacent list is not displayed */
+  input[type="checkbox"]:not(:checked) + ul {
+    display: none;
+  }
+
+  nav {
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  /* Stlying the menu icon, the checkbox stays hidden */
+  nav label {
+    text-align: right;
+    display: block;
+    padding-top: 1em;
+    align-self: center;
+    cursor: pointer;
+  }
+
+  /* Because we are in mobile mode, we want to display it as a vertical list */
+  nav ul {
+    display: block;
+  }
+
+  /* We have two lists: the first one are the always visibile items in the
+    menu bar. The second one is the one that will be hidden */
+  nav ul:last-child {
+    width: 100%;
+    flex-basis: 100%;
+  }
+
+  nav ul li {
+    margin-bottom: 0;
+    width: 100%;
+    text-align: right;
+    padding: 0.5em;
+  }
+}
 """
 
 DEFAULT_CONFIG_FILE = f"""
@@ -114,6 +179,29 @@ custom_tags = [
 """
 
 
+def menu(home: dict[str, str], navs: list[dict[str, str]]):
+    nav = "".join([f"""<li><a href="{a['url']}">{a["title"]}</a></li>""" for a in navs])
+
+    return f"""
+    <nav>
+      <div class="navbar-links">
+      <a class="home"  href="{home["url"]}">{home["title"]}</a>
+      <!-- The hamburger menu -->
+      <label for="menu" tabindex="0">
+        <svg width="24px" height="24px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M4 6H20M4 12H20M4 18H20" stroke="#E0E0E0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </label>
+      <input id="menu" type="checkbox" />
+      <!-- The collapsable menu -->
+      <ul>
+        {nav}
+      </ul>
+      </div>
+    </nav>
+    """
+
+
 @dataclass
 class SiteConfig:
     """Configuration for the Site Generator."""
@@ -129,6 +217,7 @@ class SiteConfig:
     description: str
     _favicon: str
     _favicon_type: str
+    home: dict[str, str]
     nav: list[dict[str, str]]
     custom_tags: list[dict[str, str]]
     wpm: int

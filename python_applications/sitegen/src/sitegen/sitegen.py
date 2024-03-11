@@ -33,7 +33,15 @@ import markdown
 import readtime
 from markdown.extensions.wikilinks import WikiLinkExtension
 
-from .config import DEFAULT_CONFIG_FILE, DEFAULT_CSS, Modes, SiteConfig, TEST_COUNT, PROGRESS_STEP_PERCENTAGE
+from .config import (
+    DEFAULT_CONFIG_FILE,
+    DEFAULT_CSS,
+    PROGRESS_STEP_PERCENTAGE,
+    TEST_COUNT,
+    Modes,
+    SiteConfig,
+    menu,
+)
 from .utils import get_text_file_content, minify_css, seconds_to_string, strip_empty_lines
 
 # Custome log level:
@@ -63,6 +71,7 @@ class SiteGenerator:
             description=config.get("description", config.get("name", "Example Site")),
             _favicon=config.get("favicon", None),
             _favicon_type=config.get("favicon_type", None),
+            home=config.get("home", {"title": "Home", "url": "/"}),
             nav=[],
             custom_tags={},
             wpm=config.get("wpm", 265),
@@ -117,7 +126,7 @@ class SiteGenerator:
             for nav in navigation_links:
                 self.config.nav.append(nav)
 
-        self._nav_out = self._generate_nav_bar()
+        self._nav_out = menu(self.config.home, self.config.nav + self._extra_navs)
 
         if config.get("css", None) is not None:
             css = Path(config["css"])
@@ -139,13 +148,6 @@ class SiteGenerator:
         self.logger.info("WPM              : %s", self.config.wpm)
         self.logger.info("Base host        : %s", self.config.base_href)
         self.logger.info("Create RSS       : %s", "yes" if self.config.rss else "no")
-
-    def _generate_nav_bar(self):
-        nav = "".join(
-            [f"""<a href="{a['url']}">{a["title"]}</a>""" for a in self.config.nav]
-            + [f"""<a href="{self.link(a['url'])}">{a["title"]}</a>""" for a in self._extra_navs]
-        )
-        return f"""<div class="navbar"><div class="navbar-links">{nav}</div></div>"""
 
     def _linkify_file(self, file: Path):
         base_link = self.regex_item.sub("_", file.stem)
@@ -200,9 +202,9 @@ class SiteGenerator:
         """Process all files."""
         files = self._files["md"][:TEST_COUNT] if self._test_mode else self._files["md"]
         count = len(files)
-        steps = len(files)//PROGRESS_STEP_PERCENTAGE
+        steps = len(files) // PROGRESS_STEP_PERCENTAGE
         for index, md_file in enumerate(files):
-            if steps==0 or index % steps == 0:
+            if steps == 0 or index % steps == 0:
                 self._progress(f"Busy... {100*(index+1)/count:.0f} %")
             try:
                 self.process(md_file)
@@ -243,7 +245,7 @@ class SiteGenerator:
         if "author" in data["headers"] and len(data["headers"]["author"]) > 0:
             author = data["headers"]["author"].lower()
             if author not in self._authors:
-                self._authors[author] = {"name": data["headers"]["author"], "files":[]}
+                self._authors[author] = {"name": data["headers"]["author"], "files": []}
             self._authors[author]["files"].append(md_file)
         else:
             self._author_less.append(md_file)
@@ -484,8 +486,8 @@ class SiteGenerator:
             )
             self._write(
                 author_link,
-                self._authors[author]['name'],
-                self._output_tag_page({"title": self._authors[author]['name'], "items": items}),
+                self._authors[author]["name"],
+                self._output_tag_page({"title": self._authors[author]["name"], "items": items}),
             )
         self._write(
             "authors.html",
@@ -583,7 +585,7 @@ class SiteGenerator:
         """Output a markdown file."""
         files = self._files["md"][:TEST_COUNT] if self._test_mode else self._files["md"]
         count = len(files)
-        steps = len(files)//PROGRESS_STEP_PERCENTAGE
+        steps = len(files) // PROGRESS_STEP_PERCENTAGE
         for index, file in enumerate(files):
             if index % steps == 0:
                 self._progress(f"Busy... {100*(index+1)/count:.0f} %")
@@ -603,8 +605,6 @@ class SiteGenerator:
     def generate_collection(self):
         """Generate a collection."""
         self.config.collection_name = self.config.collection_name.lower()
-        if "/index.html" not in [u["url"] for u in self.config.nav]:
-            self.config.nav.append({"url": "/index.html", "title": "Home"})
         self._progress("Locating Files...")
         self.scan()
         self._progress(f"Located {len(self._files['md'])} md files")
@@ -633,7 +633,7 @@ class SiteGenerator:
             ]
         )
 
-        self._nav_out = self._generate_nav_bar()
+        self._nav_out = menu(self.config.home, self.config.nav + self._extra_navs)
 
         start = time()
         self._progress("Output home page...")
