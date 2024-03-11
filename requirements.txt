@@ -2,6 +2,7 @@
 yt-dlp
 diagrams
 speedtest-cli
+BetterADBSync
 
 # Helpers
 Pygments
