@@ -20,22 +20,34 @@ class Modes:
 
 
 DEFAULT_CSS = """
+:root {
+  --background: #333;
+  --header: #212121;
+  --text: #E0E0E0;
+  --header-text: #CCCCCC;
+  --link: #3C92CA;
+  --width: 650px;
+}
+
+html {
+  background-color: var(--background);
+}
+
 body {
-    line-height: 1.6;
-    font-size: 14px;
-    background: #212121;
-    color: #E0E0E0;
-    font-family:Roboto,Ubuntu,open sans,helvetica neue,sans-serif;
+  line-height: 1.6;
+  font-size: 14px;
+  font-family: Roboto,Ubuntu,open sans,helvetica neue,sans-serif;
+  color: var(--text);
 }
 .content {
-    margin-top: 4em;
-    margin-inline: auto;
-    width: min(100% - 25px, 650px);
-    padding-bottom: 5em;
+  margin-top: 4em;
+  margin-inline: auto;
+  width: min(100% - 25px, var(--width));
+  padding-bottom: 5em;
 }
 h1, h2, h3 {
-    scroll-margin-top: 4em;
-    line-height:1.2
+  scroll-margin-top: 4em;
+  line-height:1.2
 }
 a {
   color: #90CAF9;
@@ -49,7 +61,7 @@ a:hover {
   text-decoration: underline;
 }
 .muted {
-    font-size: 0.8em;
+  font-size: 0.8em;
 }
 .tag {
   border-radius: 30px;
@@ -77,8 +89,8 @@ a>svg {height:52px;width:52px;}
 }
 
 nav {
-  background-color: #333;
-  color: snow;
+  background-color: var(--header);
+  color: var(--text);
   display: flex;
   justify-content: space-between;
   position: fixed;
@@ -87,7 +99,7 @@ nav {
   width: 100%;
 }
 .navbar-links {
-  width: min(100% - 25px, 650px);
+  width: min(100% - 25px, var(--width));
   margin-inline: auto;
 }
 
