@@ -9,6 +9,8 @@ export HISTFILESIZE=-1
 export CLICOLOR=1
 export TIMEFORMAT='r: %R, u: %U, s: %S'
 export BASH_LIB="$DOTFILES/bash_library.sh"
+export VISUAL=vim
+export EDITOR="$VISUAL"
 
 
 # Turn on parallel history
