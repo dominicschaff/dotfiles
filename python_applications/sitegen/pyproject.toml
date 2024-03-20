@@ -24,7 +24,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.dev-dependencies]
 isort = "5.13.2"
-black = "24.2.0"
+black = "24.3.0"
 
 [tool.isort]
 profile = "black"
