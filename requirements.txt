@@ -7,13 +7,8 @@ BetterADBSync
 # Helpers
 Pygments
 sty
-ping3
 
 # Dev Tools
 icdiff
 isort
 black
-pylint
-
-# Convert HTML to Markdown
-html2text
