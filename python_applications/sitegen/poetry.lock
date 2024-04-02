@@ -230,13 +230,13 @@ source = ["Cython (>=3.0.7)"]
 
 [[package]]
 name = "markdown"
-version = "3.5.2"
+version = "3.6"
 description = "Python implementation of John Gruber's Markdown."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "Markdown-3.5.2-py3-none-any.whl", hash = "sha256:d43323865d89fc0cb9b20c75fc8ad313af307cc087e84b657d9eec768eddeadd"},
-    {file = "Markdown-3.5.2.tar.gz", hash = "sha256:e1ac7b3dc550ee80e602e71c1d168002f062e49f1b11e26a36264dafd4df2ef8"},
+    {file = "Markdown-3.6-py3-none-any.whl", hash = "sha256:48f276f4d8cfb8ce6527c8f79e2ee29708508bf4d40aa410fbc3b4ee832c850f"},
+    {file = "Markdown-3.6.tar.gz", hash = "sha256:ed4f41f6daecbeeb96e576ce414c41d2d876daa9a16cb35fa8ed8c2ddfad0224"},
 ]
 
 [package.extras]
@@ -257,23 +257,6 @@ files = [
 [package.dependencies]
 markdown = ">=3.4.1,<4.0.0"
 pyyaml = ">=6.0,<7.0"
-
-[[package]]
-name = "markdown-include"
-version = "0.8.1"
-description = "A Python-Markdown extension which provides an 'include' function"
-optional = false
-python-versions = ">=3.7"
-files = [
-    {file = "markdown-include-0.8.1.tar.gz", hash = "sha256:1d0623e0fc2757c38d35df53752768356162284259d259c486b4ab6285cdbbe3"},
-    {file = "markdown_include-0.8.1-py3-none-any.whl", hash = "sha256:32f0635b9cfef46997b307e2430022852529f7a5b87c0075c504283e7cc7db53"},
-]
-
-[package.dependencies]
-markdown = ">=3.0"
-
-[package.extras]
-tests = ["pytest"]
 
 [[package]]
 name = "markdown2"
@@ -446,4 +429,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "1e10d7e907cd8361b7879b4a79808b028500128de3e2ae2bfb8ef9ec028b7acd"
+content-hash = "f385def798a3ed7aa353e17e091da49629eb3dcdf06037ae9e9a1b377af978c7"

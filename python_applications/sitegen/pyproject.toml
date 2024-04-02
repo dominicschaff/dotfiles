@@ -11,11 +11,10 @@ packages = [
 [tool.poetry.dependencies]
 python = "^3.11"
 html2text = "2024.2.26"
-markdown = "3.5.2"
+markdown = "3.6.0"
 markdown-full-yaml-metadata = "2.2.1"
 htmlmin = "0.1.12"
 readtime = "3.0.0"
-markdown-include = "0.8.1"
 
 
 [build-system]
