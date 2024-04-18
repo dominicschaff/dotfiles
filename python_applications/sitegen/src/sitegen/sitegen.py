@@ -645,6 +645,7 @@ class SiteGenerator:
             self.collection_output_authors()
         self._progress("Output collection pages...")
         self.collection_output_collection()
+        self.site_output_static()
 
         end = time()
         self._progress(f"Took {seconds_to_string(end-start, True)} to output all files")

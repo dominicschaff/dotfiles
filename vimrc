@@ -249,6 +249,11 @@ let g:minimap_toggle='<leader>mt'
 " Open the tree
 map <C-o> :NERDTree<CR>
 
+" Insert mode completion
+imap <c-x><c-k> <plug>(fzf-complete-word)
+imap <c-x><c-f> <plug>(fzf-complete-path)
+imap <c-x><c-l> <plug>(fzf-complete-line)
+
 " Make the tree open on launch
 " autocmd VimEnter * NERDTree | wincmd p
 
