@@ -479,16 +479,20 @@ class SiteGenerator:
             )
         for author in authors:
             items = self._authors[author]["files"]
-            author_link = "authors/" + self.regex_tag.sub("_", author.lower()) + ".html"
+            author_link = "authors/" + self.regex_item.sub("_", author.replace(' ', '-').lower()) + ".html"
             authors_all.append(
                 f"""<a href="{self.link(author_link)}">{self._authors[author]['name']}
                 ({len(items)})</a>"""
             )
-            self._write(
-                author_link,
-                self._authors[author]["name"],
-                self._output_tag_page({"title": self._authors[author]["name"], "items": items}),
-            )
+            try:
+                self._write(
+                    author_link,
+                    self._authors[author]["name"],
+                    self._output_tag_page({"title": self._authors[author]["name"], "items": items}),
+                )
+            except ValueError as err:
+                self.logger.error("Author that caused the error: %s", self._authors[author]["name"])
+                raise err
         self._write(
             "authors.html",
             "Authors",
