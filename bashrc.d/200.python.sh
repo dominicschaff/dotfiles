@@ -17,7 +17,7 @@ pip3_install()
 py_clean()
 {
   for f in "$@"; do
-    isort --profile black -w 79 "$f"
-    black --line-length 79 "$f"
+    isort --profile black -w 99 "$f"
+    black --line-length 99 "$f"
   done
 }
