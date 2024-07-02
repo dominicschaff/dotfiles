@@ -40,6 +40,7 @@ set list                               " Show the invisible characters
 set magic                              " Enable regular expressions
 set mouse=                             " Disable mouse
 set nobackup                           " Disables the backup file
+set nocompatible
 set noerrorbells                       " Remove error sound
 set nomodeline                         " Disable modeline, security something
 set nojoinspaces                       " Removes double space after punctuation
@@ -146,14 +147,16 @@ vnoremap <leader>64d c<c-r>=system('base64 --decode', @")<cr><esc>
 vnoremap <leader>64e c<c-r>=system('base64', @")<cr><esc>
 
 " Make ctrl + direction switch between tabs/buffers
-map <C-Up> <C-w>k
-map <C-Left> :bp<cr>
-map <C-Right> :bn<cr>
-map <C-Down> <C-w>j
-imap <C-Up> <C-O><C-w>k
-imap <C-Left> <C-O>:bp<cr>
-imap <C-Right> <C-O>:bn<cr>
-imap <C-Down> <C-O><C-w>j
+map <C-Up> :bp<cr>
+map <C-Left> :wincmd W<cr>
+map <C-Right> :wincmd w<cr>
+map <C-Down> :bn<cr>
+imap <C-Up> <C-O>:bp<cr>
+imap <C-Left> <C-O>:wincmd W<cr>
+imap <C-Right> <C-O>:wincmd w<cr>
+imap <C-Down> <C-O>:bn<cr>
+
+map <C-w> :bd<cr>
 
 " Remap start of line to be first non-blank character
 map 0 ^
@@ -350,6 +353,7 @@ vmap <F5> <Esc>:call CompileRun()<CR>
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Run a format based on filetype
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
 func! LocalFormat()
 exec "w"
 if &filetype == 'python'
@@ -361,3 +365,13 @@ endfunc
 map <F2> :call LocalFormat()<CR>
 imap <F2> <Esc>:call LocalFormat()<CR>
 vmap <F2> <Esc>:call LocalFormat()<CR>
+
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Python key bindings for simplicity
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+map <F3> :! make python-test PYTHON_VARS_AFTER_PYTEST=-vv PYTHON_TEST_FILE=%<CR>
+imap <F3> <Esc>:! make python-test PYTHON_VARS_AFTER_PYTEST=-vv PYTHON_TEST_FILE=%<CR>
+map <F4> :! make python-format<CR>
+imap <F4> <Esc>:! make python-format<CR>
