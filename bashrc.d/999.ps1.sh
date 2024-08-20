@@ -16,7 +16,7 @@ _git_file_color()
 _git_status()
 {
   branch="$(git branch 2> /dev/null | grep '*')"
-  if [[ "$?" -eq 0 ]]; then
+  if [[ "$(echo "$branch" | wc -c)" -gt 1 ]]; then
     echo "$(echo "$branch" | cut -d' ' -f2)"
   fi
 }
