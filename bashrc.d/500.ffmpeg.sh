@@ -212,3 +212,10 @@ overlay()
   ffmpeg -i "$1" -i "$2" -filter_complex "overlay=(main_w-overlay_w)/2:(main_h-overlay_h)/2" "$3"
 }
 
+convert_webp_to_mp4()
+{
+  for f in "$@"; do
+    magick "$f" frames.png
+    ffmpeg -r 24 -i frames-%0d.png -c:v libx264 -pix_fmt yuv420p "${f%.*}.mp4"
+  done
+}
