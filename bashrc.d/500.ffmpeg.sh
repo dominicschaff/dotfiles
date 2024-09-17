@@ -20,6 +20,15 @@ convertMp4()
   done
 }
 
+convertMp4_nvidia()
+{
+  for f in "$@"; do
+    o="${f#*/}"
+    echo "$f -> ${o%.*}.mp4"
+    ffmpeg -hwaccel cuda -i "$f" -vcodec h264_nvenc -vf "pad=ceil(iw/2)*2:ceil(ih/2)*2" -pix_fmt yuv420p -qp 25 "${o%.*}.mp4"
+  done
+}
+
 convertH265()
 {
   for f in "$@"; do

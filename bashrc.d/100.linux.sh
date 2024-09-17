@@ -18,8 +18,7 @@ update()
     sudo apt autopurge
   fi
   if hash flatpak 2>/dev/null; then
-    flatpak update --user
-    sudo flatpak update
+    flatpak update
   fi
 }
 
