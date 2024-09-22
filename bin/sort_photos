@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-mkdir -p raws
-mv *.RAF raws
+mkdir -v -p raws
+mv -v *.RAF raws
 mv *.dng raws
 
 for f in *.JPG *.jpg *.jpeg *.JPEG; do
