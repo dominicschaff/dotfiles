@@ -27,6 +27,7 @@ stop-at-end=true
 file-extensions=true
 title=$2
 seconds-per-day=0.1
+$3
 ") | ffmpeg -y -r $FRAME_RATE -f image2pipe -vcodec ppm -i - -vcodec libx264 -crf 18 -pix_fmt yuv420p -bf 0 "$1"
 }
 
@@ -53,6 +54,7 @@ stop-at-end=true
 file-extensions=true
 title=$3
 seconds-per-day=0.1
+$4
 ") | ffmpeg -y -r $FRAME_RATE -f image2pipe -vcodec ppm -i - -vcodec libx264 -crf 18 -pix_fmt yuv420p -bf 0 "$2"
 }
 
@@ -63,4 +65,13 @@ gource_output_log()
   else
     gource --output-custom-log -
   fi
+}
+
+gource_output_multiple_logs()
+{
+  {
+    for repo in "$@"; do
+      gource --output-custom-log - "$repo" 2>/dev/null | sed -r "s#(.+)\|#\1|/$repo#"
+    done
+  } | grep -v '/node_modules/' | sort -n
 }
