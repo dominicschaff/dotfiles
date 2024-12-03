@@ -11,6 +11,9 @@ update()
   if [[ $(apt list --upgradable 2>/dev/null | wc -l) -ge 2 ]];then
     apt upgrade
   fi
+  apt autoremove
+  apt autoclean
+  apt autopurge
 }
 
 alias bat="termux-battery-status | jq '\"\(.percentage) : \(.temperature) (\(.status)|\(.plugged))\"'"
