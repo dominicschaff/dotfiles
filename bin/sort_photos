@@ -1,12 +1,33 @@
 #!/usr/bin/env bash
 
-mkdir -v -p raws
-mv -v *.RAF raws
-mv *.dng raws
+date_of_file()
+{
+  exiftool "$1" \
+    | grep 'Create Date' \
+    | head -n1 \
+    | cut -d ':' -f2- \
+    | cut -d' ' -f2 \
+    | tr ':' '-'
+}
+
+check_and_move()
+{
+  file="$1"
+  pre="$2"
+  if [ ! -e "$file" ]; then
+    echo "Does not exist: $file"
+    return
+  fi
+  date_taken="$(date_of_file "$file")"
+  mkdir -v -p "$pre$date_taken"
+  mv -v "$f" "$pre$date_taken/"
+}
 
 for f in *.JPG *.jpg *.jpeg *.JPEG; do
-  date_taken="$(exiftool "$f" | grep 'Create Date' | head -n1 | cut -d ':' -f2- | cut -d' ' -f2 | tr ':' '-')"
-  mkdir -v -p "$date_taken"
-  mv -v "$f" "$date_taken/"
+  check_and_move "$f" ""
+done
+
+for f in *.RAF *.raf *.DNG *.dng; do
+  check_and_move "$f" "RAW/"
 done
 
