@@ -192,26 +192,64 @@ if empty(glob('~/.vim/autoload/plug.vim'))
 endif
 
 call plug#begin('~/.vim/plugged')
+
+" Add sane defaults to vim
 Plug 'tpope/vim-sensible'
+
+" Add fuzzy file finding
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
+
+" Modify the status line to look better
 Plug 'itchyny/lightline.vim'
+
+" Automatically insert and delete pairs of braces
 Plug 'jiangmiao/auto-pairs'
+
+" Adds rainbow highlighting for braces
 Plug 'frazrepo/vim-rainbow'
+
+" Provide inline linting
 Plug 'dense-analysis/ale'
+
+" Minimalist theme
 Plug 'dikiaap/minimalist'
-Plug 'tpope/vim-markdown'
-Plug 'tpope/vim-fugitive'
+
+" Adds the markdown syntax from vim dev
+" Plug 'tpope/vim-markdown'
+
+" Shows the git stats of the current file in the side
 Plug 'airblade/vim-gitgutter'
+
+" Add python 3 syntax support
 Plug 'vim-python/python-syntax'
+
+" Makes tabs a bit nicer to use
 Plug 'webdevel/tabulous'
+
+" Have a file listing like Sublime on the left
 Plug 'preservim/nerdtree'
+
+" Allow Git support in nerdtree
 Plug 'Xuyuanp/nerdtree-git-plugin'
+
+" Add Helm template support
 Plug 'towolf/vim-helm'
+
+" Add comment toggle
 Plug 'tomtom/tcomment_vim'
+
+" Automatically closes tags
 Plug 'tpope/vim-endwise'
+
+" Show a minimap like sublime text
 Plug 'severin-lemaignan/vim-minimap'
+
+" Nice dark theme
 Plug 'joshdick/onedark.vim'
+
+" Surround text with quotes and stuff
+Plug 'tpope/vim-surround'
 call plug#end()
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
