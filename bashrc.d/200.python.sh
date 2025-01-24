@@ -9,15 +9,7 @@ fi
 # soon https://github.com/pypa/pip/issues/7883
 export PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring
 
-pip3_install()
+python_setup()
 {
-  python3 -m pip install --user --upgrade -r $DOTFILES/requirements.txt
-}
-
-py_clean()
-{
-  for f in "$@"; do
-    isort --profile black -w 99 "$f"
-    black --line-length 99 "$f"
-  done
+  python3 -m pip install --user --upgrade poetry poetry-plugin-shell
 }
