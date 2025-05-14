@@ -44,7 +44,7 @@ if [ -z "$PS1_OVERRIDE" ]; then
   if hash git 2>/dev/null; then
     export PS1_temp=$PS1_temp'\[$(_git_file_color)\]$(_git_status)'
   fi
-  export PS1='╭─'$PS1_temp' \[\e[00m\]\n╰─ \[\e[36m\]${USER:0:1}@${HOSTNAME:0:1}\[\e[00m\] \$ '
+  export PS1=$PS1_temp' \[\e[00m\]\n⟶ \[\e[36m\]$USER@$HOSTNAME\[\e[00m\] \$ '
 else
   export PS1=$PS1_OVERRIDE
 fi
