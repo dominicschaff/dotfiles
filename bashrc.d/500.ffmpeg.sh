@@ -228,3 +228,11 @@ convert_webp_to_mp4()
     ffmpeg -r 24 -i frames-%0d.png -c:v libx264 -pix_fmt yuv420p "${f%.*}.mp4"
   done
 }
+
+check_for_video_errors()
+{
+  find . -type f | grep 'mp4\|m4v$' | while read line; do
+    echo -n "Checking... $line"
+    ffmpeg -v error -nostdin -i "$line" -c copy -f null /dev/null
+  done
+}
