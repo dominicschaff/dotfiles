@@ -232,7 +232,7 @@ convert_webp_to_mp4()
 check_for_video_errors()
 {
   find . -type f | grep 'mp4\|m4v$' | while read line; do
-    echo -n "Checking... $line"
+    echo "Checking... $line"
     ffmpeg -v error -nostdin -i "$line" -c copy -f null /dev/null
   done
 }
