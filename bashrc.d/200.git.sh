@@ -24,17 +24,6 @@ gi()
   echo "$(git branch 2> /dev/null | grep '*' | cut -d' ' -f2-) : $(git status --porcelain | wc -l)"
 }
 
-rebase()
-{
-  if git branch | grep -q main; then
-    git rebase -i main
-  elif git branch | grep -q master; then
-    git rebase -i master
-  else
-    echo "Unknown git main branch"
-  fi
-}
-
 gm()
 {
   if git branch | grep -q main; then
@@ -55,16 +44,6 @@ gn()
     git push --set-upstream origin "$1"
   else
     echo "I only accept one argument"
-  fi
-}
-
-gt()
-{
-  if [[ $# -eq 1 ]]; then
-    git tag -a "v$1" -m "Creating tag $1"
-  else
-    echo "Latest tags"
-    git tag | tail
   fi
 }
 
