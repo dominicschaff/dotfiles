@@ -104,3 +104,8 @@ convert_extensions_to_lower_case()
     fi
   done
 }
+
+disable_suspend()
+{
+  systemd-inhibit --why="Running a long task" --mode=block bash
+}
