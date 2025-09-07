@@ -236,3 +236,10 @@ check_for_video_errors()
     ffmpeg -v error -nostdin -i "$line" -c copy -f null /dev/null
   done
 }
+
+video_difference()
+{
+  ffmpeg -i "$1" -i "$2" \
+    -filter_complex "blend=all_mode=difference" \
+    -c:v libx264 -crf 18 -c:a copy "$1_$2.mp4"
+}
