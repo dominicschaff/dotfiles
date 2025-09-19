@@ -243,3 +243,24 @@ video_difference()
     -filter_complex "blend=all_mode=difference" \
     -c:v libx264 -crf 18 -c:a copy "$1_$2.mp4"
 }
+
+video_fix_errors()
+{
+  for f in "$@"; do
+    ffmpeg -err_detect ignore_err -i "$f" "${f%.*}_fixed.mp4"
+  done
+}
+
+video_fix_colour_space()
+{
+
+  for f in "$@"; do
+    ffmpeg -i "$f" \
+      -bsf:v h264_metadata=colour_primaries=1:transfer_characteristics=1:matrix_coefficients=1 \
+      -c copy \
+      -colorspace 1 \
+      -color_trc 1 \
+      -color_primaries 1 \
+      "${f%.*}_fixed.mp4"
+  done
+}
