@@ -2,7 +2,7 @@
 
 fetch_markdown()
 {
-  curl --data "read=1" --data "u=$1" "http://fuckyeahmarkdown.com/go/"
+  curl --data "read=1" --data "u=$1" "https://fuckyeahmarkdown.com/go/"
 }
 
 colours_all_styles()
