@@ -24,5 +24,15 @@ update()
 
 core_count()
 {
-  cat /proc/cpuinfo | awk '/^processor/{print $3}' | wc -l
+  awk '/^processor/{print $3}' < /proc/cpuinfo | wc -l
+}
+
+pb-paste()
+{
+  xclip -out -sel clip
+}
+
+pb-copy()
+{
+  xclip -in -sel clip
 }
