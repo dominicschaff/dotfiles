@@ -4,7 +4,7 @@ if ! hash git 2>/dev/null; then
   return
 fi
 
-alias g="git status"
+alias g="git status --short"
 alias gp="git pull"
 alias gcm="git commit -S -m"
 alias gcam="git commit -S -am"
