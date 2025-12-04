@@ -398,6 +398,8 @@ exec "w"
 if &filetype == 'python'
     exec "!isort -profile black %"
     exec "!black %"
+elseif &filetype == 'json'
+    exec "%!jq"
 endif
 endfunc
 
@@ -406,11 +408,3 @@ imap <F2> <Esc>:call LocalFormat()<CR>
 vmap <F2> <Esc>:call LocalFormat()<CR>
 
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Python key bindings for simplicity
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-map <F3> :! make python-test PYTHON_VARS_AFTER_PYTEST=-vv PYTHON_TEST_FILE=%<CR>
-imap <F3> <Esc>:! make python-test PYTHON_VARS_AFTER_PYTEST=-vv PYTHON_TEST_FILE=%<CR>
-map <F4> :! make python-format<CR>
-imap <F4> <Esc>:! make python-format<CR>
