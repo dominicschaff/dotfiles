@@ -124,9 +124,9 @@ nnoremap <leader>3 yypVr^$
 nnoremap <leader><space> :noh<cr>
 
 " Edit vimrc configuration file
-nnoremap <Leader>ve :e $MYVIMRC<CR>
+nnoremap <leader>ve :e $MYVIMRC<CR>
 " Reload vimrc configuration file
-nnoremap <Leader>vr :source $MYVIMRC<CR>
+nnoremap <leader>vr :source $MYVIMRC<CR>
 
 " Make directions use screen and not lines
 nnoremap <Up> gk
@@ -161,7 +161,12 @@ map <C-w> :bd<cr>
 " Remap start of line to be first non-blank character
 map 0 ^
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Split Veritically
+
+nnoremap <C-\> :vsp<cr>
+imap <C-\> <C-O>:vsp<cr>
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " File type specific settings
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
@@ -206,17 +211,8 @@ Plug 'itchyny/lightline.vim'
 " Automatically insert and delete pairs of braces
 Plug 'jiangmiao/auto-pairs'
 
-" Adds rainbow highlighting for braces
-Plug 'frazrepo/vim-rainbow'
-
 " Provide inline linting
 Plug 'dense-analysis/ale'
-
-" Minimalist theme
-Plug 'dikiaap/minimalist'
-
-" Adds the markdown syntax from vim dev
-" Plug 'tpope/vim-markdown'
 
 " Shows the git stats of the current file in the side
 Plug 'airblade/vim-gitgutter'
@@ -242,14 +238,17 @@ Plug 'tomtom/tcomment_vim'
 " Automatically closes tags
 Plug 'tpope/vim-endwise'
 
-" Show a minimap like sublime text
-Plug 'severin-lemaignan/vim-minimap'
+" Surround text with quotes and stuff
+Plug 'tpope/vim-surround'
 
 " Nice dark theme
 Plug 'joshdick/onedark.vim'
 
-" Surround text with quotes and stuff
-Plug 'tpope/vim-surround'
+" Minimalist theme
+" Plug 'dikiaap/minimalist'
+
+" Adds the markdown syntax from vim dev
+" Plug 'tpope/vim-markdown'
 
 call plug#end()
 
@@ -278,16 +277,6 @@ highlight ColorColumn ctermbg=235
 " Plugin Configuration
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-" Minimap:
-
-let g:minimap_highlight='Visual'
-
-" NerdTree options:
-let g:minimap_show='<leader>ms'
-let g:minimap_update='<leader>mu'
-let g:minimap_close='<leader>mc'
-let g:minimap_toggle='<leader>mt'
-
 " Open the tree
 map <C-o> :NERDTree<CR>
 
@@ -307,9 +296,7 @@ imap <c-x><c-l> <plug>(fzf-complete-line)
 
 " Open quick switcher
 map <C-p> :Files<CR>
-if executable('ag')
-  let g:ackprg = 'ag --vimgrep'
-endif
+map <C-g> :GFiles<CR>
 
 " ALE settings, trim whitespace on save, ignore mypy
 let g:ale_linters_ignore = {
@@ -352,7 +339,7 @@ fun! CleanExtraSpaces()
 endfun
 
 if has("autocmd")
-    autocmd BufWritePre *.txt,*.js,*.py,*.sh,*.md,*.ts,*.html,*.yaml,*.rst :call CleanExtraSpaces()
+    autocmd BufWritePre *.txt,*.js,*.py,*.sh,*.md,*.ts,*.html,*.yaml,*.rst,*.css,*.json :call CleanExtraSpaces()
 endif
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""

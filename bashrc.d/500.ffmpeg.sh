@@ -132,7 +132,8 @@ gifenc()
 convertMp3()
 {
   for f in "$@"; do
-    ffmpeg -i "$f" -q:a 3 "${f%.*}.mp3"
+    # ffmpeg -i "$f" -q:a 3 "${f%.*}.mp3"
+    ffmpeg -i "$f" -vcodec copy -q:a 3 -map_metadata 0:s:a:0 -id3v2_version 3 "${f%.*}.mp3"
   done
 }
 
