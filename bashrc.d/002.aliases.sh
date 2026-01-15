@@ -3,9 +3,9 @@
 alias ..="cd .."
 alias cd..="cd .."
 alias ls="ls -GpFh --color --group-directories-first"
-alias l="ls"
 alias ll="ls -l"
 alias la="ll -a"
+alias l="ls -lgN"
 alias less='less -R -S -# 10'
 alias curl="curl -w \"\\n\""
 alias wget='wget -c'
