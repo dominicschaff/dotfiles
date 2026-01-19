@@ -109,3 +109,7 @@ disable_suspend()
 {
   systemd-inhibit --why="Running a long task" --mode=block bash
 }
+
+mkc () {
+  mkdir -p "$@" && cd "$@" || return
+}
