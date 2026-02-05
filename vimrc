@@ -143,8 +143,8 @@ map <C-i> :tabnext<cr>
 nnoremap <leader>W :%s/\s\+$//<cr>:let @/=''<CR>
 
 " Base64 things
-vnoremap <leader>64d c<c-r>=system('base64 --decode', @")<cr><esc>
-vnoremap <leader>64e c<c-r>=system('base64', @")<cr><esc>
+vnoremap <leader>64d y:let @"=system('base64 -w 0 --decode', @")<cr>gvP
+vnoremap <leader>64e y:let @"=system('base64 -w 0', @")<cr>gvP
 
 " Make ctrl + direction switch between tabs/buffers
 map <C-Up> :bp<cr>
@@ -250,6 +250,9 @@ Plug 'joshdick/onedark.vim'
 " Adds the markdown syntax from vim dev
 " Plug 'tpope/vim-markdown'
 
+" Adds indent guides
+Plug 'nathanaelkane/vim-indent-guides'
+
 call plug#end()
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -292,7 +295,7 @@ imap <c-x><c-l> <plug>(fzf-complete-line)
 " nnoremap <C-t> :NERDTreeToggle<CR>
 
 " Make vim close if only the tree is open
-" autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | quit | endif
+autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | quit | endif
 
 " Open quick switcher
 map <C-p> :Files<CR>
@@ -307,6 +310,12 @@ let g:ale_echo_msg_error_str = 'ERR'
 let g:ale_echo_msg_warning_str = 'WARN'
 let g:ale_echo_msg_format = '[%linter%] %severity%: [%code%] %s'
 let g:ale_lint_delay = 500
+
+" Switch on indent guides on startup
+let g:indent_guides_enable_on_vim_startup = 1
+
+let g:indent_guides_color_change_percent = 1
+let g:indent_guides_guide_size = 1
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Spellcheck configuration
