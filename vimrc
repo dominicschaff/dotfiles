@@ -350,6 +350,7 @@ endfun
 
 if has("autocmd")
     autocmd BufWritePre *.txt,*.js,*.py,*.sh,*.md,*.ts,*.html,*.yaml,*.rst,*.css,*.json,*.toml :call CleanExtraSpaces()
+    autocmd BufWritePre Makefile,justfile,*.justfile :call CleanExtraSpaces()
 endif
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
