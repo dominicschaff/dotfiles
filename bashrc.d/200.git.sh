@@ -18,11 +18,7 @@ alias aws_deploy="gl | pbcopy; read; gh | pbcopy"
 alias gds="git diff --stat"
 alias gb="cd \$(git rev-parse --show-toplevel)"
 alias gr="git remote -v"
-
-gi()
-{
-  echo "$(git branch 2> /dev/null | grep '*' | cut -d' ' -f2-) : $(git status --porcelain | wc -l)"
-}
+alias gstart="git log --reverse --format=\"%aI\" --all | head -n 1"
 
 gm()
 {
@@ -54,21 +50,21 @@ bundle()
     return
   fi
   repo_name="$(pwd | rev | cut -d'/' -f1 | rev).bundle"
-  git bundle create "$repo_name" "$(git branch | grep '*' | cut -d' ' -f2)"
+  git bundle create "$repo_name" "$(git branch | grep --fixed-strings '*' | cut -d' ' -f2)"
   echo "Created $repo_name"
 }
 
 unbundle()
 {
   if [[ -z "$1" ]]; then
-    echo "Need name"
+    echo "File needed"
     return
   fi
   if [[ ! -f "$1" ]]; then
     echo "File not exist"
     return
   fi
-  git clone "$1" -b master
+  git clone "$1" -b main
 }
 
 record_history_to_video()
